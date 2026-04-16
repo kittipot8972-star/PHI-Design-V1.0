@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOM STD Part List - PHI Integration Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --orange: #f5620a; --orange-dark: #c44600; --orange-light: #ff8c42;
+    --orange-glow: rgba(245,98,10,0.18);
+    --black: #0d0d0d; --black2: #161616; --black3: #1e1e1e; --black4: #2a2a2a;
+    --charcoal: #333; --gray3: #888; --gray4: #aaa;
+    --text-light: #e8e8e8; --white: #ffffff; --green: #2ecc71;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans Thai','Barlow',sans-serif; background:var(--black); color:var(--text-light); font-size:14px; }
+  a { text-decoration:none; color:inherit; }
+
+  /* HEADER */
+  header { background:var(--black2); border-bottom:2px solid var(--orange); box-shadow:0 4px 20px rgba(0,0,0,0.6); }
+  .header-main { max-width:1400px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:20px; }
+  .logo { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+  .logo-text .line1 { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--white); line-height:1; }
+  .logo-text .line1 span { color:var(--orange); }
+  .search-bar { flex:1; display:flex; border:1.5px solid var(--charcoal); border-radius:4px; overflow:hidden; background:var(--black3); }
+  .search-bar input { flex:1; padding:10px 16px; border:none; outline:none; font-size:14px; font-family:inherit; background:transparent; color:var(--text-light); }
+  .search-bar input::placeholder { color:var(--gray3); }
+  .search-bar button { background:var(--orange); border:none; padding:0 20px; cursor:pointer; color:white; font-size:18px; }
+  .search-bar button:hover { background:var(--orange-dark); }
+
+  /* NAV */
+  nav { background:var(--black3); border-bottom:1px solid var(--black4); }
+  .nav-inner { max-width:1400px; margin:0 auto; padding:0 20px; display:flex; }
+  .catalog-menu { position:relative; }
+  .catalog-btn { display:flex; align-items:center; gap:8px; padding:12px 20px; background:var(--orange); color:white; font-size:13px; font-weight:700; cursor:pointer; border:none; font-family:inherit; transition:background 0.2s; white-space:nowrap; }
+  .catalog-btn:hover { background:var(--orange-dark); }
+  .catalog-btn .arrow { font-size:10px; transition:transform 0.2s; }
+  .catalog-menu:hover .catalog-btn .arrow { transform:rotate(180deg); }
+  .catalog-dropdown { display:none; position:absolute; top:100%; left:0; background:var(--black2); border:1px solid var(--black4); border-top:2px solid var(--orange); border-radius:0 0 6px 6px; width:290px; z-index:300; box-shadow:0 12px 40px rgba(0,0,0,0.7); overflow:hidden; }
+  .catalog-menu:hover .catalog-dropdown { display:block; }
+  .dropdown-item { display:flex; align-items:center; gap:12px; padding:13px 18px; border-bottom:1px solid var(--black4); transition:all 0.15s; color:var(--text-light); font-size:13px; font-weight:500; cursor:pointer; }
+  .dropdown-item:last-child { border-bottom:none; }
+  .dropdown-item:hover { background:var(--black4); color:var(--orange-light); padding-left:24px; }
+  .d-num { width:22px; height:22px; background:var(--orange-glow); border:1px solid var(--orange); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--orange-light); flex-shrink:0; }
+  .dropdown-item:hover .d-num { background:var(--orange); color:white; }
+  .d-icon { font-size:18px; flex-shrink:0; }
+  .d-arrow { margin-left:auto; color:var(--gray3); font-size:12px; }
+
+  /* BREADCRUMB */
+  .breadcrumb { max-width:1400px; margin:12px auto 0; padding:0 20px; display:flex; align-items:center; gap:6px; font-size:12px; color:var(--gray3); }
+  .breadcrumb a { color:var(--orange-light); }
+
+  /* PAGE WRAPPER */
+  .page-wrapper { max-width:1400px; margin:14px auto 40px; padding:0 20px; }
+
+  /* PAGE TITLE */
+  .page-title-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:10px; }
+  .page-title-row h1 { font-size:22px; font-weight:700; color:var(--white); display:flex; align-items:center; gap:10px; }
+  .page-title-row h1::before { content:''; width:5px; height:26px; background:var(--orange); border-radius:3px; display:block; box-shadow:0 0 8px var(--orange); }
+  .page-subtitle { font-size:12px; color:var(--gray3); margin-left:15px; }
+
+  /* SOURCE BAR */
+  .source-bar { border-radius:6px; padding:9px 14px; margin-bottom:12px; font-size:12px; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+
+  /* TOOLBAR — User + Type only */
+  .toolbar { background:var(--black2); border:1px solid var(--black4); border-radius:6px; padding:10px 14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .toolbar label { font-size:12px; color:var(--gray3); white-space:nowrap; }
+  .filter-input { background:var(--black3); border:1px solid var(--charcoal); border-radius:4px; padding:6px 10px; font-size:13px; font-family:inherit; color:var(--text-light); outline:none; min-width:140px; }
+  .filter-input:focus { border-color:var(--orange); }
+  .filter-select { background:var(--black3); border:1px solid var(--charcoal); border-radius:4px; padding:6px 10px; font-size:13px; font-family:inherit; color:var(--text-light); cursor:pointer; outline:none; min-width:140px; }
+  .filter-select:focus { border-color:var(--orange); }
+  .toolbar-divider { width:1px; height:28px; background:var(--charcoal); flex-shrink:0; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:4px; font-size:13px; font-weight:700; cursor:pointer; border:none; font-family:inherit; white-space:nowrap; }
+  .btn-outline { background:transparent; color:var(--gray4); border:1px solid var(--charcoal); }
+  .btn-outline:hover { border-color:var(--orange); color:var(--orange-light); }
+  .btn-green { background:rgba(46,204,113,0.15); color:var(--green); border:1px solid rgba(46,204,113,0.4); }
+  .btn-green:hover { background:rgba(46,204,113,0.25); }
+  .btn-green:disabled { opacity:0.35; cursor:not-allowed; }
+  .selected-badge { font-size:12px; color:var(--orange-light); font-weight:700; background:var(--orange-glow); border:1px solid var(--orange); border-radius:4px; padding:4px 10px; }
+
+  /* SPLIT LAYOUT */
+  .split-layout { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+
+  /* BOM TABLE PANEL */
+  .panel { background:var(--black2); border:1px solid var(--black4); border-radius:6px; overflow:hidden; display:flex; flex-direction:column; }
+  .panel-header { background:var(--black4); padding:9px 14px; display:flex; align-items:center; gap:8px; border-bottom:2px solid var(--orange); flex-shrink:0; }
+  .panel-title { font-size:13px; font-weight:700; color:var(--orange-light); flex:1; }
+  .select-all-btn { font-size:11px; color:var(--gray3); cursor:pointer; }
+  .select-all-btn:hover { color:var(--orange-light); }
+
+  .bom-table-wrap { overflow-y:auto; max-height:calc(100vh - 300px); }
+  .bom-table { width:100%; border-collapse:collapse; }
+  .bom-table thead tr { background:var(--black3); position:sticky; top:0; z-index:2; }
+  .bom-table th { padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:var(--gray4); text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid var(--orange); white-space:nowrap; }
+  .bom-table th.col-check { width:36px; text-align:center; }
+  .bom-table th.col-no { width:36px; }
+  .bom-table th.col-qty { width:100px; }
+  .bom-table tbody tr { border-bottom:1px solid var(--black4); transition:background 0.1s; cursor:pointer; }
+  .bom-table tbody tr:hover { background:var(--black3); }
+  .bom-table tbody tr.selected { background:rgba(245,98,10,0.07); }
+  .bom-table td { padding:8px 10px; font-size:12px; vertical-align:middle; }
+  .bom-table td.col-check { text-align:center; }
+  .part-check { width:16px; height:16px; accent-color:var(--orange); cursor:pointer; }
+  .part-no { font-weight:700; color:var(--orange-light); }
+  .part-desc { color:var(--text-light); }
+  .part-brand { color:var(--gray4); font-size:11px; }
+  .part-src { display:inline-block; background:var(--black4); border:1px solid var(--charcoal); color:var(--gray3); padding:1px 6px; border-radius:8px; font-size:10px; }
+  .qty-input-wrap { display:flex; align-items:center; border:1px solid var(--charcoal); border-radius:4px; overflow:hidden; width:88px; }
+  .qty-minus, .qty-plus { background:var(--black4); border:none; width:24px; height:26px; color:var(--text-light); font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .qty-minus:hover, .qty-plus:hover { background:var(--orange); }
+  .qty-num { flex:1; height:26px; background:var(--black3); border:none; text-align:center; font-size:12px; color:var(--text-light); font-family:inherit; outline:none; }
+  tr:not(.selected) .qty-input-wrap { opacity:0.3; pointer-events:none; }
+  .thumb { width:48px; height:48px; object-fit:contain; background:var(--black3); border:1px solid var(--black4); border-radius:4px; display:block; flex-shrink:0; }
+  .thumb-placeholder { width:48px; height:48px; background:var(--black3); border:1px solid var(--black4); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--charcoal); font-size:18px; flex-shrink:0; }
+  .part-info-cell { display:flex; align-items:center; gap:10px; }
+  .empty-state { padding:30px; text-align:center; color:var(--gray3); font-size:13px; }
+
+  .panel-footer { background:var(--black3); border-top:1px solid var(--black4); padding:8px 14px; display:flex; gap:12px; font-size:12px; color:var(--gray3); flex-shrink:0; }
+  .panel-footer span { color:var(--orange-light); font-weight:700; }
+
+  /* PREVIEW PANEL */
+  .preview-wrap { overflow-y:auto; max-height:calc(100vh - 300px); }
+  .preview-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .preview-table thead tr { background:var(--black3); position:sticky; top:0; z-index:2; }
+  .preview-table th { padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:var(--gray4); text-transform:uppercase; border-bottom:1px solid var(--orange); white-space:nowrap; }
+  .preview-table th:last-child { color:var(--orange-light); }
+  .preview-table td { padding:8px 10px; border-bottom:1px solid var(--black4); }
+  .preview-table tbody tr:nth-child(even) td { background:var(--black3); }
+  .preview-table tbody tr:hover td { background:var(--black4); }
+  .preview-empty { padding:30px; text-align:center; color:var(--gray3); font-size:13px; }
+
+  /* AUTO REFRESH INDICATOR */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .live-dot { width:8px; height:8px; background:var(--green); border-radius:50%; display:inline-block; animation:pulse 2s infinite; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-main">
+    <div class="logo">
+      <img src="../img/PHI.png" alt="PHI Logo" style="width:52px;height:52px;object-fit:contain;">
+      <div class="logo-text"><div class="line1"><span>PHI</span> INTEGRATION DESIGN</div></div>
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="ค้นหาสินค้า, รหัสสินค้า...">
+      <button>🔍</button>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="catalog-menu">
+      <button class="catalog-btn">☰ &nbsp;PHI-Catalog <span class="arrow">▼</span></button>
+      <div class="catalog-dropdown">
+        <a class="dropdown-item" href="../automation-components/automation-components.html"><span class="d-num">1</span><span class="d-icon">⚙️</span><span>Automation Components</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../pneumatic-system/pneumatic-system.html"><span class="d-num">2</span><span class="d-icon">💨</span><span>Pneumatic System</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../module-std/module-std.html"><span class="d-num">3</span><span class="d-icon">📦</span><span>Module STD</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../al-profile-accessories/al-profile-accessories.html"><span class="d-num">4</span><span class="d-icon">🔩</span><span>AL Profile &amp; Accessories</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../electrical-components/electrical-components.html"><span class="d-num">5</span><span class="d-icon">⚡</span><span>Electrical Components</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../autoliv-std/autoliv-std.html"><span class="d-num">6</span><span class="d-icon">🛡️</span><span>Autoliv STD</span><span class="d-arrow">›</span></a>
+      </div>
+    </div>
+    <div class="catalog-menu">
+      <button class="catalog-btn">🧮 &nbsp;Calculator Design <span class="arrow">▼</span></button>
+      <div class="catalog-dropdown">
+        <a class="dropdown-item" href="../calculator-design/item1.html"><span class="d-num">1</span><span class="d-icon">➕</span><span>Calculator Motor</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../calculator-design/item2.html"><span class="d-num">2</span><span class="d-icon">➖</span><span>Calculator IAI</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../calculator-design/item3.html"><span class="d-num">3</span><span class="d-icon">✖️</span><span>Calculator 1</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../calculator-design/item4.html"><span class="d-num">4</span><span class="d-icon">➗</span><span>Calculator Item 4</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../calculator-design/item5.html"><span class="d-num">5</span><span class="d-icon">📐</span><span>Calculator Item 5</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../calculator-design/item6.html"><span class="d-num">6</span><span class="d-icon">📏</span><span>Calculator Item 6</span><span class="d-arrow">›</span></a>
+      </div>
+    </div>
+    <div class="catalog-menu">
+      <button class="catalog-btn">🏢 &nbsp;ข้อมูลภายในองค์กร <span class="arrow">▼</span></button>
+      <div class="catalog-dropdown">
+        <a class="dropdown-item" href="../internal-data/item1.html"><span class="d-num">1</span><span class="d-icon">📋</span><span>Internal Item 1</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../internal-data/item2.html"><span class="d-num">2</span><span class="d-icon">📊</span><span>Internal Item 2</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../internal-data/item3.html"><span class="d-num">3</span><span class="d-icon">📈</span><span>Internal Item 3</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../internal-data/item4.html"><span class="d-num">4</span><span class="d-icon">📉</span><span>Internal Item 4</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../internal-data/item5.html"><span class="d-num">5</span><span class="d-icon">🗂️</span><span>Internal Item 5</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../internal-data/item6.html"><span class="d-num">6</span><span class="d-icon">🗃️</span><span>Internal Item 6</span><span class="d-arrow">›</span></a>
+      </div>
+    </div>
+    <div class="catalog-menu">
+      <button class="catalog-btn">📂 &nbsp;Data1 <span class="arrow">▼</span></button>
+      <div class="catalog-dropdown">
+        <a class="dropdown-item" href="../data1/item1.html"><span class="d-num">1</span><span class="d-icon">🔵</span><span>Data1 Item 1</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../data1/item2.html"><span class="d-num">2</span><span class="d-icon">🟢</span><span>Data1 Item 2</span><span class="d-arrow">›</span></a>
+      </div>
+    </div>
+    <div class="catalog-menu">
+      <button class="catalog-btn">📁 &nbsp;Data2 <span class="arrow">▼</span></button>
+      <div class="catalog-dropdown">
+        <a class="dropdown-item" href="../data2/item1.html"><span class="d-num">1</span><span class="d-icon">🔷</span><span>Data2 Item 1</span><span class="d-arrow">›</span></a>
+        <a class="dropdown-item" href="../data2/item2.html"><span class="d-num">2</span><span class="d-icon">🔶</span><span>Data2 Item 2</span><span class="d-arrow">›</span></a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="index.html">🏠 หน้าแรก</a> ›
+  <span style="color:var(--orange-light);">BOM STD Part List</span>
+</div>
+
+<!-- MAIN -->
+<div class="page-wrapper">
+
+  <!-- TITLE ROW -->
+  <div class="page-title-row">
+    <div>
+      <h1>BOM STD Part List</h1>
+      <div class="page-subtitle">เลือกรายการสินค้าและกำหนดจำนวน แล้ว Export เป็น Excel</div>
+    </div>
+  </div>
+
+  <!-- SOURCE BAR removed -->
+
+  <!-- TOOLBAR: User + Type only -->
+  <div class="toolbar">
+    <label>👤 User :</label>
+    <input type="text" class="filter-input" id="filterUser" placeholder="กรอกชื่อผู้ใช้...">
+    <div class="toolbar-divider"></div>
+    <label>📁 Type :</label>
+    <select class="filter-select" id="filterType">
+      <option value="all">ทุกประเภท</option>
+    </select>
+    <div class="toolbar-divider"></div>
+    <button class="btn btn-outline" onclick="clearAll()">✕ ล้าง</button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
+      <span class="selected-badge" id="selectedCount">เลือกแล้ว 0 รายการ</span>
+      <button class="btn btn-green" id="exportBtn" onclick="exportBOM()" disabled>⬇️ Export BOM Excel</button>
+    </div>
+  </div>
+
+  <!-- SPLIT LAYOUT -->
+  <div class="split-layout">
+
+    <!-- LEFT: รายการสินค้าทั้งหมด -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📋 รายการสินค้าทั้งหมด</div>
+        <span class="select-all-btn" onclick="selectAll()">เลือกทั้งหมด</span>
+        <span style="color:var(--charcoal);margin:0 5px;">|</span>
+        <span class="select-all-btn" onclick="deselectAll()">ยกเลิก</span>
+      </div>
+      <div class="bom-table-wrap">
+        <table class="bom-table">
+          <thead>
+            <tr>
+              <th class="col-check"><input type="checkbox" id="masterCheck" onchange="toggleMaster(this)" style="width:15px;height:15px;accent-color:var(--orange);cursor:pointer;"></th>
+              <th class="col-no">#</th>
+              <th>ชื่อสินค้า / รหัส</th>
+              <th>Source</th>
+              <th class="col-qty">ตัวคูณ (×)</th>
+            </tr>
+          </thead>
+          <tbody id="bomTbody"></tbody>
+        </table>
+        <div id="emptyState" class="empty-state" style="display:none;">ไม่พบรายการ</div>
+      </div>
+      <div class="panel-footer">
+        <span>ทั้งหมด: <span id="totalCount">0</span> รายการ</span>
+        <span style="margin-left:auto;">เลือก: <span id="selectedCount2">0</span> รายการ</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: Preview -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📄 Preview BOM ที่จะ Export</div>
+        <span style="font-size:11px;color:var(--gray3);">real-time</span>
+      </div>
+      <div class="preview-wrap">
+        <table class="preview-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Part No.</th>
+              <th>Description</th>
+              <th>Brand</th>
+              <th>Qty.</th>
+            </tr>
+          </thead>
+          <tbody id="previewTbody"></tbody>
+        </table>
+        <div id="previewEmpty" class="preview-empty">ยังไม่ได้เลือกรายการ<br><span style="font-size:11px;color:var(--gray3);">ติ๊กรายการด้านซ้ายเพื่อดู preview</span></div>
+      </div>
+      <div class="panel-footer">
+        <span>Preview: <span id="previewCount">0</span> รายการ</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ======================================================
+// STATE
+// ======================================================
+let PARTS = [];        // { uid, pageLabel, pagePath, items:[{partNo,desc,brand,qty}] }
+let PAGES = [];        // list of { label, path, count }
+let currentUser = '';
+let currentType = 'all';
+let refreshTimer = null;
+
+// ======================================================
+// โหลดจาก localStorage — แต่ละ key = 1 หน้าสินค้า
+// แสดงชื่อหน้า (SFA-2N1 ฯลฯ) ไม่ใช่แถว Excel
+// ======================================================
+function loadFromLocalStorage() {
+  PARTS = [];
+  PAGES = [];
+  const typeSet = new Set();
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith('phi_excel_data_')) continue;
+
+    const pagePath  = key.replace('phi_excel_data_', '');
+    const pageLabel = pagePath.split('/').pop().replace('.html','') || pagePath;
+    const imagePath = localStorage.getItem('phi_image_' + pagePath) || '';
+    const pageTitle = localStorage.getItem('phi_title_' + pagePath) || pageLabel;
+
+    try {
+      const data = JSON.parse(localStorage.getItem(key));
+      if (!Array.isArray(data) || data.length === 0) continue;
+
+      const items = data.map(row => ({
+        partNo: String(row['Part No.'] || row['Part No'] || row['PART NO'] || '').trim(),
+        desc:   String(row['Description'] || row['DESCRIPTION'] || '').trim(),
+        brand:  String(row['Brand'] || row['BRAND'] || '').trim(),
+        qty:    parseFloat(row['Qty.'] || row['QTY'] || row['qty'] || 1) || 1,
+      })).filter(r => r.partNo);
+
+      const uid = pageLabel + '__' + pagePath;
+      PARTS.push({ uid, pageLabel, pageTitle, pagePath, imagePath, items });
+      PAGES.push({ label: pageLabel, path: pagePath, count: items.length });
+      typeSet.add(pageLabel);
+    } catch(e) { /* skip */ }
+  }
+
+  rebuildTypeFilter(typeSet);
+  return PAGES;
+}
+
+function rebuildTypeFilter(typeSet) {
+  const sel = document.getElementById('filterType');
+  const prev = sel.value;
+  while (sel.options.length > 1) sel.remove(1);
+  typeSet.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    sel.appendChild(opt);
+  });
+  if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
+}
+
+// ======================================================
+// FILTER + RENDER
+// ======================================================
+function getFiltered() {
+  const typeVal = document.getElementById('filterType').value;
+  return PARTS.filter(p => typeVal === 'all' || p.pageLabel === typeVal);
+}
+
+function eid(uid) { return uid.replace(/[^a-zA-Z0-9]/g, '_'); }
+function getMultiplier(uid) {
+  const el = document.getElementById('mult_' + eid(uid));
+  return el ? (parseInt(el.value) || 1) : 1;
+}
+function isChecked(uid) {
+  const el = document.getElementById('cb_' + eid(uid));
+  return el ? el.checked : false;
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  const tbody = document.getElementById('bomTbody');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('totalCount').textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = ''; empty.style.display = 'block';
+    updateSummary(); return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map((p, i) => {
+    const id  = eid(p.uid);
+    const chk = isChecked(p.uid) ? 'checked' : '';
+    const sel = isChecked(p.uid) ? 'selected' : '';
+    const mult = getMultiplier(p.uid);
+    const totalQty = p.items.reduce((sum, it) => sum + it.qty * mult, 0);
+    const thumbHtml = p.imagePath
+      ? `<img class="thumb" src="${p.imagePath}" alt="${p.pageLabel}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="thumb-placeholder" style="display:none">📦</span>`
+      : `<span class="thumb-placeholder">📦</span>`;
+    return `<tr id="row_${id}" class="${sel}" onclick="rowClick('${id}',event)">
+      <td class="col-check"><input type="checkbox" id="cb_${id}" class="part-check" ${chk} onclick="toggleRow('${id}',event)"></td>
+      <td style="color:var(--gray3);font-size:11px;">${i+1}</td>
+      <td>
+        <div class="part-info-cell">
+          ${thumbHtml}
+          <div>
+            <div style="font-weight:700;color:var(--orange-light);font-size:13px;">${p.pageTitle || p.pageLabel}</div>
+            <div style="font-size:11px;color:var(--gray3);margin-top:2px;">${p.items.length} รายการใน Excel</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="part-src">${p.pageLabel}</span></td>
+      <td>
+        <div class="qty-input-wrap">
+          <button class="qty-minus" onclick="adjustMult('${id}',-1,event)">−</button>
+          <input class="qty-num" id="mult_${id}" type="number" value="${mult}" min="1" onchange="onMultChange('${id}')">
+          <button class="qty-plus" onclick="adjustMult('${id}',1,event)">+</button>
+        </div>
+      </td>
+      <td style="font-weight:700;color:var(--orange-light);text-align:center;" id="total_${id}">${totalQty}</td>
+    </tr>`;
+  }).join('');
+
+  updateSummary();
+  updatePreview();
+}
+
+// ======================================================
+// ROW INTERACTION
+// ======================================================
+function rowClick(id, e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+  const cb = document.getElementById('cb_' + id);
+  if (cb) { cb.checked = !cb.checked; applyRowState(id); }
+}
+function toggleRow(id, e) { e.stopPropagation(); applyRowState(id); }
+function applyRowState(id) {
+  const cb  = document.getElementById('cb_' + id);
+  const row = document.getElementById('row_' + id);
+  if (!cb || !row) return;
+  row.classList.toggle('selected', cb.checked);
+  updateSummary(); updatePreview();
+}
+function toggleMaster(mc) {
+  getFiltered().forEach(p => {
+    const id  = eid(p.uid);
+    const cb  = document.getElementById('cb_' + id);
+    const row = document.getElementById('row_' + id);
+    if (cb) { cb.checked = mc.checked; if (row) row.classList.toggle('selected', mc.checked); }
+  });
+  updateSummary(); updatePreview();
+}
+function selectAll()   { const mc = document.getElementById('masterCheck'); mc.checked = true;  toggleMaster(mc); }
+function deselectAll() { const mc = document.getElementById('masterCheck'); mc.checked = false; toggleMaster(mc); }
+
+function adjustMult(id, delta, e) {
+  e.stopPropagation();
+  const inp = document.getElementById('mult_' + id);
+  if (inp) {
+    inp.value = Math.max(1, (parseInt(inp.value) || 1) + delta);
+    onMultChange(id);
+  }
+}
+function onMultChange(id) {
+  // อัปเดต total qty ในแถว
+  const p = PARTS.find(x => eid(x.uid) === id);
+  if (p) {
+    const mult = getMultiplier(p.uid);
+    const totalQty = p.items.reduce((sum, it) => sum + it.qty * mult, 0);
+    const totalEl = document.getElementById('total_' + id);
+    if (totalEl) totalEl.textContent = totalQty;
+  }
+  updatePreview();
+}
+
+// ======================================================
+// SUMMARY + PREVIEW
+// ======================================================
+function updateSummary() {
+  const count = PARTS.filter(p => isChecked(p.uid)).length;
+  document.getElementById('selectedCount').textContent  = `เลือกแล้ว ${count} หน้า`;
+  document.getElementById('selectedCount2').textContent = count;
+  document.getElementById('exportBtn').disabled = count === 0;
+}
+
+function updatePreview() {
+  // รวม items จากทุกหน้าที่ติ๊กเลือก คูณด้วย multiplier
+  const rows = [];
+  PARTS.filter(p => isChecked(p.uid)).forEach(p => {
+    const mult = getMultiplier(p.uid);
+    p.items.forEach(it => {
+      rows.push({
+        partNo: it.partNo,
+        desc:   it.desc,
+        brand:  it.brand,
+        qty:    it.qty * mult,
+        source: p.pageLabel,
+      });
+    });
+  });
+
+  const tbody = document.getElementById('previewTbody');
+  const empty = document.getElementById('previewEmpty');
+  document.getElementById('previewCount').textContent = rows.length;
+
+  if (rows.length === 0) {
+    tbody.innerHTML = ''; empty.style.display = 'block';
+    updateSummary(); return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = rows.map((r, i) => `<tr>
+    <td style="color:var(--gray3);font-size:11px;">${i+1}</td>
+    <td style="color:var(--orange-light);font-weight:700;">${r.partNo}</td>
+    <td>${r.desc}</td>
+    <td style="color:var(--gray4);">${r.brand}</td>
+    <td style="text-align:center;font-weight:700;color:var(--orange-light);">${r.qty}</td>
+  </tr>`).join('');
+  updateSummary();
+}
+
+// ======================================================
+// FILTER EVENTS
+// ======================================================
+document.getElementById('filterType').addEventListener('change', function() {
+  currentType = this.value;
+  renderTable();
+});
+document.getElementById('filterUser').addEventListener('input', function() {
+  currentUser = this.value.trim();
+});
+
+function clearAll() {
+  deselectAll();
+  document.getElementById('filterUser').value = '';
+  document.getElementById('filterType').value = 'all';
+  currentUser = ''; currentType = 'all';
+  renderTable();
+}
+
+// ======================================================
+// EXPORT — แต่ละหน้าที่เลือก × multiplier → flatten rows
+// ======================================================
+function exportBOM() {
+  const exportRows = [];
+  PARTS.filter(p => isChecked(p.uid)).forEach(p => {
+    const mult = getMultiplier(p.uid);
+    p.items.forEach((it, i) => {
+      exportRows.push({
+        'No.':         exportRows.length + 1,
+        'Part No.':    it.partNo,
+        'Description': it.desc,
+        'Brand':       it.brand,
+        'Qty.':        it.qty * mult,
+      });
+    });
+  });
+  if (exportRows.length === 0) return;
+
+  const user    = document.getElementById('filterUser').value.trim();
+  const today   = new Date();
+  const dateStr = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+
+  const ws = XLSX.utils.json_to_sheet(exportRows);
+  ws['!cols'] = [{wch:6},{wch:18},{wch:40},{wch:14},{wch:10}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'BOM STD Part List');
+  const userSuffix = user ? `_${user.replace(/[^a-zA-Z0-9ก-๙]/g,'_')}` : '';
+  XLSX.writeFile(wb, `BOM_STD_${dateStr}${userSuffix}.xlsx`);
+}
+
+// ======================================================
+// AUTO REFRESH ทุก 5 วินาที
+// ======================================================
+function autoRefresh() {
+  const prevCount = PARTS.length;
+  loadFromLocalStorage();
+  if (PARTS.length !== prevCount) renderTable();
+}
+
+function initApp() {
+  loadFromLocalStorage();
+  renderTable();
+  refreshTimer = setInterval(autoRefresh, 5000);
+}
+
+window.addEventListener('storage', function(e) {
+  if (e.key && e.key.startsWith('phi_excel_data_')) {
+    loadFromLocalStorage();
+    renderTable();
+  }
+});
+
+initApp();
+</script>
+</body>
+</html>
