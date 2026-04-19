@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conveyor Module 200 TEE - PHI Integration Design</title>
+<title>Master Template- PHI Integration Design</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root { --orange: #f5620a; --orange-dark: #c44600; --orange-light: #ff8c42; --orange-glow: rgba(245,98,10,0.18); --black: #0d0d0d; --black2: #161616; --black3: #1e1e1e; --black4: #2a2a2a; --charcoal: #333; --gray3: #888; --gray4: #aaa; --text-light: #e8e8e8; --white: #ffffff; --green: #2ecc71; --blue: #3498db; }
@@ -62,15 +62,15 @@
 </header>
 
 <div class="breadcrumb">
-  <a href="#">Home</a> > <span id="bread-cat">Catalog</span> > <span id="bread-sku" style="color:var(--gray3)">Conveyor</span>
+  <a href="#">Home</a> > <span id="bread-cat">Catalog</span> > <span id="bread-sku" style="color:var(--gray3)">-</span>
 </div>
 
 <div class="page-wrapper">
   <div class="product-header">
-    <div class="product-title" id="p-title">Conveyor Module 200 TEE</div>
+    <div class="product-title" id="p-title">-</div>
     <div class="product-meta">
-      <div class="meta-badge">PART NO : <span class="val" id="p-sku">CM-200-TEE</span></div>
-      <div class="meta-badge">CATEGORY : <span class="val" id="p-cat">Conveyor Module</span></div>
+      <div class="meta-badge">PART NO : <span class="val" id="p-sku">-</span></div>
+      <div class="meta-badge">CATEGORY : <span class="val" id="p-cat">-</span></div>
     </div>
   </div>
 
@@ -78,7 +78,7 @@
     <div class="left-col">
       <div class="image-panel">
         <div class="main-image-wrap">
-          <img id="p-image" src="../img/Conveyor Module 200 TEE.png" alt="Product Image">
+          <img id="p-image" src="" alt="Product Image">
         </div>
       </div>
       <div class="docs-row">
@@ -90,11 +90,11 @@
     <div class="order-panel">
       <div class="order-row">
         <div class="order-label">BRAND</div>
-        <div class="order-brand" id="p-brand">PHI</div>
+        <div class="order-brand" id="p-brand">-</div>
       </div>
       <div class="order-row">
         <div class="order-label">PRODUCT SKU</div>
-        <div id="p-sku-display" style="color:var(--orange-light); font-weight:700; font-size: 20px;">CM-200-TEE</div>
+        <div id="p-sku-display" style="color:var(--orange-light); font-weight:700; font-size: 20px;">-</div>
       </div>
       <div class="order-row">
         <div class="order-label">QUANTITY</div>
@@ -110,11 +110,11 @@
   <div class="spec-section">
     <div class="section-title">📋 SPECIFICATIONS</div>
     <table class="spec-table" id="p-spec-table">
-      <tr><td class="spec-key">User</td><td><span class="spec-tag">WD</span></td></tr>
-      <tr><td class="spec-key">Type</td><td><span class="spec-tag">Module-STD-WD</span></td></tr>
-      <tr><td class="spec-key">Description</td><td><span class="spec-tag">Conveyor belt</span></td></tr>
-      <tr><td class="spec-key">Dimension</td><td><span class="spec-tag">200 mm.</span></td></tr>
-      <tr><td class="spec-key">Material</td><td><span class="spec-tag">N/A</span></td></tr>
+      <tr><td class="spec-key">User</td><td><span class="spec-tag">-</span></td></tr>
+      <tr><td class="spec-key">Type</td><td><span class="spec-tag">-</span></td></tr>
+      <tr><td class="spec-key">Description</td><td><span class="spec-tag">-</span></td></tr>
+      <tr><td class="spec-key">Dimension</td><td><span class="spec-tag">-</span></td></tr>
+      <tr><td class="spec-key">Material</td><td><span class="spec-tag">-</span></td></tr>
     </table>
   </div>
 
@@ -137,6 +137,7 @@
         <thead>
           <tr>
             <th>No.</th>
+            <th>Module</th>
             <th>Part No.</th>
             <th>Description</th>
             <th>Brand</th>
@@ -245,6 +246,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${i + 1}</td>
+        <td>${row['Module'] || row['Module'] || ''}</td>
         <td>${row['Part No.'] || row['Part No'] || ''}</td>
         <td>${row['Description'] || row['DESCRIPTION'] || ''}</td>
         <td>${row['Brand'] || row['BRAND'] || ''}</td>
@@ -268,6 +270,7 @@
     const mult = parseInt(document.getElementById('main-qty').value) || 1;
     const rows = importedData.map((row, i) => ({
       'No.':         i + 1,
+      'Description': row['Module'] || '-',
       'Part No.':    row['Part No.'] || row['Part No'] || '-',
       'Description': row['Description'] || '-',
       'Brand':       row['Brand'] || '-',

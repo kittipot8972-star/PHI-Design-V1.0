@@ -82,7 +82,7 @@
         </div>
       </div>
       <div class="docs-row">
-        <a id="p-pdf" href="#" target="_blank" class="doc-button">📄 PDF Catalog</a>
+        <a id="p-pdf" href="https://www.myqnapcloud.com/smartshare/7509fgmlnp2m265rux393026_b9g54h2h14542n8707wv795b318610ig" target="_blank" class="doc-button">📄 PDF Catalog</a>
         <a id="p-cad" href="#" target="_blank" class="doc-button" style="border-color: var(--orange);">📐 CAD Data</a>
       </div>
     </div>
@@ -136,6 +136,7 @@
         <thead>
           <tr>
             <th>No.</th>
+            <th>Module</th>
             <th>Part No.</th>
             <th>Description</th>
             <th>Brand</th>
@@ -244,6 +245,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${i + 1}</td>
+        <td>${row['Module'] || row['Module'] || ''}</td>
         <td>${row['Part No.'] || row['Part No'] || ''}</td>
         <td>${row['Description'] || row['DESCRIPTION'] || ''}</td>
         <td>${row['Brand'] || row['BRAND'] || ''}</td>
@@ -267,6 +269,7 @@
     const mult = parseInt(document.getElementById('main-qty').value) || 1;
     const rows = importedData.map((row, i) => ({
       'No.':         i + 1,
+      'Module': row['Module'] || '-',
       'Part No.':    row['Part No.'] || row['Part No'] || '-',
       'Description': row['Description'] || '-',
       'Brand':       row['Brand'] || '-',

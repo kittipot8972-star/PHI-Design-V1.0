@@ -137,6 +137,7 @@
         <thead>
           <tr>
             <th>No.</th>
+            <th>Module</th>
             <th>Part No.</th>
             <th>Description</th>
             <th>Brand</th>
@@ -245,6 +246,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${i + 1}</td>
+        <td>${row['Module'] || row['Module'] || ''}</td>
         <td>${row['Part No.'] || row['Part No'] || ''}</td>
         <td>${row['Description'] || row['DESCRIPTION'] || ''}</td>
         <td>${row['Brand'] || row['BRAND'] || ''}</td>
@@ -268,6 +270,7 @@
     const mult = parseInt(document.getElementById('main-qty').value) || 1;
     const rows = importedData.map((row, i) => ({
       'No.':         i + 1,
+      'Module': row['Module'] || '-',
       'Part No.':    row['Part No.'] || row['Part No'] || '-',
       'Description': row['Description'] || '-',
       'Brand':       row['Brand'] || '-',
