@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conveyor Module 200 TEE - PHI Integration Design</title>
+<title>Bridge spine for Support Frame Profile - PHI Integration Design</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root { --orange: #f5620a; --orange-dark: #c44600; --orange-light: #ff8c42; --orange-glow: rgba(245,98,10,0.18); --black: #0d0d0d; --black2: #161616; --black3: #1e1e1e; --black4: #2a2a2a; --charcoal: #333; --gray3: #888; --gray4: #aaa; --text-light: #e8e8e8; --white: #ffffff; --green: #2ecc71; --blue: #3498db; }
@@ -67,9 +67,9 @@
 
 <div class="page-wrapper">
   <div class="product-header">
-    <div class="product-title" id="p-title">Conveyor Module 200 TEE</div>
+    <div class="product-title" id="p-title">Bridge spine for Support Frame Profile</div>
     <div class="product-meta">
-      <div class="meta-badge">PART NO : <span class="val" id="p-sku">Conveyor-Module-200-TEE</span></div>
+      <div class="meta-badge">PART NO : <span class="val" id="p-sku">Bridge spine for Support Frame Profile</span></div>
       <div class="meta-badge">CATEGORY : <span class="val" id="p-cat">Module STD WD</span></div>
     </div>
   </div>
@@ -78,11 +78,11 @@
     <div class="left-col">
       <div class="image-panel">
         <div class="main-image-wrap">
-          <img id="p-image" src="../img/Conveyor Module 200 TEE.png" alt="Product Image">
+          <img id="p-image" src="../img/Bridge spine for Support Frame Profile.png" alt="Product Image">
         </div>
       </div>
       <div class="docs-row">
-        <a id="p-pdf" href="#" target="_blank" class="doc-button">📄 PDF Catalog</a>
+        <a id="p-pdf" href="https://www.myqnapcloud.com/smartshare/7509fgmlnp2m265rux393026_011i868410352s0srut6226z58ach2fh" target="_blank" class="doc-button">📄 PDF Catalog</a>
         <a id="p-cad" href="#" target="_blank" class="doc-button" style="border-color: var(--orange);">📐 CAD Data</a>
       </div>
     </div>
@@ -94,7 +94,7 @@
       </div>
       <div class="order-row">
         <div class="order-label">PRODUCT SKU</div>
-        <div id="p-sku-display" style="color:var(--orange-light); font-weight:700; font-size: 20px;">Conveyor-Module-200-TEE</div>
+        <div id="p-sku-display" style="color:var(--orange-light); font-weight:700; font-size: 20px;">Bridge spine for Support Frame Profile</div>
       </div>
       <div class="order-row">
         <div class="order-label">QUANTITY</div>
@@ -112,8 +112,8 @@
     <table class="spec-table" id="p-spec-table">
       <tr><td class="spec-key">User</td><td><span class="spec-tag">WD</span></td></tr>
       <tr><td class="spec-key">Type</td><td><span class="spec-tag">Module-STD-WD</span></td></tr>
-      <tr><td class="spec-key">Description</td><td><span class="spec-tag">Conveyor belt</span></td></tr>
-      <tr><td class="spec-key">Dimension</td><td><span class="spec-tag">200 mm.</span></td></tr>
+      <tr><td class="spec-key">Description</td><td><span class="spec-tag">Bridge spine for Support Frame Profile</span></td></tr>
+      <tr><td class="spec-key">Dimension</td><td><span class="spec-tag">N/A</span></td></tr>
       <tr><td class="spec-key">Material</td><td><span class="spec-tag">N/A</span></td></tr>
     </table>
   </div>
@@ -122,6 +122,7 @@
     <div class="section-title">
       <span>📊 BILL OF MATERIALS (BOM)</span>
       <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn-clear" onclick="clearData()">🗑️ ล้างข้อมูล</button>
         <button class="btn-export" onclick="exportExcel()">⬇️ Export Excel</button>
       </div>
     </div>
@@ -157,7 +158,7 @@
   // ⚙️ ตั้งค่าครั้งเดียว — วาง Google Sheets URL ของบริษัทที่นี่
   //    ทุกเครื่องที่เปิดไฟล์นี้จะโหลดข้อมูลจาก URL นี้อัตโนมัติ
   // ================================================================
-  const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1DW4GP278jflYk7Pn4_IzOBeOVgj7w3ZXjfUnwyA3Peg/edit?usp=sharing";
+  const DEFAULT_SHEET_URL = "";
   // ================================================================
 
   let importedData = [];
