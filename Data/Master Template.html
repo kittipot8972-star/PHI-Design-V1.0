@@ -40,11 +40,14 @@
   .spec-table td, .excel-table th, .excel-table td { padding: 12px 20px; border-bottom: 1px solid var(--black4); }
   .spec-key { width: 250px; color: var(--gray3); background: rgba(255,255,255,0.01); }
   .spec-tag { background: var(--black3); border: 1px solid var(--charcoal); color: var(--orange-light); padding: 2px 10px; border-radius: 3px; font-size: 11px; margin-right: 5px; }
-  .btn-import { background: var(--charcoal); color: var(--white); padding: 8px 16px; border-radius: 4px; cursor: pointer; border: 1px solid var(--gray4); font-size: 12px; }
   .btn-export { background: var(--orange); color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: 700; }
-  .btn-clear { background: #442222; color: #ffaaaa; border: 1px solid #663333; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; }
-  .btn-save-html { background: #1a3a1a; color: #88ff88; border: 1px solid #336633; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 700; }
-  .save-tip { background: rgba(245,98,10,0.08); border: 1px solid var(--orange-dark); border-radius: 4px; padding: 10px 16px; margin: 12px 0 0 0; font-size: 12px; color: var(--orange-light); display: none; }
+  .btn-clear { background: #442222; color: #ffaaaa; border: 1px solid #663333; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+  .btn-load { background: #1a2e3a; color: #66ccff; border: 1px solid #2255aa; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .gsheet-bar { display:flex; align-items:center; gap:8px; padding:12px 16px; background:var(--black3); border-bottom:1px solid var(--black4); flex-wrap:wrap; }
+  .gsheet-input { flex:1; min-width:260px; background:var(--black4); border:1px solid var(--charcoal); border-radius:4px; padding:8px 12px; color:var(--text-light); font-size:13px; font-family:inherit; outline:none; }
+  .gsheet-status { font-size:12px; padding:4px 10px; border-radius:4px; display:none; }
+  .gsheet-status.loading { display:inline-block; color:#66ccff; background:rgba(102,204,255,0.08); border:1px solid #2255aa; }
+  .gsheet-status.ok  { display:inline-block; color:var(--green); background:rgba(46,204,113,0.08); border:1px solid rgba(46,204,113,0.4); }
 </style>
 </head>
 <body>
@@ -59,15 +62,15 @@
 </header>
 
 <div class="breadcrumb">
-  <a href="#">Home</a> > <span id="bread-cat"></span> > <span id="bread-sku" style="color:var(--gray3)"></span>
+  <a href="#">Home</a> > <span id="bread-cat">Catalog</span> > <span id="bread-sku" style="color:var(--gray3)">Conveyor</span>
 </div>
 
 <div class="page-wrapper">
   <div class="product-header">
-    <div class="product-title" id="p-title"></div>
+    <div class="product-title" id="p-title">Conveyor Module 200 TEE</div>
     <div class="product-meta">
-      <div class="meta-badge">PART NO : <span class="val" id="p-sku"></span></div>
-      <div class="meta-badge">CATEGORY : <span class="val" id="p-cat"></span></div>
+      <div class="meta-badge">PART NO : <span class="val" id="p-sku">CM-200-TEE</span></div>
+      <div class="meta-badge">CATEGORY : <span class="val" id="p-cat">Conveyor Module</span></div>
     </div>
   </div>
 
@@ -75,7 +78,7 @@
     <div class="left-col">
       <div class="image-panel">
         <div class="main-image-wrap">
-          <img id="p-image" src="">
+          <img id="p-image" src="../img/Conveyor Module 200 TEE.png" alt="Product Image">
         </div>
       </div>
       <div class="docs-row">
@@ -87,11 +90,11 @@
     <div class="order-panel">
       <div class="order-row">
         <div class="order-label">BRAND</div>
-        <div class="order-brand" id="p-brand"></div>
+        <div class="order-brand" id="p-brand">PHI</div>
       </div>
       <div class="order-row">
         <div class="order-label">PRODUCT SKU</div>
-        <div id="p-sku-display" style="color:var(--orange-light); font-weight:700; font-size: 20px;"></div>
+        <div id="p-sku-display" style="color:var(--orange-light); font-weight:700; font-size: 20px;">CM-200-TEE</div>
       </div>
       <div class="order-row">
         <div class="order-label">QUANTITY</div>
@@ -106,22 +109,28 @@
 
   <div class="spec-section">
     <div class="section-title">📋 SPECIFICATIONS</div>
-    <table class="spec-table" id="p-spec-table"></table>
+    <table class="spec-table" id="p-spec-table">
+      <tr><td class="spec-key">User</td><td><span class="spec-tag">WD</span></td></tr>
+      <tr><td class="spec-key">Type</td><td><span class="spec-tag">Module-STD-WD</span></td></tr>
+      <tr><td class="spec-key">Description</td><td><span class="spec-tag">Conveyor belt</span></td></tr>
+      <tr><td class="spec-key">Dimension</td><td><span class="spec-tag">200 mm.</span></td></tr>
+      <tr><td class="spec-key">Material</td><td><span class="spec-tag">N/A</span></td></tr>
+    </table>
   </div>
 
   <div class="excel-section">
     <div class="section-title">
       <span>📊 BILL OF MATERIALS (BOM)</span>
-      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <button class="btn-clear" onclick="clearImport()">🗑️ ล้างข้อมูล</button>
-        <input type="file" id="uploadExcel" hidden accept=".xlsx, .xls">
-        <label for="uploadExcel" class="btn-import">📂 Import Excel</label>
-        <button class="btn-save-html" onclick="saveHTML()">💾 บันทึกไฟล์นี้</button>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn-clear" onclick="clearData()">🗑️ ล้างข้อมูล</button>
         <button class="btn-export" onclick="exportExcel()">⬇️ Export Excel</button>
       </div>
     </div>
-    <div id="save-tip" class="save-tip">
-      ✅ Import สำเร็จ! กด <strong>💾 บันทึกไฟล์นี้</strong> เพื่อดาวน์โหลดไฟล์ HTML ที่มีข้อมูล BOM ฝังอยู่ — นำไปเปิดเครื่องไหนก็ได้
+    <div class="gsheet-bar">
+      <span style="font-size:12px; color:var(--gray3); white-space:nowrap;">🔗 Google Sheets URL :</span>
+      <input type="text" class="gsheet-input" id="gsheet-url" placeholder="วาง link Google Sheets ที่นี่..." />
+      <button class="btn-load" onclick="loadFromGSheet()">📥 โหลดข้อมูล</button>
+      <span class="gsheet-status" id="gsheet-status"></span>
     </div>
     <div style="overflow-x:auto;">
       <table class="excel-table">
@@ -131,13 +140,12 @@
             <th>Part No.</th>
             <th>Description</th>
             <th>Brand</th>
-            <th>Upload Time</th>
             <th style="text-align:center;">Base Qty</th>
-            <th style="text-align:center; color:var(--orange-light);">Total (x<span id="multiplierDisplay">1</span>)</th>
+            <th style="text-align:center; color:var(--orange-light);">Total</th>
           </tr>
         </thead>
         <tbody id="excel-tbody">
-          <tr><td colspan="7" style="text-align:center; padding:40px; color:var(--gray3);">ยังไม่มีข้อมูล กรุณา Import ไฟล์ Excel</td></tr>
+          <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--gray3);">ยังไม่มีข้อมูล — ลิงก์จะถูกโหลดอัตโนมัติหากตั้งค่าไว้</td></tr>
         </tbody>
       </table>
     </div>
@@ -146,110 +154,88 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-  const productData = {
-    title: "Conveyor Module 200 TEE",
-    sku: "Conveyor Module 200 TEE",
-    category: "Module STD",
-    brand: "PHI",
-    image: "../img/Conveyor Module 200 TEE.png",
-    pdfLink: "#",
-    cadLink: "#",
-    specs: [
-      { key: "User", val: ["WD"] },
-      { key: "Type", val: ["Module-STD-WD"] },
-      { key: "Description", val: ["Conveyor belt"] },
-      { key: "Dimension", val: ["200 mm."] },
-      { key: "Material", val: ["N/A"] }
-    ]
-  };
-
-  // ===== ข้อมูล BOM ที่ฝังไว้ในไฟล์ =====
-  // (จะถูกแทนที่โดยอัตโนมัติเมื่อกด "บันทึกไฟล์นี้")
-  var EMBEDDED_BOM = null;
-  var EMBEDDED_TIME = "";
-  // ========================================
-
-  function initProduct() {
-    document.title = productData.sku + " - PHI Integration Design";
-    document.getElementById('p-title').textContent = productData.title;
-    document.getElementById('p-sku').textContent = productData.sku;
-    document.getElementById('p-sku-display').textContent = productData.sku;
-    document.getElementById('p-cat').textContent = productData.category;
-    document.getElementById('p-brand').textContent = productData.brand;
-    document.getElementById('p-image').src = productData.image;
-    document.getElementById('p-pdf').href = productData.pdfLink;
-    document.getElementById('p-cad').href = productData.cadLink;
-    document.getElementById('bread-cat').textContent = productData.category;
-    document.getElementById('bread-sku').textContent = productData.sku;
-
-    const specTable = document.getElementById('p-spec-table');
-    specTable.innerHTML = productData.specs.map(s => `
-      <tr>
-        <td class="spec-key">${s.key}</td>
-        <td>${s.val.map(v => `<span class="spec-tag">${v}</span>`).join('')}</td>
-      </tr>
-    `).join('');
-
-    // โหลดข้อมูลที่ฝังในไฟล์ก่อน (ถ้ามี)
-    if (EMBEDDED_BOM && EMBEDDED_BOM.length > 0) {
-      importedData = EMBEDDED_BOM;
-      lastUploadTime = EMBEDDED_TIME;
-      renderTable();
-    }
-  }
+  // ================================================================
+  // ⚙️ ตั้งค่าครั้งเดียว — วาง Google Sheets URL ของบริษัทที่นี่
+  //    ทุกเครื่องที่เปิดไฟล์นี้จะโหลดข้อมูลจาก URL นี้อัตโนมัติ
+  // ================================================================
+  const DEFAULT_SHEET_URL = "";
+  // ================================================================
 
   let importedData = [];
-  let lastUploadTime = "";
+  let lastLoadTime  = "";
 
-  // ===== บันทึก/ลบข้อมูลใน localStorage พร้อม image path =====
-  function syncToLocalStorage() {
-    const key = 'phi_excel_data_' + window.location.pathname;
-    if (importedData && importedData.length > 0) {
-      localStorage.setItem(key, JSON.stringify(importedData));
-      localStorage.setItem('phi_image_' + window.location.pathname, productData.image);
-      localStorage.setItem('phi_title_' + window.location.pathname, productData.title);
-    } else {
-      localStorage.removeItem(key);
-      localStorage.removeItem('phi_image_' + window.location.pathname);
-      localStorage.removeItem('phi_title_' + window.location.pathname);
-    }
+  // แปลง Google Sheets URL → CSV export URL
+  function toCSVUrl(url) {
+    url = url.trim();
+    const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+    if (!m) return null;
+    const id = m[1];
+    const gidMatch = url.match(/[#&?]gid=([0-9]+)/);
+    const gid = gidMatch ? gidMatch[1] : '0';
+    return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
   }
 
-  document.getElementById('uploadExcel').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      const bstr = evt.target.result;
-      const wb = XLSX.read(bstr, {type:'binary'});
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      importedData = XLSX.utils.sheet_to_json(ws);
-      const now = new Date();
-      lastUploadTime = now.toLocaleDateString('th-TH') + " " + now.toLocaleTimeString('th-TH');
-      syncToLocalStorage();
-      renderTable();
-      document.getElementById('save-tip').style.display = 'block';
-    };
-    reader.readAsBinaryString(file);
-  });
+  // parse CSV รองรับ quoted fields
+  function parseCSVLine(line) {
+    const result = [];
+    let cur = '', inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQuote = !inQuote; }
+      else if (c === ',' && !inQuote) { result.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur);
+    return result;
+  }
 
-  function clearImport() {
-    if(confirm('คุณต้องการล้างข้อมูลตาราง BOM ใช่หรือไม่?')) {
-      importedData = [];
-      lastUploadTime = "";
-      document.getElementById('uploadExcel').value = "";
-      document.getElementById('save-tip').style.display = 'none';
-      syncToLocalStorage();
+  function setStatus(type, msg) {
+    const el = document.getElementById('gsheet-status');
+    el.className = 'gsheet-status ' + type;
+    el.textContent = msg;
+  }
+
+  async function loadFromGSheet() {
+    const urlInput = document.getElementById('gsheet-url');
+    const url = urlInput.value.trim();
+    if (!url) { setStatus('err', '⚠️ กรุณากรอก URL'); return; }
+
+    const csvUrl = toCSVUrl(url);
+    if (!csvUrl) { setStatus('err', '❌ URL ไม่ถูกต้อง'); return; }
+
+    setStatus('loading', '⏳ กำลังโหลด...');
+
+    try {
+      const res = await fetch(csvUrl);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const csv = await res.text();
+
+      // แปลง CSV → array of objects
+      const lines = csv.split('\n').filter(l => l.trim());
+      const headers = parseCSVLine(lines[0]);
+      importedData = lines.slice(1).map(line => {
+        const vals = parseCSVLine(line);
+        const obj = {};
+        headers.forEach((h, i) => obj[h.trim()] = (vals[i] || '').trim());
+        return obj;
+      }).filter(r => Object.values(r).some(v => v));
+
+      const now = new Date();
+      lastLoadTime = now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH');
+
+      setStatus('ok', `✅ โหลดสำเร็จ ${importedData.length} รายการ`);
       renderTable();
+    } catch (e) {
+      setStatus('err', '❌ โหลดไม่ได้ — ตรวจสอบว่า Sheet ตั้งเป็น "Anyone with link can view"');
     }
   }
 
   function renderTable() {
     const tbody = document.getElementById('excel-tbody');
     const mult = parseInt(document.getElementById('main-qty').value) || 1;
-    document.getElementById('multiplierDisplay').textContent = mult;
 
     if (!importedData || importedData.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px; color:var(--gray3);">ยังไม่มีข้อมูล กรุณา Import ไฟล์ Excel</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--gray3);">ยังไม่มีข้อมูล</td></tr>';
       return;
     }
 
@@ -262,70 +248,58 @@
         <td>${row['Part No.'] || row['Part No'] || ''}</td>
         <td>${row['Description'] || row['DESCRIPTION'] || ''}</td>
         <td>${row['Brand'] || row['BRAND'] || ''}</td>
-        <td style="color:var(--gray4); font-size:12px;">${lastUploadTime}</td>
         <td style="text-align:center;">${qty}</td>
-        <td style="text-align:center;color:var(--orange-light);font-weight:700;">${qty * mult}</td>
+        <td style="text-align:center; color:var(--orange-light); font-weight:700;">${qty * mult}</td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  // ===== บันทึกไฟล์ HTML พร้อมข้อมูล BOM ฝังอยู่ข้างใน =====
-  function saveHTML() {
-    if (!importedData || importedData.length === 0) {
-      alert('ยังไม่มีข้อมูล BOM กรุณา Import ไฟล์ Excel ก่อน');
-      return;
+  function clearData() {
+    if (confirm('ต้องการล้างข้อมูลตารางใช่หรือไม่?')) {
+      importedData = [];
+      lastLoadTime = '';
+      renderTable();
     }
-
-    // อ่าน HTML ปัจจุบัน แล้วแทนที่บรรทัด EMBEDDED_BOM ด้วยข้อมูลจริง
-    const currentHTML = document.documentElement.outerHTML;
-    const bomJSON = JSON.stringify(importedData);
-    const timeJSON = JSON.stringify(lastUploadTime);
-
-    const updated = currentHTML
-      .replace(
-        /var EMBEDDED_BOM = (?:null|.*?);/,
-        'var EMBEDDED_BOM = ' + bomJSON + ';'
-      )
-      .replace(
-        /var EMBEDDED_TIME = (?:""|.*?);/,
-        'var EMBEDDED_TIME = ' + timeJSON + ';'
-      );
-
-    const blob = new Blob(['<!DOCTYPE html>\n' + updated.replace(/^<!DOCTYPE html>/i,'')], { type: 'text/html;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'Conveyor_Module_200_TEE.html';
-    a.click();
-    URL.revokeObjectURL(a.href);
-
-    document.getElementById('save-tip').style.display = 'none';
-    alert('✅ บันทึกสำเร็จ!\n\nนำไฟล์ที่ดาวน์โหลดไปเปิดในเครื่องอื่นได้เลย ข้อมูล BOM จะแสดงขึ้นมาทันที');
   }
 
   function exportExcel() {
-    if (!importedData.length) return;
+    if (!importedData.length) { alert('ยังไม่มีข้อมูล'); return; }
     const mult = parseInt(document.getElementById('main-qty').value) || 1;
-    const exportRows = importedData.map((row, i) => ({
-      'No.': i + 1,
-      'Part No.': row['Part No.'] || row['Part No'] || '-',
+    const rows = importedData.map((row, i) => ({
+      'No.':         i + 1,
+      'Part No.':    row['Part No.'] || row['Part No'] || '-',
       'Description': row['Description'] || '-',
-      'Brand': row['Brand'] || '-',
-      'Qty.': (parseFloat(row['Qty.'] || 0)) * mult,
+      'Brand':       row['Brand'] || '-',
+      'Qty.':        (parseFloat(row['Qty.'] || 0)) * mult,
     }));
-    const ws = XLSX.utils.json_to_sheet(exportRows);
+    const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "BOM");
-    XLSX.writeFile(wb, `BOM_${productData.sku}_x${mult}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, 'BOM');
+    XLSX.writeFile(wb, `BOM_Conveyor_Module_200_TEE_x${mult}.xlsx`);
   }
 
-  document.getElementById('plus-btn').onclick = () => { document.getElementById('main-qty').value++; renderTable(); };
+  // เพิ่มลดจำนวน
+  document.getElementById('plus-btn').onclick  = () => { document.getElementById('main-qty').value++; renderTable(); };
   document.getElementById('minus-btn').onclick = () => {
-    if(document.getElementById('main-qty').value > 1) { document.getElementById('main-qty').value--; renderTable(); }
+    if (document.getElementById('main-qty').value > 1) { document.getElementById('main-qty').value--; renderTable(); }
   };
   document.getElementById('main-qty').oninput = renderTable;
 
-  window.addEventListener('DOMContentLoaded', initProduct);
+  // กด Enter ใน input URL ได้เลย
+  document.getElementById('gsheet-url').addEventListener('keydown', e => {
+    if (e.key === 'Enter') loadFromGSheet();
+  });
+
+  // โหลดอัตโนมัติเมื่อเปิดหน้า
+  window.addEventListener('DOMContentLoaded', () => {
+    // ลำดับความสำคัญ: DEFAULT_SHEET_URL (ฝังในโค้ด) → โหลดทันที
+    if (DEFAULT_SHEET_URL) {
+      document.getElementById('gsheet-url').value = DEFAULT_SHEET_URL;
+      loadFromGSheet();
+    }
+  });
 </script>
+
 </body>
 </html>
