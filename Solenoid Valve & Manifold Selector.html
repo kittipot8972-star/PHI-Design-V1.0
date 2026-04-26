@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solenoid Valve Selector — PHI Integration Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --orange:#f5620a; --orange-dark:#c44600; --orange-light:#ff8c42; --orange-glow:rgba(245,98,10,0.18); --black:#0d0d0d; --black2:#161616; --black3:#1e1e1e; --black4:#2a2a2a; --charcoal:#333; --gray3:#888; --gray4:#aaa; --text-light:#e8e8e8; --white:#ffffff; --green:#2ecc71; --blue:#3498db; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans Thai','Barlow',sans-serif; background:var(--black); color:var(--text-light); font-size:14px; line-height:1.5; }
+  header { background:var(--black2); border-bottom:2px solid var(--orange); box-shadow:0 4px 20px rgba(0,0,0,0.6); position:sticky; top:0; z-index:100; }
+  .header-main { max-width:1280px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-text .line1 { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--white); letter-spacing:2px; }
+  .logo-text .line1 span { color:var(--orange); }
+  .breadcrumb { max-width:1280px; margin:0 auto; padding:10px 20px; font-size:12px; color:var(--gray3); }
+  .breadcrumb a { color:var(--orange-light); text-decoration:none; }
+  .page-wrapper { max-width:1280px; margin:0 auto; padding:0 20px 40px; }
+  .page-title { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:1px; color:var(--white); margin-bottom:6px; }
+  .page-sub { font-size:13px; color:var(--gray3); }
+
+  /* SECTION */
+  .section { background:var(--black2); border:1px solid var(--black4); border-radius:6px; margin-top:20px; overflow:hidden; }
+  .section-title { background:var(--black4); padding:12px 20px; font-weight:700; color:var(--orange-light); border-bottom:1px solid var(--orange); display:flex; justify-content:space-between; align-items:center; }
+  .section-body { padding:20px; }
+
+  /* VALVE ROWS */
+  .valve-header { display:grid; grid-template-columns:40px 180px 1fr 120px 140px 120px 36px; gap:10px; padding:0 0 8px; border-bottom:1px solid var(--black4); margin-bottom:10px; }
+  .valve-header span { font-size:11px; color:var(--gray3); text-transform:uppercase; letter-spacing:.05em; }
+  .valve-row { display:grid; grid-template-columns:40px 180px 1fr 120px 140px 120px 36px; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid var(--black4); }
+  .valve-row:last-child { border-bottom:none; }
+  .row-num { font-size:12px; color:var(--gray3); text-align:center; }
+  select { background:var(--black3); border:1px solid var(--charcoal); border-radius:4px; padding:8px 10px; font-size:13px; font-family:inherit; color:var(--text-light); cursor:pointer; outline:none; width:100%; }
+  select:focus { border-color:var(--orange); }
+  .part-tag { background:var(--black3); border:1px solid var(--charcoal); color:var(--orange-light); padding:6px 12px; border-radius:4px; font-size:12px; font-weight:700; font-family:'Barlow',sans-serif; letter-spacing:.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .btn-del { background:#3a1a1a; border:1px solid #663333; color:#ff6666; border-radius:4px; width:36px; height:36px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .btn-del:hover { background:#551a1a; }
+  .btn-add { background:var(--black3); border:1px solid var(--charcoal); border-radius:4px; padding:10px 20px; font-size:13px; font-family:inherit; color:var(--gray4); cursor:pointer; width:100%; margin-top:12px; transition:.2s; }
+  .btn-add:hover { border-color:var(--orange); color:var(--orange-light); }
+  .badge-v { background:rgba(46,204,113,0.12); color:#2ecc71; border:1px solid rgba(46,204,113,0.3); padding:3px 10px; border-radius:3px; font-size:11px; font-weight:700; }
+  .badge-h { background:rgba(52,152,219,0.12); color:#66ccff; border:1px solid rgba(52,152,219,0.3); padding:3px 10px; border-radius:3px; font-size:11px; font-weight:700; }
+
+  /* RESULT */
+  .result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:20px; }
+  .metric { background:var(--black3); border:1px solid var(--black4); border-radius:6px; padding:16px 20px; }
+  .metric-label { font-size:11px; color:var(--gray3); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+  .metric-val { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--orange-light); line-height:1; }
+  .metric-note { font-size:11px; color:var(--gray3); margin-top:4px; }
+
+  /* MANIFOLD TABLE */
+  .manifold-table { width:100%; border-collapse:collapse; }
+  .manifold-table th { padding:10px 16px; background:var(--black3); color:var(--gray4); font-size:11px; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--black4); text-align:left; }
+  .manifold-table td { padding:12px 16px; border-bottom:1px solid var(--black4); font-size:13px; }
+  .manifold-table tr:last-child td { border-bottom:none; }
+  .manifold-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .part-no { color:var(--orange-light); font-weight:700; font-family:'Barlow',sans-serif; font-size:14px; }
+  .series-badge { background:var(--black4); border:1px solid var(--charcoal); color:var(--gray4); padding:2px 10px; border-radius:3px; font-size:11px; }
+
+  /* EXPORT */
+  .btn-export { background:var(--orange); color:white; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-weight:700; font-size:13px; font-family:inherit; }
+  .btn-export:hover { background:var(--orange-dark); }
+  .btn-export:disabled { opacity:.35; cursor:not-allowed; }
+  .empty-state { text-align:center; padding:40px; color:var(--gray3); font-size:13px; }
+  .product-table { width:100%; border-collapse:collapse; }
+  .product-table th { padding:10px 16px; background:var(--black3); color:var(--gray4); font-size:11px; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--black4); text-align:left; }
+  .product-table td { padding:12px 16px; border-bottom:1px solid var(--black4); font-size:13px; vertical-align:middle; }
+  .product-table tr:last-child td { border-bottom:none; }
+  .product-table tr.has-link:hover td { background:rgba(245,98,10,0.05); cursor:pointer; }
+  .product-link { color:var(--orange-light); font-weight:700; font-family:'Barlow',sans-serif; font-size:14px; text-decoration:none; }
+  .product-link:hover { color:var(--orange); text-decoration:underline; }
+  .tag-series { background:var(--black4); border:1px solid var(--charcoal); color:var(--gray4); padding:2px 10px; border-radius:3px; font-size:11px; }
+  .tag-type { padding:2px 10px; border-radius:3px; font-size:11px; font-weight:700; }
+  .tag-sv { background:rgba(46,204,113,0.12); color:#2ecc71; border:1px solid rgba(46,204,113,0.3); }
+  .tag-mf { background:rgba(52,152,219,0.12); color:#66ccff; border:1px solid rgba(52,152,219,0.3); }
+  .tag-ft { background:rgba(245,98,10,0.12); color:var(--orange-light); border:1px solid rgba(245,98,10,0.3); }
+  .tag-bk { background:rgba(155,89,182,0.12); color:#c39bd3; border:1px solid rgba(155,89,182,0.3); }
+  .no-link-badge { font-size:11px; color:var(--gray3); background:var(--black4); border:1px solid var(--charcoal); padding:2px 10px; border-radius:3px; }
+  .btn-dl-all { background:var(--orange); color:white; border:none; padding:4px 12px; border-radius:3px; cursor:pointer; font-size:11px; font-weight:700; font-family:inherit; white-space:nowrap; }
+  .btn-dl-all:hover { background:var(--orange-dark); }
+  .btn-dl-all:disabled { opacity:.35; cursor:not-allowed; }
+
+  .product-header { background:var(--black2); border:1px solid var(--black4); border-radius:6px; padding:20px; margin-bottom:4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-main">
+    <div class="logo">
+      <img src="../img/PHI.png" width="45" onerror="this.style.display='none'">
+      <div class="logo-text"><div class="line1"><span>PHI</span> INTEGRATION DESIGN</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb">
+  <a href="../index.html">หน้าแรก</a> › <a href="#">Calculator Design</a> › <span style="color:var(--gray3)">Solenoid Valve Selector</span>
+</div>
+
+<div class="page-wrapper">
+
+  <div class="product-header">
+    <div class="page-title">Solenoid Valve &amp; Manifold Selector</div>
+    <div class="page-sub">เลือกการใช้งานกระบอกลมและ Series เพื่อคำนวณ Solenoid Valve และ Manifold ที่เหมาะสม</div>
+  </div>
+
+  <!-- BORE POPUP -->
+  <div id="borePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;">
+    <div style="background:var(--black2);border:1px solid var(--black4);border-top:2px solid var(--orange);border-radius:6px;width:360px;max-height:80vh;overflow-y:auto;">
+      <div style="padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--black4);position:sticky;top:0;background:var(--black2);">
+        <span style="font-weight:700;color:var(--orange-light);font-size:13px;">📋 ตารางเทียบ Bore → สายลม</span>
+        <button onclick="document.getElementById('borePopup').style.display='none'" style="background:none;border:none;color:var(--gray3);font-size:20px;cursor:pointer;">✕</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="padding:8px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--black4);text-align:left;">Bore (mm)</th>
+          <th style="padding:8px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--black4);text-align:left;">สายลมแนะนำ (OD mm)</th>
+          <th style="padding:8px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--black4);text-align:left;">หมายเหตุ</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">mini cylinder</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø10</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;"></td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø12</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4–6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;"></td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4–6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;"></td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø20</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø25</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø32</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø40</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">8</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø50</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">10</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø63</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">10</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø80</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">10–12</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">เริ่ม flow สูง</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø100</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">12</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;"></td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø125</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">12–16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">heavy load</td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø140</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;"></td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø160</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;"></td></tr>
+          <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø180</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">16–20</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;"></td></tr>
+          <tr><td style="padding:8px 16px;">Ø200</td><td style="padding:8px 16px;">20</td><td style="padding:8px 16px;color:var(--gray3);font-size:11px;">ใหญ่มาก</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SOLENOID VALVE SECTION -->
+  <div class="section">
+    <div class="section-title">
+      <span>⚡ SOLENOID VALVE <button onclick="toggleBoreTable(event)" style="background:var(--black4);border:1px solid var(--charcoal);color:var(--gray4);border-radius:3px;padding:2px 8px;font-size:11px;cursor:pointer;font-family:inherit;margin-left:8px;">📋 ดูตาราง Bore</button></span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-export" style="background:#3a1a1a;border:1px solid #663333;color:#ff6666;font-weight:500;" onclick="clearAll()">✕ ล้างทั้งหมด</button>
+        <button class="btn-export" style="background:var(--black3);border:1px solid var(--charcoal);color:var(--gray4);font-weight:500;" onclick="addRow()">＋ เพิ่ม Solenoid Valve</button>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="valve-header">
+        <span>#</span>
+        <span>การใช้งาน</span>
+        <span>Series</span>
+        <span>Part No.</span>
+        <span>Typ.</span>
+        <span>Fittings (mm.)</span>
+        <span></span>
+      </div>
+      <div id="valveRows"></div>
+      <button class="btn-add" onclick="addRow()">＋ เพิ่ม Solenoid Valve</button>
+    </div>
+  </div>
+
+  <!-- RESULT SUMMARY -->
+  <div class="section">
+    <div class="section-title">📊 สรุปผลการเลือก</div>
+    <div class="section-body">
+      <div class="result-grid">
+        <div class="metric">
+          <div class="metric-label">Solenoid Valve ทั้งหมด</div>
+          <div class="metric-val" id="totalValves">0</div>
+          <div class="metric-note">รายการ</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Station บน Manifold</div>
+          <div class="metric-val" id="totalStation">0</div>
+          <div class="metric-note" id="stationNote">valve + 2 spare (ปัดเลขคู่)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANIFOLD SECTION -->
+  <div class="section" id="manifoldSection">
+    <div class="section-title">
+      <span>🔧 MANIFOLD VALVE ที่ต้องใช้</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="manifold-table">
+        <thead>
+          <tr>
+            <th>Series</th>
+            <th>จำนวน Solenoid Valve</th>
+            <th>Station (+ 2 spare)</th>
+            <th>Manifold Part No.</th>
+            <th>Solenoid Part No.</th>
+          </tr>
+        </thead>
+        <tbody id="manifoldTbody">
+          <tr><td colspan="5" class="empty-state">ยังไม่มีรายการ — เพิ่ม Solenoid Valve ด้านบน</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PRODUCT LIST SECTION -->
+  <div class="section">
+    <div class="section-title">
+      <span>📦 รายการสินค้าที่เกี่ยวข้อง <span style="font-size:11px;color:var(--gray3);font-weight:400;" id="productCount"></span></span>
+      <button class="btn-dl-all" id="dlAllBtn" onclick="downloadAll()" disabled>⬇️ ดาวน์โหลดทั้งหมด</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ชื่อสินค้า</th>
+            <th>Series</th>
+            <th>ประเภท</th>
+            <th>Part No.</th>
+            <th>ดาวน์โหลด 3D</th>
+          </tr>
+        </thead>
+        <tbody id="productTbody">
+          <tr><td colspan="6" class="empty-state">เพิ่ม Solenoid Valve เพื่อดูรายการ</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SERIES_DATA = {
+  SY3: { V:'SY3320-5LZ-M5',  H:'SY3420-5LZ-M5'  },
+  SY5: { V:'SY5320-5LZ-01',  H:'SY5420-5LZ-01'  },
+  SY7: { V:'SY7320-5LZ-02',  H:'SY7420-5LZ-02'  },
+  SY9: { V:'SY9320-5LZ-03',  H:'SY9420-5LZ-03'  },
+};
+const MANIFOLD_PREFIX = { SY3:'SS5Y3-20-', SY5:'SS5Y5-20-', SY7:'SS5Y7-20-', SY9:'SS5Y9-20-' };
+
+let rows = [];
+let nextId = 1;
+
+function clearAll() {
+  rows = [];
+  nextId = 1;
+  render();
+}
+
+function addRow() {
+  rows.push({ id: nextId++, orientation:'V', size:'SY3', typ:'straight', fitting:'6' });
+  render();
+}
+
+function removeRow(id) {
+  rows = rows.filter(r => r.id !== id);
+  render();
+}
+
+function getPartNo(orientation, size) {
+  return SERIES_DATA[size]?.[orientation] || '-';
+}
+
+function render() {
+  const container = document.getElementById('valveRows');
+
+  if (rows.length === 0) {
+    container.innerHTML = '<div class="empty-state">ยังไม่มีรายการ — กดปุ่มด้านบนเพื่อเพิ่ม</div>';
+  } else {
+    container.innerHTML = rows.map((r, i) => {
+      const part = getPartNo(r.orientation, r.size);
+      return `<div class="valve-row">
+        <div class="row-num">${i + 1}</div>
+        <select onchange="setOrientation(${r.id}, this.value)">
+          <option value="V" ${r.orientation==='V'?'selected':''}>🟢 Vertical</option>
+          <option value="H" ${r.orientation==='H'?'selected':''}>🔵 Horizontal</option>
+        </select>
+        <select onchange="setSize(${r.id}, this.value)">
+          <option value="SY3" ${r.size==='SY3'?'selected':''}>SY3 Series</option>
+          <option value="SY5" ${r.size==='SY5'?'selected':''}>SY5 Series</option>
+          <option value="SY7" ${r.size==='SY7'?'selected':''}>SY7 Series</option>
+          <option value="SY9" ${r.size==='SY9'?'selected':''}>SY9 Series</option>
+        </select>
+        <div class="part-tag">${part}</div>
+        <select onchange="setTyp(${r.id}, this.value)">
+          <option value="straight" ${r.typ==='straight'?'selected':''}>แบบตรง</option>
+          <option value="L"        ${r.typ==='L'       ?'selected':''}>แบบ L</option>
+        </select>
+        <select onchange="setFitting(${r.id}, this.value)">${getFittingOptions('', r.fitting)}</select>
+        <button class="btn-del" onclick="removeRow(${r.id})">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  calcResult();
+  loadProductList();
+}
+
+function setOrientation(id, val) {
+  const r = rows.find(r => r.id === id);
+  if (r) { r.orientation = val; render(); }
+}
+
+function toggleBoreTable(e) {
+  e.stopPropagation();
+  const p = document.getElementById('borePopup');
+  p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+}
+document.addEventListener('click', function(e) {
+  const p = document.getElementById('borePopup');
+  if (p && e.target === p) p.style.display = 'none';
+});
+
+// ================================================================
+// ⚙️ FITTINGS CONFIG — เพิ่ม Part No. ได้ที่นี่
+// partNo: '' = ยังไม่มีโค้ด, ใส่ Part No. จริงเมื่อมีข้อมูล
+// ================================================================
+const FITTINGS_CONFIG = {
+  '4':  { label:'4 mm.',  partNo:'' },
+  '6':  { label:'6 mm.',  partNo:'' },
+  '8':  { label:'8 mm.',  partNo:'' },
+  '10': { label:'10 mm.', partNo:'' },
+  '12': { label:'12 mm.', partNo:'' },
+  '16': { label:'16 mm.', partNo:'' },
+  '20': { label:'20 mm.', partNo:'' },
+};
+// ================================================================
+
+const BORE_FITTINGS_MAP = {
+  '':   ['4','6','8','10','12'],
+  '6':  ['4'],
+  '10': ['4'],
+  '12': ['4','6'],
+  '16': ['4','6'],
+  '20': ['6'],
+  '25': ['6'],
+  '32': ['6'],
+  '40': ['8'],
+  '50': ['10'],
+  '63': ['10'],
+  '80': ['10','12'],
+  '100':['12'],
+  '125':['12','16'],
+  '140':['16'],
+  '160':['16'],
+  '180':['16','20'],
+  '200':['20'],
+};
+
+function getFittingOptions(bore, selectedFitting) {
+  const opts = BORE_FITTINGS_MAP[bore] || BORE_FITTINGS_MAP[''];
+  return opts.map(v => {
+    const cfg = FITTINGS_CONFIG[v] || { label: v + ' mm.', partNo: '' };
+    const label = cfg.partNo ? `${cfg.partNo} (${cfg.label})` : cfg.label;
+    return `<option value="${v}" ${selectedFitting===v?'selected':''}>${label}</option>`;
+  }).join('');
+}
+
+function setTyp(id, val) {
+  const r = rows.find(r => r.id === id);
+  if (r) { r.typ = val; render(); }
+}
+
+// ตารางเทียบ Bore → Fittings แนะนำ
+const BORE_FITTING = {
+  '6':'4','10':'4','12':'6','16':'6','20':'6','25':'6',
+  '32':'6','40':'8','50':'10','63':'10','80':'10',
+  '100':'12','125':'12','140':'16','160':'16','180':'16','200':'20'
+};
+
+function setBore(id, val) {
+  const r = rows.find(r => r.id === id);
+  if (!r) return;
+  r.bore = val;
+  // auto-suggest fitting ตาม bore
+  if (val && BORE_FITTING[val]) r.fitting = BORE_FITTING[val];
+  render();
+}
+
+function setFitting(id, val) {
+  const r = rows.find(r => r.id === id);
+  if (r) { r.fitting = val; render(); }
+}
+
+function setSize(id, val) {
+  const r = rows.find(r => r.id === id);
+  if (r) { r.size = val; render(); }
+}
+
+function calcResult() {
+  const total = rows.length;
+  document.getElementById('totalValves').textContent = total;
+
+  const spare = total > 10 ? 4 : 2;
+  const raw = total + spare;
+  const station = raw % 2 === 0 ? raw : raw + 1;
+  document.getElementById('totalStation').textContent = total > 0 ? station : 0;
+  document.getElementById('stationNote').textContent = total > 0
+    ? (raw !== station ? `${total} valve + 2 spare = ${raw} → ปัดขึ้นเป็น ${station}` : `${total} valve + 2 spare = ${station}`)
+    : 'valve + 2 spare (ปัดเลขคู่)';
+
+  const tbody = document.getElementById('manifoldTbody');
+  const manifoldSection = document.getElementById('manifoldSection');
+  if (rows.length <= 1) {
+    manifoldSection.style.display = 'none';
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">ยังไม่มีรายการ — เพิ่ม Solenoid Valve ด้านบน</td></tr>';
+    return;
+  }
+
+  manifoldSection.style.display = 'block';
+
+  // จัดกลุ่มตาม size
+  const groups = {};
+  rows.forEach(r => {
+    if (!groups[r.size]) groups[r.size] = { size: r.size, rows: [] };
+    groups[r.size].rows.push(r);
+  });
+
+  const allRows = [];
+
+  Object.values(groups).forEach(g => {
+    const count = g.rows.length;
+    const spare2 = count > 10 ? 4 : 2;
+    const raw2 = count + spare2;
+    const st = raw2 % 2 === 0 ? raw2 : raw2 + 1;
+    const prefix = MANIFOLD_PREFIX[g.size] || '';
+    const solenoidParts = [...new Set(g.rows.map(r => getPartNo(r.orientation, r.size)))];
+
+    // แตก Manifold ทุก 10 station
+    const MAX = 10;
+    let remain = st;
+    let unitIdx = 1;
+    const manifoldUnits = [];
+    while (remain > 0) {
+      const take = remain > MAX ? MAX : remain;
+      manifoldUnits.push(take);
+      remain -= take;
+    }
+
+    const noteStr = raw2 !== st ? `<span style="color:var(--gray3);font-size:11px">(${raw2}→${st})</span>` : '';
+    const isFirst = true;
+
+    manifoldUnits.forEach((take, idx) => {
+      const stStr = String(take).padStart(2, '0');
+      const manifoldPart = prefix + stStr;
+      const unitLabel = manifoldUnits.length > 1 ? `<span style="color:var(--gray3);font-size:11px"> ตัวที่ ${idx+1}</span>` : '';
+
+      allRows.push(`<tr>
+        <td><span class="series-badge">${g.size}</span></td>
+        <td style="color:var(--text-light);font-weight:700;">${idx === 0 ? count + ' รายการ' : ''}</td>
+        <td>${idx === 0 ? st + ' station ' + noteStr : ''}</td>
+        <td><span class="part-no">${manifoldPart}</span>${unitLabel}</td>
+        <td style="font-size:12px;color:var(--gray4);">${idx === 0 ? solenoidParts.join(', ') : ''}</td>
+      </tr>`);
+    });
+  });
+
+  tbody.innerHTML = allRows.join('');
+
+}
+
+
+
+// ================================================================
+// ⚙️ รายการสินค้าที่เกี่ยวข้อง — เพิ่ม/แก้ไขได้ที่นี่
+// url: '' = ยังไม่มีหน้าสินค้า, ใส่ path เมื่อมีหน้าสินค้าแล้ว
+// type: 'solenoid' | 'manifold' | 'fitting'
+// ================================================================
+const PRODUCT_LIST = [
+  { title:'Solenoid Valve SY3 Series (Vertical)',   series:'SY3', type:'solenoid', partNo:'SY3320-5LZ-M5', url3d:'' },
+  { title:'Solenoid Valve SY5 Series (Vertical)',   series:'SY5', type:'solenoid', partNo:'SY5320-5LZ-01', url3d:'' },
+  { title:'Solenoid Valve SY7 Series (Vertical)',   series:'SY7', type:'solenoid', partNo:'SY7320-5LZ-02', url3d:'' },
+  { title:'Solenoid Valve SY9 Series (Vertical)',   series:'SY9', type:'solenoid', partNo:'SY9320-5LZ-03', url3d:'' },
+  { title:'Solenoid Valve SY3 Series (Horizontal)', series:'SY3', type:'solenoid', partNo:'SY3420-5LZ-M5', url3d:'' },
+  { title:'Solenoid Valve SY5 Series (Horizontal)', series:'SY5', type:'solenoid', partNo:'SY5420-5LZ-01', url3d:'' },
+  { title:'Solenoid Valve SY7 Series (Horizontal)', series:'SY7', type:'solenoid', partNo:'SY7420-5LZ-02', url3d:'' },
+  { title:'Solenoid Valve SY9 Series (Horizontal)', series:'SY9', type:'solenoid', partNo:'SY9420-5LZ-03', url3d:'' },
+  { title:'Manifold SY3 Series', series:'SY3', type:'manifold', partNo:'SS5Y3-20-xx', url3d:'' },
+  { title:'Manifold SY5 Series', series:'SY5', type:'manifold', partNo:'SS5Y5-20-xx', url3d:'' },
+  { title:'Manifold SY7 Series', series:'SY7', type:'manifold', partNo:'SS5Y7-20-xx', url3d:'' },
+  { title:'Manifold SY9 Series', series:'SY9', type:'manifold', partNo:'SS5Y9-20-xx', url3d:'' },
+  { title:'Blanking Plate SY3 Series', series:'SY3', type:'blanking', partNo:'SY3000-26-10A', url3d:'' },
+  { title:'Blanking Plate SY5 Series', series:'SY5', type:'blanking', partNo:'SY5000-26-20A', url3d:'' },
+  { title:'Blanking Plate SY7 Series', series:'SY7', type:'blanking', partNo:'SY7000-26-20A', url3d:'' },
+  { title:'Blanking Plate SY9 Series', series:'SY9', type:'blanking', partNo:'SY9000-26-1A',  url3d:'' },
+];
+// ================================================================
+
+function downloadAll() {
+  const items = window._currentProductList || [];
+  const downloadables = items.filter(item => item.url3d);
+  if (downloadables.length === 0) return;
+  downloadables.forEach((item, i) => {
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = item.url3d;
+      a.download = '';
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }, i * 300);
+  });
+}
+
+function loadProductList() {
+  const tbody = document.getElementById('productTbody');
+
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">เพิ่ม Solenoid Valve ด้านบนเพื่อดูรายการสินค้าที่เกี่ยวข้อง</td></tr>';
+    document.getElementById('productCount').textContent = '';
+    return;
+  }
+
+  // รวม series+orientation ที่ถูกเลือกทั้งหมด (unique)
+  const selectedSeries = new Set(rows.map(r => r.size));
+  const selectedOrientations = new Set(rows.map(r => r.orientation));
+
+  // คำนวณ Manifold Part No. จริงตาม station แต่ละ series
+  const manifoldCalc = {};
+  selectedSeries.forEach(size => {
+    const count = rows.filter(r => r.size === size).length;
+    const spare = count > 10 ? 4 : 2;
+    const raw = count + spare;
+    const st = raw % 2 === 0 ? raw : raw + 1;
+    // แตกเป็นหลายตัวถ้าเกิน 10
+    const units = [];
+    let remain = st;
+    while (remain > 0) { const take = Math.min(remain, 10); units.push(take); remain -= take; }
+    manifoldCalc[size] = units.map(u => (MANIFOLD_PREFIX[size] || '') + String(u).padStart(2,'0'));
+  });
+
+  // กรองเฉพาะรายการที่ตรง series+orientation
+  const filtered = PRODUCT_LIST.filter(item => {
+    if (item.type === 'solenoid') {
+      const seriesMatch = selectedSeries.has(item.series);
+      const orientMatch = (item.title.includes('Vertical') && selectedOrientations.has('V'))
+                       || (item.title.includes('Horizontal') && selectedOrientations.has('H'));
+      return seriesMatch && orientMatch;
+    }
+    if (item.type === 'manifold') return rows.length > 1 && selectedSeries.has(item.series);
+    if (item.type === 'blanking') return rows.length > 1 && selectedSeries.has(item.series);
+    return false;
+  });
+
+  // ขยาย manifold ที่มีหลายตัวออกเป็นหลายแถว
+  const expandedList = [];
+  filtered.forEach(item => {
+    if (item.type === 'manifold') {
+      const units = manifoldCalc[item.series] || [item.partNo];
+      units.forEach((partNo, idx) => {
+        expandedList.push({ ...item, partNo, unitLabel: units.length > 1 ? ` (ตัวที่ ${idx+1})` : '' });
+      });
+    } else {
+      expandedList.push({ ...item, unitLabel: '' });
+    }
+  });
+
+  window._currentProductList = expandedList;
+  const hasDownload = expandedList.some(item => item.url3d);
+  const dlBtn = document.getElementById('dlAllBtn');
+  if (dlBtn) dlBtn.disabled = !hasDownload;
+  document.getElementById('productCount').textContent = expandedList.length + ' รายการ';
+
+  tbody.innerHTML = expandedList.map((item, i) => {
+    const typeTag = item.type === 'solenoid'
+      ? '<span class="tag-type tag-sv">Solenoid Valve</span>'
+      : item.type === 'manifold'
+      ? '<span class="tag-type tag-mf">Manifold</span>'
+      : item.type === 'blanking'
+      ? '<span class="tag-type tag-bk">Blanking Plate</span>'
+      : '<span class="tag-type tag-ft">Fitting</span>';
+
+    const linkCell = item.url3d
+      ? `<a class="product-link" href="${item.url3d}" download target="_blank">⬇️ ดาวน์โหลด 3D</a>`
+      : `<span class="no-link-badge">ยังไม่มีไฟล์ 3D</span>`;
+
+    const rowClass = '';
+    const rowClick = '';
+
+    return `<tr class="${rowClass}" ${rowClick}>
+      <td style="color:var(--gray3);font-size:11px;">${i+1}</td>
+      <td style="color:var(--text-light);font-weight:500;">${item.title}${item.unitLabel ? `<span style="color:var(--gray3);font-size:11px">${item.unitLabel}</span>` : ''}</td>
+      <td><span class="tag-series">${item.series}</span></td>
+      <td>${typeTag}</td>
+      <td style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--orange-light);font-weight:700;">${item.partNo}</td>
+      <td>${linkCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+// เริ่มต้นด้วย 1 แถว
+addRow();
+loadProductList();
+</script>
+</body>
+</html>
