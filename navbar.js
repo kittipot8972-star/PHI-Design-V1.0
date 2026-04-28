@@ -94,7 +94,7 @@
     { label:'🏢 &nbsp;Design Tools', items:[
       {n:'1',i:'📋',t:'BOM List', h:'BOM List.html'},
       {n:'2',i:'📊',t:'Solenoid Valve & Manifold Selector', h:'Solenoid Valve & Manifold Selector.html'},
-      {n:'3',i:'📈',t:'Internal Item 3', h:'internal-data/item3.html'},
+      {n:'3',i:'📈',t:'Product-Page-Generator', h:'Product_Page_Generator.html'},
     ]},
     { label:'📂 &nbsp;Data1', items:[
       {n:'1',i:'🔵',t:'Data1 Item 1', h:'data1/item1.html'},
