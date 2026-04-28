@@ -128,7 +128,7 @@
   .modal-close:hover { color:var(--white); }
   .modal-body { overflow-y:auto; padding:16px 18px; flex:1; }
   .modal-footer { padding:12px 18px; border-top:1px solid var(--black4); display:flex; gap:10px; justify-content:flex-end; flex-shrink:0; }
-  .item-row { display:grid; grid-template-columns:1fr 1fr 32px; gap:8px; margin-bottom:8px; align-items:center; }
+  .item-row { display:grid; grid-template-columns:1fr 1fr 1fr 32px; gap:8px; margin-bottom:8px; align-items:center; }
   .item-row input { background:var(--black4); border:1px solid var(--charcoal); border-radius:4px; padding:7px 10px; font-size:12px; font-family:inherit; color:var(--text-light); outline:none; width:100%; }
   .item-row input:focus { border-color:var(--orange); }
   .item-row input::placeholder { color:var(--gray3); }
@@ -202,9 +202,10 @@
         <button class="modal-close" onclick="closeManager()">✕</button>
       </div>
       <div class="modal-body">
-        <div style="display:grid;grid-template-columns:1fr 1fr 32px;gap:8px;margin-bottom:6px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;">
           <div class="col-label">ชื่อสินค้า</div>
           <div class="col-label">Google Sheet URL</div>
+          <div class="col-label">URL รูปภาพ</div>
           <div></div>
         </div>
         <div id="managerRows"></div>
@@ -659,6 +660,7 @@ function renderManagerRows() {
     <div class="item-row" id="mrow_${i}">
       <input type="text" placeholder="ชื่อสินค้า" value="${escHtml(item.title || '')}" oninput="managerData[${i}].title=this.value">
       <input type="text" placeholder="https://docs.google.com/spreadsheets/..." value="${escHtml(item.sheetUrl || '')}" oninput="managerData[${i}].sheetUrl=this.value">
+      <input type="text" placeholder="https://.../img/ชื่อรูป.png" value="${escHtml(item.image || '')}" oninput="managerData[${i}].image=this.value">
       <button class="btn-del" onclick="removeManagerRow(${i})">✕</button>
     </div>
   `).join('');
