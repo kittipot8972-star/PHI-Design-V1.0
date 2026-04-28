@@ -97,7 +97,7 @@
       {n:'3',i:'📈',t:'Product-Page-Generator', h:'Product_Page_Generator.html'},
     ]},
     { label:'📂 &nbsp;PHI INTEGRATION', items:[
-      {n:'1',i:'🔵',t:'PHI Stock Issue Record', h:'https://docs.google.com/spreadsheets/d/1Zr9APLKxKX_R_8SZ92YVPZvqKzaDcrwYgCeYcaYp6dg/edit?gid=984590829#gid=984590829'},
+      {n:'1',i:'🔵',<a href="https://docs.google.com/spreadsheets/d/1Zr9APLKxKX_R_8SZ92YVPZvqKzaDcrwYgCeYcaYp6dg/edit?gid=984590829#gid=984590829">PHI Stock Issue Record</a>},
       {n:'2',i:'🟢',t:'PHI Stock Inventory Store', h:'https://docs.google.com/spreadsheets/d/1BzKfYmTSlQxDh1qpAPqkQGsLG8rQy3dNygvmt0vWO-Y/edit?gid=984590829#gid=984590829'},
       {n:'3',i:'🟡',t:'STD Material size', h:'https://docs.google.com/spreadsheets/d/1NUpXNs3CQuuDLo_AAkIt8p1CNHXkNP8ydmDJpe5ikPo/edit?gid=181278085#gid=181278085'},
     ]},
