@@ -79,6 +79,9 @@
   .btn-dl-all { background:var(--orange); color:white; border:none; padding:4px 12px; border-radius:3px; cursor:pointer; font-size:11px; font-weight:700; font-family:inherit; white-space:nowrap; }
   .btn-dl-all:hover { background:var(--orange-dark); }
   .btn-dl-all:disabled { opacity:.35; cursor:not-allowed; }
+  .btn-dl-diagram { background:linear-gradient(135deg,#1a6aaa,#1a4a8a); color:#fff; border:1px solid #3a8acc; padding:6px 16px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; font-family:inherit; display:inline-flex; align-items:center; gap:6px; transition:.2s; box-shadow:0 2px 8px rgba(26,106,170,0.3); }
+  .btn-dl-diagram:hover { background:linear-gradient(135deg,#2a7abb,#1a5aaa); box-shadow:0 4px 14px rgba(26,106,170,0.5); transform:translateY(-1px); }
+  #diagramDownloadWrap { display:flex; gap:8px; flex-wrap:wrap; }
 
   .product-header { background:var(--black2); border:1px solid var(--black4); border-radius:6px; padding:20px; margin-bottom:4px; }
 </style>
@@ -95,7 +98,7 @@
 </header>
 
 <div class="breadcrumb">
-  <a href="index.html">หน้าแรก</a> › <a href="#">Calculator Design</a> › <span style="color:var(--gray3)">Solenoid Valve Selector</span>
+  <a href="../index.html">หน้าแรก</a> › <a href="#">Calculator Design</a> › <span style="color:var(--gray3)">Solenoid Valve Selector</span>
 </div>
 
 <div class="page-wrapper">
@@ -207,6 +210,17 @@
     </div>
   </div>
 
+  <!-- ASSEMBLY DIAGRAM SECTION -->
+  <div class="section" id="diagramSection" style="display:none;">
+    <div class="section-title">
+      <span>🔩 Assembly Diagram <span style="font-size:11px;color:var(--gray3);font-weight:400;" id="diagramLabel"></span></span>
+      <div id="diagramDownloadWrap"></div>
+    </div>
+    <div style="overflow-x:auto;padding:20px;" id="diagramWrap">
+      <svg id="assemblyDiagram" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
   <!-- PRODUCT LIST SECTION -->
   <div class="section">
     <div class="section-title">
@@ -253,7 +267,7 @@ function clearAll() {
 }
 
 function addRow() {
-  rows.push({ id: nextId++, orientation:'V', size:'SY3', typ:'straight', fitting:'6' });
+  rows.push({ id: nextId++, orientation:'H', size:'SY5', typ:'L', fitting:'6' });
   render();
 }
 
@@ -277,8 +291,8 @@ function render() {
       return `<div class="valve-row">
         <div class="row-num">${i + 1}</div>
         <select onchange="setOrientation(${r.id}, this.value)">
-          <option value="V" ${r.orientation==='V'?'selected':''}>🟢 Vertical</option>
           <option value="H" ${r.orientation==='H'?'selected':''}>🔵 Horizontal</option>
+          <option value="V" ${r.orientation==='V'?'selected':''}>🟢 Vertical</option>
         </select>
         <select onchange="setSize(${r.id}, this.value)">
           <option value="SY3" ${r.size==='SY3'?'selected':''}>SY3 Series</option>
@@ -299,6 +313,7 @@ function render() {
 
   calcResult();
   loadProductList();
+  drawDiagram();
 }
 
 function setOrientation(id, val) {
@@ -473,11 +488,11 @@ function calcResult() {
 // ================================================================
 const PRODUCT_LIST = [
   { title:'Solenoid Valve SY3 Series (Vertical)',   series:'SY3', type:'solenoid', partNo:'SY3320-5LZ-M5', url3d:'' },
-  { title:'Solenoid Valve SY5 Series (Vertical)',   series:'SY5', type:'solenoid', partNo:'SY5320-5LZ-01', url3d:'https://drive.google.com/uc?export=download&id=file/d/1hFkbRmNStl46yTfPDNb7z_2fQpieILNk/view?usp=sharing' },
+  { title:'Solenoid Valve SY5 Series (Vertical)',   series:'SY5', type:'solenoid', partNo:'SY5320-5LZ-01', url3d:'' },
   { title:'Solenoid Valve SY7 Series (Vertical)',   series:'SY7', type:'solenoid', partNo:'SY7320-5LZ-02', url3d:'' },
   { title:'Solenoid Valve SY9 Series (Vertical)',   series:'SY9', type:'solenoid', partNo:'SY9320-5LZ-03', url3d:'' },
   { title:'Solenoid Valve SY3 Series (Horizontal)', series:'SY3', type:'solenoid', partNo:'SY3420-5LZ-M5', url3d:'' },
-  { title:'Solenoid Valve SY5 Series (Horizontal)', series:'SY5', type:'solenoid', partNo:'SY5420-5LZ-01', url3d:'https://drive.google.com/uc?export=download&id=1EWXB4p8sdfwpamGfeXl8HNVr-yOCRFae1hFkbRmNStl46yTfPDNb7z_2fQpieILNk' },
+  { title:'Solenoid Valve SY5 Series (Horizontal)', series:'SY5', type:'solenoid', partNo:'SY5420-5LZ-01', url3d:'' },
   { title:'Solenoid Valve SY7 Series (Horizontal)', series:'SY7', type:'solenoid', partNo:'SY7420-5LZ-02', url3d:'' },
   { title:'Solenoid Valve SY9 Series (Horizontal)', series:'SY9', type:'solenoid', partNo:'SY9420-5LZ-03', url3d:'' },
   { title:'Manifold SY3 Series', series:'SY3', type:'manifold', partNo:'SS5Y3-20-xx', url3d:'' },
@@ -508,6 +523,271 @@ function downloadAll() {
   });
 }
 
+// ================================================================
+// ASSEMBLY DIAGRAM
+// ================================================================
+function drawDiagram() {
+  const sec = document.getElementById('diagramSection');
+  if (rows.length <= 1) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+
+  const wrap = document.getElementById('diagramWrap');
+  wrap.innerHTML = '';
+  const dlWrapClear = document.getElementById('diagramDownloadWrap');
+  if (dlWrapClear) dlWrapClear.innerHTML = '';
+
+  const groups = {};
+  rows.forEach(r => {
+    if (!groups[r.size]) groups[r.size] = [];
+    groups[r.size].push(r);
+  });
+
+  Object.values(groups).forEach(grp => {
+    const size    = grp[0].size;
+    const count   = grp.length;
+    const spare   = count > 10 ? 4 : 2;
+    const raw     = count + spare;
+    const station = raw % 2 === 0 ? raw : raw + 1;
+    const blanks  = station - count;
+    const mfPrefix = {SY3:'SS5Y3-20-',SY5:'SS5Y5-20-',SY7:'SS5Y7-20-',SY9:'SS5Y9-20-'}[size]||'';
+    const MAX_MF  = 10;
+
+    // แตก station เป็น rows
+    // ถ้าจำนวน SV ลงท้ายด้วย 8, 9, 0 → แบ่งครึ่ง, อื่นๆ ใช้ max 10
+    function toEven(n) { return n % 2 === 0 ? n : n + 1; }
+    function splitStations(total, svCount) {
+      const lastDigit = svCount % 10;
+      if (lastDigit === 8 || lastDigit === 9 || lastDigit === 0) {
+        // แบ่งครึ่ง แต่ละตัวไม่เกิน 10 และเป็นเลขคู่
+        const half = toEven(Math.min(Math.ceil(total / 2), 10));
+        const rest = toEven(total - half);
+        if (rest <= 10) return [half, rest];
+        // ถ้า rest ยังเกิน 10 ให้แตกต่อ
+        const units = [half];
+        let r = rest;
+        while (r > 0) { const t = toEven(Math.min(r, 10)); units.push(t); r -= t; }
+        return units;
+      }
+      const units = [];
+      let r = total;
+      while (r > 0) { const t = toEven(Math.min(r, 10)); units.push(t); r -= t; }
+      return units;
+    }
+    const unitCounts = splitStations(station, count);
+    const stationRows = [];
+    let stIdx = 0;
+    unitCounts.forEach(take => {
+      stationRows.push({ count: take, startIdx: stIdx });
+      stIdx += take;
+    });
+
+    const svgNS  = 'http://www.w3.org/2000/svg';
+    const SW     = 80;
+    const CARD_W = 64;
+    const CARD_H = 200;
+    const FT_H   = 28;
+    const FT_LBL = 22;
+    const WIRE_T = 40;
+    const WIRE_B = 50;
+    const MFH    = 100;
+    const PAD    = 100;
+    const ROW_GAP = 40;  // gap ระหว่าง manifold row
+
+    // height ต่อ row
+    const ROW_H = WIRE_T + FT_LBL + FT_H + CARD_H + MFH + FT_H + FT_LBL + WIRE_B;
+    const maxW  = stationRows.reduce((m,r) => Math.max(m, PAD*2 + r.count*SW), 0);
+    const totalH = stationRows.length * ROW_H + (stationRows.length - 1) * ROW_GAP;
+
+    const container = document.createElement('div');
+    container.style.cssText = 'margin-bottom:24px;';
+
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:12px;color:var(--gray3);margin-bottom:8px;font-family:Barlow,sans-serif;';
+    lbl.textContent = `${size} Series — ${count} Solenoid Valve + ${blanks} Blanking Plate = ${station} Station`;
+    container.appendChild(lbl);
+
+    const svgId = 'svg_' + size + '_' + Date.now();
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('id', svgId);
+    svg.setAttribute('width', maxW);
+    svg.setAttribute('height', totalH);
+    svg.setAttribute('viewBox', `0 0 ${maxW} ${totalH}`);
+    svg.style.cssText = 'display:block;';
+
+    function el(tag, attrs, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k,v));
+      (parent||svg).appendChild(e); return e;
+    }
+    function txt(t, x, y, attrs, parent) {
+      const e = document.createElementNS(svgNS, 'text');
+      e.textContent = t;
+      const d = {x,y,fill:'#ccc','font-size':'11','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle'};
+      Object.entries({...d,...attrs}).forEach(([k,v])=>e.setAttribute(k,v));
+      (parent||svg).appendChild(e); return e;
+    }
+
+    el('rect',{x:0,y:0,width:maxW,height:totalH,fill:'#161616'});
+
+    // วาดแต่ละ manifold row
+    stationRows.forEach((mfRow, rowIdx) => {
+      const rowY   = rowIdx * (ROW_H + ROW_GAP);
+      const CARD_TOP_Y = rowY + WIRE_T + FT_LBL + FT_H;
+      const MFY    = CARD_TOP_Y + CARD_H;
+      const mfCount = mfRow.count;
+      const mfPart  = mfPrefix + String(mfCount).padStart(2,'0');
+      const mxStart = PAD;
+      const mxWidth = mfCount * SW;
+
+      // Manifold body
+      el('rect',{x:mxStart,y:MFY,width:mxWidth,height:MFH,rx:6,fill:'#2a2a2a',stroke:'#555','stroke-width':'2'});
+      for(let j=1;j<mfCount;j++)
+        el('line',{x1:mxStart+j*SW,y1:MFY,x2:mxStart+j*SW,y2:MFY+MFH,stroke:'#444','stroke-width':'1'});
+
+      // Manifold Part No.
+      txt(mfPart, mxStart+mxWidth/2, MFY+MFH/2-(stationRows.length>1?8:0), {fill:'#f5a500','font-size':'11','font-weight':'bold'});
+      if (stationRows.length > 1)
+        txt(`ตัวที่ ${rowIdx+1}`, mxStart+mxWidth/2, MFY+MFH/2+10, {fill:'#888','font-size':'9'});
+
+      // End caps EA/P/EB
+      const portRows = [{label:'EA',y:MFY+20},{label:'P',y:MFY+50},{label:'EB',y:MFY+80}];
+      [-1,1].forEach(side => {
+        portRows.forEach(p => {
+          const capX = side===-1 ? mxStart-46 : mxStart+mxWidth+4;
+          el('rect',{x:capX,y:p.y-10,width:40,height:20,rx:4,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.5'});
+          el('line',{x1:side===-1?capX+40:capX,y1:p.y,x2:side===-1?mxStart:mxStart+mxWidth,y2:p.y,stroke:'#6bbccc','stroke-width':'2'});
+          txt(p.label, capX+20, p.y+1, {fill:'#fff','font-size':'10','font-weight':'bold'});
+        });
+      });
+
+      // วาด station แต่ละตัวใน row นี้
+      for (let i = 0; i < mfCount; i++) {
+        const globalIdx = mfRow.startIdx + i;
+        const cx      = PAD + i * SW + SW/2;
+        const cardX   = PAD + i * SW + (SW - CARD_W) / 2;
+        const isBlank = globalIdx >= count;
+        const row     = isBlank ? null : grp[globalIdx];
+        const svPart  = row ? getPartNo(row.orientation, row.size) : '';
+        const ftCfg   = row ? (FITTINGS_CONFIG[row.fitting]||{label:row.fitting+' mm.',partNo:''}) : null;
+        const ftLabel = ftCfg ? (ftCfg.partNo || ftCfg.label) : '';
+        const isL     = row && row.typ === 'L';
+        const isH     = row && row.orientation === 'H';
+
+        if (isBlank) {
+          const bkPart = {SY3:'SY3000-26-10A',SY5:'SY5000-26-20A',SY7:'SY7000-26-20A',SY9:'SY9000-26-1A'}[size]||'BLANK';
+          const g = el('g',{transform:`translate(${cardX},${CARD_TOP_Y})`});
+          el('rect',{x:0,y:0,width:CARD_W,height:CARD_H,rx:5,fill:'#1a3a5c',stroke:'#3a7aac','stroke-width':'2'},g);
+          el('circle',{cx:CARD_W/2,cy:20,r:8,fill:'#3a7aac',stroke:'#6abaec','stroke-width':'1.5'},g);
+          el('circle',{cx:CARD_W/2,cy:CARD_H-20,r:8,fill:'#3a7aac',stroke:'#6abaec','stroke-width':'1.5'},g);
+          const t = el('text',{x:CARD_W/2,y:CARD_H/2,fill:'#6abaec','font-size':'11','font-weight':'bold','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(-90,${CARD_W/2},${CARD_H/2})`},g);
+          t.textContent = bkPart;
+        } else {
+          const cardColor = isH ? '#c45000' : '#e06010';
+
+          // สายไฟบน
+          el('line',{x1:cx-6,y1:rowY,x2:cx-6,y2:CARD_TOP_Y,stroke:'#cc3333','stroke-width':'2'});
+          el('line',{x1:cx,  y1:rowY,x2:cx,  y2:CARD_TOP_Y,stroke:'#444',   'stroke-width':'2'});
+          el('line',{x1:cx+6,y1:rowY,x2:cx+6,y2:CARD_TOP_Y,stroke:'#ddd',   'stroke-width':'2'});
+
+          // Fitting A label
+          if (ftLabel) {
+            el('rect',{x:cx-28,y:rowY+WIRE_T,width:56,height:FT_LBL-2,rx:3,fill:'#f5c518',stroke:'#f5a500','stroke-width':'1'});
+            txt('A: '+ftLabel, cx, rowY+WIRE_T+10, {fill:'#000','font-size':'10','font-weight':'bold'});
+          }
+          // Fitting A box
+          const ftTopY = rowY + WIRE_T + FT_LBL;
+          el('rect',{x:cx-22,y:ftTopY,width:44,height:FT_H,rx:4,fill:'#222',stroke:'#555','stroke-width':'1.5'});
+          if (isL) {
+            el('rect',{x:cx-16,y:ftTopY+4,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});
+            el('rect',{x:cx+2, y:ftTopY+2,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});
+            txt('L',cx+20,ftTopY+11,{fill:'#6bbccc','font-size':'9','font-weight':'bold'});
+          } else {
+            el('rect',{x:cx-9,y:ftTopY+4,width:18,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});
+          }
+
+          // Card
+          const g = el('g',{transform:`translate(${cardX},${CARD_TOP_Y})`});
+          el('rect',{x:0,y:0,width:CARD_W,height:CARD_H,rx:5,fill:cardColor,stroke:'#ff9a40','stroke-width':'2'},g);
+          el('circle',{cx:CARD_W/2,cy:16,r:9,fill:'#ffeecc',stroke:'#fff','stroke-width':'1.5'},g);
+          txt('A', CARD_W/2, 16, {fill:'#333','font-size':'9','font-weight':'bold'}, g);
+          el('circle',{cx:CARD_W/2,cy:CARD_H-16,r:9,fill:'#ffeecc',stroke:'#fff','stroke-width':'1.5'},g);
+          txt('B', CARD_W/2, CARD_H-16, {fill:'#333','font-size':'9','font-weight':'bold'}, g);
+          const t = el('text',{x:CARD_W/2,y:CARD_H/2,fill:'#000','font-size':'12','font-weight':'900','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(-90,${CARD_W/2},${CARD_H/2})`},g);
+          t.textContent = svPart;
+
+          // Fitting B box
+          const ftBotY = MFY + MFH + 4;
+          el('rect',{x:cx-22,y:ftBotY,width:44,height:FT_H,rx:4,fill:'#222',stroke:'#555','stroke-width':'1.5'});
+          if (isL) {
+            el('rect',{x:cx-16,y:ftBotY+4,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});
+            el('rect',{x:cx+2, y:ftBotY+2,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});
+          } else {
+            el('rect',{x:cx-9,y:ftBotY+4,width:18,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});
+          }
+          if (ftLabel) {
+            el('rect',{x:cx-28,y:ftBotY+FT_H+2,width:56,height:FT_LBL-2,rx:3,fill:'#f5c518',stroke:'#f5a500','stroke-width':'1'});
+            txt('B: '+ftLabel, cx, ftBotY+FT_H+11, {fill:'#000','font-size':'10','font-weight':'bold'});
+          }
+
+          // สายไฟล่าง
+          const wireBotY = ftBotY + FT_H + FT_LBL + 2;
+          el('line',{x1:cx-6,y1:wireBotY,x2:cx-6,y2:rowY+ROW_H,stroke:'#cc3333','stroke-width':'2'});
+          el('line',{x1:cx,  y1:wireBotY,x2:cx,  y2:rowY+ROW_H,stroke:'#444',   'stroke-width':'2'});
+          el('line',{x1:cx+6,y1:wireBotY,x2:cx+6,y2:rowY+ROW_H,stroke:'#ddd',   'stroke-width':'2'});
+        }
+
+        // เลข station (global)
+        txt(globalIdx+1, cx, MFY+MFH/2+(stationRows.length>1?-8:0), {fill:'#666','font-size':'10','font-weight':'bold'});
+      }
+    });
+
+    container.appendChild(svg);
+    wrap.appendChild(container);
+
+    // ปุ่มดาวน์โหลดใน section-title
+    const dlWrap = document.getElementById('diagramDownloadWrap');
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'btn-dl-diagram';
+    dlBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ${size} Series`;
+    dlBtn.onclick = () => downloadDiagram(svgId, size);
+    dlWrap.appendChild(dlBtn);
+  });
+
+  document.getElementById('diagramLabel').textContent = rows.length + ' Solenoid Valve';
+}
+
+function downloadDiagram(svgId, size) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+
+  const scale  = 2; // @2x ความละเอียดสูง
+  const w      = parseInt(svg.getAttribute('width'));
+  const h      = parseInt(svg.getAttribute('height'));
+  const data   = new XMLSerializer().serializeToString(svg);
+  const svgBlob = new Blob([data], {type:'image/svg+xml;charset=utf-8'});
+  const url    = URL.createObjectURL(svgBlob);
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width  = w * scale;
+    canvas.height = h * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Assembly_${size}_Series.png`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, 'image/png');
+  };
+  img.src = url;
+}
+
 function loadProductList() {
   const tbody = document.getElementById('productTbody');
 
@@ -531,7 +811,22 @@ function loadProductList() {
     // แตกเป็นหลายตัวถ้าเกิน 10
     const units = [];
     let remain = st;
-    while (remain > 0) { const take = Math.min(remain, 10); units.push(take); remain -= take; }
+    // ถ้าจำนวน SV ลงท้ายด้วย 8, 9, 0 → แบ่งครึ่ง, อื่นๆ ใช้ max 10
+    function toEven2(n) { return n % 2 === 0 ? n : n + 1; }
+    const lastDigit = count % 10;
+    if (lastDigit === 8 || lastDigit === 9 || lastDigit === 0) {
+      const half = toEven2(Math.min(Math.ceil(st / 2), 10));
+      const rest = toEven2(st - half);
+      if (rest <= 10) { units.push(half); units.push(rest); }
+      else {
+        units.push(half);
+        let r2 = rest;
+        while (r2 > 0) { const take = toEven2(Math.min(r2, 10)); units.push(take); r2 -= take; }
+      }
+    } else {
+      let r2 = st;
+      while (r2 > 0) { const take = toEven2(Math.min(r2, 10)); units.push(take); r2 -= take; }
+    }
     manifoldCalc[size] = units.map(u => (MANIFOLD_PREFIX[size] || '') + String(u).padStart(2,'0'));
   });
 

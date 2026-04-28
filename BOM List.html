@@ -346,7 +346,7 @@
 // ================================================================
 // CONFIG — path ของ bom-index.json (relative จาก BOM_List.html)
 // ================================================================
-const BOM_INDEX_URL = 'bom-index.json';
+const BOM_INDEX_URL = './bom-index.json';
 // ================================================================
 
 let PARTS = [];
@@ -381,8 +381,23 @@ async function loadAll() {
   PARTS = [];
 
   try {
-    const res = await fetch(BOM_INDEX_URL + '?t=' + Date.now());
-    if (!res.ok) throw new Error('โหลด bom-index.json ไม่ได้');
+    let res;
+    try {
+      res = await fetch(BOM_INDEX_URL + '?t=' + Date.now());
+    } catch(e) {
+      setLoadingState(false);
+      const empty = document.getElementById('emptyState');
+      if (empty) { empty.style.display='block'; empty.textContent='⚠️ ไม่พบ bom-index.json — กรุณา upload ไฟล์ขึ้น GitHub ก่อน'; }
+      renderTable();
+      return;
+    }
+    if (!res.ok) {
+      setLoadingState(false);
+      const empty = document.getElementById('emptyState');
+      if (empty) { empty.style.display='block'; empty.textContent='⚠️ ไม่พบ bom-index.json — กรุณา upload ไฟล์ขึ้น GitHub ก่อน'; }
+      renderTable();
+      return;
+    }
     const index = await res.json();
 
     // กรองเฉพาะที่มี sheetUrl
@@ -407,8 +422,6 @@ async function loadAll() {
     console.error(e);
   }
 
-  rebuildTypeFilter();
-  rebuildUserFilter();
   setLoadingState(false);
   renderTable();
 }
