@@ -80,8 +80,8 @@
   .part-desc { color:var(--text-light); }
   .part-brand { color:var(--gray4); font-size:11px; }
   .part-src { display:inline-block; background:var(--black4); border:1px solid var(--charcoal); color:var(--gray3); padding:1px 6px; border-radius:8px; font-size:10px; }
-  .qty-input-wrap { display:flex; align-items:center; border:1px solid var(--charcoal); border-radius:4px; overflow:hidden; width:88px; }
-  .qty-minus, .qty-plus { background:var(--black4); border:none; width:24px; height:26px; color:var(--text-light); font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .qty-input-wrap { display:flex; align-items:center; border:1px solid var(--charcoal); border-radius:4px; overflow:hidden; width:100px; }
+  .qty-minus, .qty-plus { background:var(--black4); border:none; width:28px; height:30px; color:var(--text-light); font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .qty-minus:hover, .qty-plus:hover { background:var(--orange); }
   .qty-num { flex:1; height:26px; background:var(--black3); border:none; text-align:center; font-size:12px; color:var(--text-light); font-family:inherit; outline:none; }
   tr:not(.selected) .qty-input-wrap { opacity:0.3; pointer-events:none; }
@@ -205,7 +205,7 @@
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 32px;gap:8px;margin-bottom:6px;">
           <div class="col-label">ชื่อสินค้า</div>
           <div class="col-label">Google Sheet URL</div>
-          <div class="col-label">URL รูปภาพ</div>
+          <div class="col-label">ชื่อไฟล์รูป (.png)</div>
           <div></div>
         </div>
         <div id="managerRows"></div>
@@ -457,8 +457,8 @@ function renderTable() {
     const thumbHtml = p.imagePath
       ? `<img class="thumb" src="${p.imagePath}" alt="${p.pageLabel}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="thumb-placeholder" style="display:none">📦</span>`
       : `<span class="thumb-placeholder">📦</span>`;
-    return `<tr id="row_${id}" class="${sel}" onclick="rowClick('${id}',event)">
-      <td class="col-check"><input type="checkbox" id="cb_${id}" class="part-check" ${chk} onclick="toggleRow('${id}',event)"></td>
+    return `<tr id="row_${id}" class="${sel}">
+      <td class="col-check"><input type="checkbox" id="cb_${id}" class="part-check" ${chk} onchange="toggleRow('${id}',event)" style="width:16px;height:16px;accent-color:var(--orange);cursor:pointer;"></td>
       <td style="color:var(--gray3);font-size:11px;">${i+1}</td>
       <td>
         <div class="part-info-cell">
@@ -660,7 +660,7 @@ function renderManagerRows() {
     <div class="item-row" id="mrow_${i}">
       <input type="text" placeholder="ชื่อสินค้า" value="${escHtml(item.title || '')}" oninput="managerData[${i}].title=this.value">
       <input type="text" placeholder="https://docs.google.com/spreadsheets/..." value="${escHtml(item.sheetUrl || '')}" oninput="managerData[${i}].sheetUrl=this.value">
-      <input type="text" placeholder="https://.../img/ชื่อรูป.png" value="${escHtml(item.image || '')}" oninput="managerData[${i}].image=this.value">
+      <input type="text" placeholder="เช่น CC-Link Board.png" value="${escHtml((item.image||'').replace('https://kittipot8972-star.github.io/PHI-Design-V1.0/img/',''))}" oninput="managerData[${i}].image='https://kittipot8972-star.github.io/PHI-Design-V1.0/img/'+this.value.trim()">
       <button class="btn-del" onclick="removeManagerRow(${i})">✕</button>
     </div>
   `).join('');
