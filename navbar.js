@@ -96,10 +96,10 @@
       {n:'2',i:'📊',t:'Solenoid Valve & Manifold Selector', h:'Solenoid Valve & Manifold Selector.html'},
       {n:'3',i:'📈',t:'Product-Page-Generator', h:'Product_Page_Generator.html'},
     ]},
-    { label:'📂 &nbsp;Data1', items:[
-      {n:'1',i:'🔵',t:'Data1 Item 1', h:'data1/item1.html'},
-      {n:'2',i:'🟢',t:'Data1 Item 2', h:'data1/item2.html'},
-      {n:'3',i:'🟡',t:'Data1 Item 3', h:'data1/item3.html'},
+    { label:'📂 &nbsp;PHI INTEGRATION', items:[
+      {n:'1',i:'🔵',t:'PHI Stock Issue Record', h:'https://docs.google.com/spreadsheets/d/1Zr9APLKxKX_R_8SZ92YVPZvqKzaDcrwYgCeYcaYp6dg/edit?gid=984590829#gid=984590829'},
+      {n:'2',i:'🟢',t:'PHI Stock Inventory Store', h:'https://docs.google.com/spreadsheets/d/1BzKfYmTSlQxDh1qpAPqkQGsLG8rQy3dNygvmt0vWO-Y/edit?gid=984590829#gid=984590829'},
+      {n:'3',i:'🟡',t:'STD Material size', h:'https://docs.google.com/spreadsheets/d/1NUpXNs3CQuuDLo_AAkIt8p1CNHXkNP8ydmDJpe5ikPo/edit?gid=181278085#gid=181278085'},
     ]},
     { label:'📁 &nbsp;Data2', items:[
       {n:'1',i:'🔷',t:'Data2 Item 1', h:'data2/item1.html'},
