@@ -43,6 +43,23 @@
   .btn-export { background: var(--orange); color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: 700; }
   .btn-clear { background: #442222; color: #ffaaaa; border: 1px solid #663333; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; }
   .btn-load { background: #1a2e3a; color: #66ccff; border: 1px solid #2255aa; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .link-display { flex:1; font-size:12px; color:var(--gray3); display:flex; align-items:center; gap:8px; }
+  .link-masked { color:var(--gray3); letter-spacing:2px; font-size:14px; }
+  .btn-show-link { background:var(--black4); border:1px solid var(--charcoal); color:var(--gray4); border-radius:4px; padding:4px 12px; font-size:11px; cursor:pointer; font-family:inherit; white-space:nowrap; }
+  .btn-show-link:hover { border-color:var(--orange); color:var(--orange-light); }
+  .link-url { color:var(--orange-light); font-size:12px; word-break:break-all; display:none; }
+  /* PWD MODAL */
+  .pwd-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:600; align-items:center; justify-content:center; }
+  .pwd-ov.open { display:flex; }
+  .pwd-box { background:var(--black2); border:1px solid var(--black4); border-top:2px solid var(--orange); border-radius:8px; padding:28px 32px; width:320px; text-align:center; }
+  .pwd-box h3 { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; color:var(--white); margin-bottom:6px; }
+  .pwd-box p { font-size:12px; color:var(--gray3); margin-bottom:16px; }
+  .pwd-inp { background:var(--black3); border:1px solid var(--charcoal); border-radius:4px; padding:10px; font-size:14px; font-family:inherit; color:var(--text-light); outline:none; width:100%; text-align:center; letter-spacing:4px; margin-bottom:8px; }
+  .pwd-inp:focus { border-color:var(--orange); }
+  .pwd-inp.err { border-color:#ff4444; animation:shake .3s; }
+  .pwd-err { font-size:12px; color:#ff4444; min-height:16px; margin-bottom:10px; }
+  .pwd-btn { background:var(--orange); color:white; border:none; padding:10px; border-radius:4px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; width:100%; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
   .gsheet-bar { display:flex; align-items:center; gap:8px; padding:12px 16px; background:var(--black3); border-bottom:1px solid var(--black4); flex-wrap:wrap; }
   .gsheet-input { flex:1; min-width:260px; background:var(--black4); border:1px solid var(--charcoal); border-radius:4px; padding:8px 12px; color:var(--text-light); font-size:13px; font-family:inherit; outline:none; }
   .gsheet-status { font-size:12px; padding:4px 10px; border-radius:4px; display:none; }
@@ -125,10 +142,27 @@
         <button class="btn-export" onclick="exportExcel()">⬇️ Export Excel</button>
       </div>
     </div>
+    <!-- PWD MODAL -->
+    <div class="pwd-ov" id="linkPwdModal">
+      <div class="pwd-box">
+        <h3>🔒 ดู Link</h3>
+        <p>กรอกรหัสผ่านเพื่อดู Google Sheets URL</p>
+        <input class="pwd-inp" id="linkPwdInput" type="password" placeholder="••••••" maxlength="20"
+          onkeydown="if(event.key==='Enter')checkLinkPwd()">
+        <div class="pwd-err" id="linkPwdErr"></div>
+        <button class="pwd-btn" onclick="checkLinkPwd()">ยืนยัน</button>
+        <button onclick="closeLinkPwd()" style="background:none;border:none;color:var(--gray3);font-size:12px;cursor:pointer;margin-top:10px;font-family:inherit;">ยกเลิก</button>
+      </div>
+    </div>
+
     <div class="gsheet-bar">
       <span style="font-size:12px; color:var(--gray3); white-space:nowrap;">🔗 Google Sheets URL :</span>
-      <input type="text" class="gsheet-input" id="gsheet-url" placeholder="วาง link Google Sheets ที่นี่..." />
-      <button class="btn-load" onclick="loadFromGSheet()">📥 โหลดข้อมูล</button>
+      <div class="link-display">
+        <span class="link-masked" id="linkMasked">••••••••••••••••••••••••••••••••••••••</span>
+        <span class="link-url" id="linkUrl"></span>
+        <button class="btn-show-link" id="btnShowLink" onclick="openLinkPwd()">🔓 ดู Link</button>
+      </div>
+      <input type="text" id="gsheet-url" style="display:none;" />
       <span class="gsheet-status" id="gsheet-status"></span>
     </div>
     <div style="overflow-x:auto;">
@@ -155,6 +189,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
   // ================================================================
+  // รหัสผ่านสำหรับดู Link (เปลี่ยนได้ที่นี่)
+  const LINK_PASSWORD = 'phi2025';
+
+  function openLinkPwd() {
+    document.getElementById('linkPwdInput').value = '';
+    document.getElementById('linkPwdErr').textContent = '';
+    document.getElementById('linkPwdInput').classList.remove('err');
+    document.getElementById('linkPwdModal').classList.add('open');
+    setTimeout(() => document.getElementById('linkPwdInput').focus(), 100);
+  }
+  function closeLinkPwd() {
+    document.getElementById('linkPwdModal').classList.remove('open');
+  }
+  function checkLinkPwd() {
+    const val = document.getElementById('linkPwdInput').value;
+    if (val === LINK_PASSWORD) {
+      closeLinkPwd();
+      document.getElementById('linkMasked').style.display = 'none';
+      document.getElementById('linkUrl').style.display = 'block';
+      document.getElementById('linkUrl').textContent = DEFAULT_SHEET_URL;
+      document.getElementById('btnShowLink').textContent = '🔒 ซ่อน';
+      document.getElementById('btnShowLink').onclick = hideLinkUrl;
+    } else {
+      const inp = document.getElementById('linkPwdInput');
+      inp.classList.add('err');
+      document.getElementById('linkPwdErr').textContent = '❌ รหัสผ่านไม่ถูกต้อง';
+      inp.value = '';
+      setTimeout(() => inp.classList.remove('err'), 400);
+    }
+  }
+  function hideLinkUrl() {
+    document.getElementById('linkMasked').style.display = 'inline';
+    document.getElementById('linkUrl').style.display = 'none';
+    document.getElementById('btnShowLink').textContent = '🔓 ดู Link';
+    document.getElementById('btnShowLink').onclick = openLinkPwd;
+  }
+  document.addEventListener('click', function(e) {
+    const modal = document.getElementById('linkPwdModal');
+    if (e.target === modal) closeLinkPwd();
+  });
+
   // ⚙️ ตั้งค่าครั้งเดียว — วาง Google Sheets URL ของบริษัทที่นี่
   //    ทุกเครื่องที่เปิดไฟล์นี้จะโหลดข้อมูลจาก URL นี้อัตโนมัติ
   // ================================================================
