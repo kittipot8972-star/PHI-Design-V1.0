@@ -54,7 +54,7 @@
   .selected-badge { font-size:12px; color:var(--orange-light); font-weight:700; background:var(--orange-glow); border:1px solid var(--orange); border-radius:4px; padding:4px 10px; }
 
   /* SPLIT LAYOUT */
-  .split-layout { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+  .split-layout { display:flex; flex-direction:column; gap:14px; }
 
   /* BOM TABLE PANEL */
   .panel { background:var(--black2); border:1px solid var(--black4); border-radius:6px; overflow:hidden; display:flex; flex-direction:column; }
@@ -63,7 +63,7 @@
   .select-all-btn { font-size:11px; color:var(--gray3); cursor:pointer; }
   .select-all-btn:hover { color:var(--orange-light); }
 
-  .bom-table-wrap { overflow-y:auto; max-height:calc(100vh - 300px); }
+  .bom-table-wrap { overflow-y:auto; }
   .search-wrap { padding:8px 10px; border-bottom:1px solid var(--black4); background:var(--black2); }
   .search-input { width:100%; background:var(--black3); border:1px solid var(--charcoal); border-radius:4px; padding:7px 10px 7px 30px; font-size:12px; font-family:inherit; color:var(--text-light); outline:none; }
   .search-input:focus { border-color:var(--orange); }
@@ -626,7 +626,7 @@ let managerData = [];
 // ================================================================
 // PASSWORD PROTECTION
 // ================================================================
-const MANAGER_PASSWORD = 'kittipot'; // ← เปลี่ยนรหัสผ่านได้ที่นี่
+const MANAGER_PASSWORD = 'phi2025'; // ← เปลี่ยนรหัสผ่านได้ที่นี่
 
 function openPwd() {
   document.getElementById('pwdInput').value = '';
