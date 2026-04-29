@@ -116,7 +116,8 @@
     return '<div class="pmenu"><button class="pmbtn">' + m.label +
       ' <span class="pmarr">▼</span></button><div class="pmdd">' +
       m.items.map(function(it){
-        return '<a class="pmitem" href="' + root + it.h + '">' +
+        var href = (it.h.startsWith('http://') || it.h.startsWith('https://') || it.h.startsWith('//')) ? it.h : root + it.h;
+        return '<a class="pmitem" href="' + href + '"' + (it.h.startsWith('http') ? ' target="_blank"' : '') + '>' +
           '<span class="pnum">' + it.n + '</span>' +
           '<span class="pico">' + it.i + '</span>' +
           '<span>' + it.t + '</span>' +
