@@ -116,7 +116,7 @@
 
     <!--Air Filter and Regulator-->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Air Filter and Regulator')">Air Filter and Regulator<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Air Filter and Regulator" onclick="filterCat(this,'Air Filter and Regulator')">Air Filter and Regulator<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -130,7 +130,7 @@
     </div>
     <!--Solenoid Valve Unit-->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Solenoid Valve Unit')">Solenoid Valve Unit<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Solenoid Valve Unit" onclick="filterCat(this,'Solenoid Valve Unit')">Solenoid Valve Unit<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -148,7 +148,7 @@
     </div>
     <!--Digital Pressure SwitchVacuum Switch-->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Digital Pressure SwitchVacuum Switch')">Digital Pressure SwitchVacuum Switch<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Digital Pressure SwitchVacuum Switch" onclick="filterCat(this,'Digital Pressure SwitchVacuum Switch')">Digital Pressure SwitchVacuum Switch<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -162,7 +162,7 @@
     </div>
     <!-- Vacuum Unit -->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Vacuum Unit')">Vacuum Unit<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Vacuum Unit" onclick="filterCat(this,'Vacuum Unit')">Vacuum Unit<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -172,7 +172,7 @@
     </div>
     <!--Type Lead SW-->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Type Lead SW')">Type Lead SW<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Type Lead SW" onclick="filterCat(this,'Type Lead SW')">Type Lead SW<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -182,7 +182,7 @@
     </div>
     <!-- Fittings -->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Fittings')">Fittings<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Fittings" onclick="filterCat(this,'Fittings')">Fittings<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -196,7 +196,7 @@
     </div>
     <!--Speed Controllers-->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Speed Controllers')">Speed Controllers<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Speed Controllers" onclick="filterCat(this,'Speed Controllers')">Speed Controllers<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -210,7 +210,7 @@
     </div>
     <!--Air Tube STD-->
     <div class="section">
-      <div class="section-label" onclick="filterCat('Air Tube STD')">Air Tube STD<span class="filter-badge">✕ ยกเลิก</span></div>
+      <div class="section-label" data-cat="Air Tube STD" onclick="filterCat(this,'Air Tube STD')">Air Tube STD<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -229,7 +229,8 @@
 <script>
 let activeFilter = null;
 
-function filterCat(cat) {
+function filterCat(labelEl, cat) {
+  // ถ้ากด category เดิมซ้ำ = ยกเลิก
   if (activeFilter === cat) {
     activeFilter = null;
     document.querySelectorAll('.section').forEach(s => s.classList.remove('filtered-out'));
@@ -241,15 +242,15 @@ function filterCat(cat) {
   }
   activeFilter = cat;
   document.querySelectorAll('.section').forEach(s => {
-    const label = s.querySelector('.section-label');
-    if (!label) return;
-    const labelTxt = label.textContent.replace('✕ ยกเลิก','').trim();
-    if (labelTxt === cat) {
+    const lbl = s.querySelector('.section-label');
+    if (!lbl) return;
+    const txt = lbl.getAttribute('data-cat') || '';
+    if (txt === cat) {
       s.classList.remove('filtered-out');
-      label.classList.add('active-filter');
+      lbl.classList.add('active-filter');
     } else {
       s.classList.add('filtered-out');
-      label.classList.remove('active-filter');
+      lbl.classList.remove('active-filter');
     }
   });
   document.querySelectorAll('.sidebar-item').forEach(i => {
