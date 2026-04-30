@@ -117,7 +117,7 @@
 
     <!-- Adjuster -->
     <div class="section" id="section-adjuster">
-      <div class="section-label">Adjuster</div>
+      <div class="section-label" onclick="filterCat('Adjuster')">Adjuster<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card" data-name="Adjuster1" data-cat="Adjuster">
           <div class="product-img">🔩</div>
@@ -136,7 +136,7 @@
 
     <!-- Casters -->
     <div class="section" id="section-casters">
-      <div class="section-label">Casters</div>
+      <div class="section-label" onclick="filterCat('Casters')">Casters<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card" data-name="Casters1" data-cat="Casters">
           <div class="product-img">🔩</div>
@@ -155,7 +155,7 @@
 
     <!-- Doors lock -->
     <div class="section" id="section-doors">
-      <div class="section-label">Doors lock</div>
+      <div class="section-label" onclick="filterCat('Doors lock')">Doors lock<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card" data-name="Doors lock1" data-cat="Doors lock">
           <div class="product-img">🔩</div>
@@ -170,7 +170,7 @@
 
     <!-- Hinge -->
     <div class="section" id="section-hinge">
-      <div class="section-label">Hinge</div>
+      <div class="section-label" onclick="filterCat('Hinge')">Hinge<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <a class="product-card" href="../Data/SFA-2N1.html
         " target="_blank" data-name="SFA-2N1" data-cat="Hinge">
@@ -202,7 +202,7 @@
 
     <!-- Safety Door Switch -->
     <div class="section" id="section-safety">
-      <div class="section-label">Safety Door Switch</div>
+      <div class="section-label" onclick="filterCat('Safety Door Switch')">Safety Door Switch<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card" data-name="Safety Door Switch1" data-cat="Safety Door Switch">
           <div class="product-img">🔩</div>
@@ -217,7 +217,7 @@
 
     <!-- Touch switch -->
     <div class="section" id="section-touch">
-      <div class="section-label">Touch switch</div>
+      <div class="section-label" onclick="filterCat('Touch switch')">Touch switch<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card" data-name="Touch switch1" data-cat="Touch switch">
           <div class="product-img">🔩</div>
@@ -235,6 +235,43 @@
 
 
 
+<script>
+let activeFilter = null;
+
+function filterCat(cat) {
+  // ถ้ากด category เดิมซ้ำ = ยกเลิก filter
+  if (activeFilter === cat) {
+    activeFilter = null;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('filtered-out'));
+    document.querySelectorAll('.section-label').forEach(l => l.classList.remove('active-filter'));
+    // update sidebar
+    document.querySelectorAll('.sidebar-item').forEach(i => {
+      i.classList.toggle('active', i.textContent.trim() === 'Automation Components');
+    });
+    return;
+  }
+  activeFilter = cat;
+  document.querySelectorAll('.section').forEach(s => {
+    const label = s.querySelector('.section-label');
+    if (!label) return;
+    const labelTxt = label.textContent.replace('✕ ยกเลิก','').trim();
+    if (labelTxt === cat) {
+      s.classList.remove('filtered-out');
+      label.classList.add('active-filter');
+    } else {
+      s.classList.add('filtered-out');
+      label.classList.remove('active-filter');
+    }
+  });
+  // highlight sidebar
+  document.querySelectorAll('.sidebar-item').forEach(i => {
+    i.classList.toggle('active', i.textContent.trim() === cat);
+  });
+  // scroll to section
+  const target = document.querySelector('.section:not(.filtered-out)');
+  if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+</script>
 <script src="../navbar.js" data-depth="1"></script>
 </body>
 </html>
