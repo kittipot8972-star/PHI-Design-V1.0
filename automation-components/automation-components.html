@@ -91,13 +91,13 @@
   <aside class="sidebar">
     <div class="sidebar-title">⚙️ Automation Components</div>
     <div class="sidebar-menu">
-      <a class="sidebar-item active" href="#">Automation Components</a>
-      <a class="sidebar-item" href="Adjuster.html">Adjuster</a>
-      <a class="sidebar-item" href="Casters.html">Casters</a>
-      <a class="sidebar-item" href="Doors lock.html">Doors lock</a>
-      <a class="sidebar-item" href="Hinge.html">Hinge</a>
-      <a class="sidebar-item" href="Safety Door Switch.html">Safety Door Switch</a>
-      <a class="sidebar-item" href="Touch switch.html">Touch switch</a>
+      <a class="sidebar-item active" onclick="filterCat(null,'all')">Automation Components</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Adjuster')">Adjuster</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Casters')">Casters</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Doors lock')">Doors lock</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Hinge')">Hinge</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Safety Door Switch')">Safety Door Switch</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Touch switch')">Touch switch</a>
     </div>
   </aside>
 
@@ -239,13 +239,15 @@
 let activeFilter = null;
 
 function filterCat(labelEl, cat) {
-  if (activeFilter === cat) {
+  // แสดงทั้งหมด
+  if (!cat || cat === 'all' || activeFilter === cat) {
     activeFilter = null;
     document.querySelectorAll('.section').forEach(s => s.classList.remove('filtered-out'));
     document.querySelectorAll('.section-label').forEach(l => l.classList.remove('active-filter'));
     document.querySelectorAll('.sidebar-item').forEach(i => {
       i.classList.toggle('active', i.textContent.trim() === 'Automation Components');
     });
+    window.scrollTo({top:0, behavior:'smooth'});
     return;
   }
   activeFilter = cat;
