@@ -91,15 +91,15 @@
   <aside class="sidebar">
     <div class="sidebar-title">⚙️ pneumatic-system</div>
     <div class="sidebar-menu">
-      <a class="sidebar-item active" href="#">pneumatic-system</a>
-      <a class="sidebar-item" href="#">Air Filter and Regulator</a>
-      <a class="sidebar-item" href="#">Solenoid Valve Unit</a>
-      <a class="sidebar-item" href="#">Digital Pressure SwitchVacuum Switch</a>
-      <a class="sidebar-item" href="#">Vacuum Unit</a>
-      <a class="sidebar-item" href="#">Type Lead SW</a>
-      <a class="sidebar-item" href="#">Fittings</a>
-      <a class="sidebar-item" href="#">Speed Controllers</a>
-      <a class="sidebar-item" href="#">Air Tube STD</a>
+      <a class="sidebar-item active" onclick="filterCat(null,'all')">pneumatic-system</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Air Filter and Regulator')">Air Filter and Regulator</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Solenoid Valve Unit')">Solenoid Valve Unit</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Digital Pressure SwitchVacuum Switch')">Digital Pressure SwitchVacuum Switch</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Vacuum Unit')">Vacuum Unit</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Type Lead SW')">Type Lead SW</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Fittings')">Fittings</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Speed Controllers')">Speed Controllers</a>
+      <a class="sidebar-item" onclick="filterCat(null,'Air Tube STD')">Air Tube STD</a>
     </div>
   </aside>
 
@@ -230,14 +230,14 @@
 let activeFilter = null;
 
 function filterCat(labelEl, cat) {
-  // ถ้ากด category เดิมซ้ำ = ยกเลิก
-  if (activeFilter === cat) {
+  if (!cat || cat === 'all' || activeFilter === cat) {
     activeFilter = null;
     document.querySelectorAll('.section').forEach(s => s.classList.remove('filtered-out'));
     document.querySelectorAll('.section-label').forEach(l => l.classList.remove('active-filter'));
     document.querySelectorAll('.sidebar-item').forEach(i => {
       i.classList.toggle('active', i.textContent.trim() === 'pneumatic-system');
     });
+    window.scrollTo({top:0, behavior:'smooth'});
     return;
   }
   activeFilter = cat;
