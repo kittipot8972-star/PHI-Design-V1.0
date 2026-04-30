@@ -54,7 +54,11 @@
 
   /* SECTION */
   .section { margin-bottom: 28px; }
-  .section-label { font-size: 14px; font-weight: 700; color: var(--orange-light); border-left: 3px solid var(--orange); padding-left: 10px; margin-bottom: 14px; letter-spacing: 0.5px; }
+  .section-label { font-size: 14px; font-weight: 700; color: var(--orange-light); border-left: 3px solid var(--orange); padding-left: 10px; margin-bottom: 14px; letter-spacing: 0.5px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; user-select:none; }
+  .section-label:hover { color: var(--orange); }
+  .section-label .filter-badge { font-size:10px; background:var(--orange); color:white; padding:2px 8px; border-radius:10px; display:none; font-weight:500; }
+  .section-label.active-filter .filter-badge { display:inline; }
+  .section.filtered-out { display:none; }
 
   /* PRODUCT GRID */
   .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
@@ -112,7 +116,7 @@
 
     <!--Air Filter and Regulator-->
     <div class="section">
-      <div class="section-label">Air Filter and Regulator</div>
+      <div class="section-label" onclick="filterCat('Air Filter and Regulator')">Air Filter and Regulator<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -126,7 +130,7 @@
     </div>
     <!--Solenoid Valve Unit-->
     <div class="section">
-      <div class="section-label">Solenoid Valve Unit</div>
+      <div class="section-label" onclick="filterCat('Solenoid Valve Unit')">Solenoid Valve Unit<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -144,7 +148,7 @@
     </div>
     <!--Digital Pressure SwitchVacuum Switch-->
     <div class="section">
-      <div class="section-label">Digital Pressure SwitchVacuum Switch</div>
+      <div class="section-label" onclick="filterCat('Digital Pressure SwitchVacuum Switch')">Digital Pressure SwitchVacuum Switch<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -158,7 +162,7 @@
     </div>
     <!-- Vacuum Unit -->
     <div class="section">
-      <div class="section-label">Vacuum Unit</div>
+      <div class="section-label" onclick="filterCat('Vacuum Unit')">Vacuum Unit<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -168,7 +172,7 @@
     </div>
     <!--Type Lead SW-->
     <div class="section">
-      <div class="section-label">Type Lead SW</div>
+      <div class="section-label" onclick="filterCat('Type Lead SW')">Type Lead SW<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -178,7 +182,7 @@
     </div>
     <!-- Fittings -->
     <div class="section">
-      <div class="section-label">Fittings</div>
+      <div class="section-label" onclick="filterCat('Fittings')">Fittings<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -192,7 +196,7 @@
     </div>
     <!--Speed Controllers-->
     <div class="section">
-      <div class="section-label">Speed Controllers</div>
+      <div class="section-label" onclick="filterCat('Speed Controllers')">Speed Controllers<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -206,7 +210,7 @@
     </div>
     <!--Air Tube STD-->
     <div class="section">
-      <div class="section-label">Air Tube STD</div>
+      <div class="section-label" onclick="filterCat('Air Tube STD')">Air Tube STD<span class="filter-badge">✕ ยกเลิก</span></div>
       <div class="product-grid">
         <div class="product-card">
           <div class="product-img">🔩</div>
@@ -222,5 +226,38 @@
 </div>
 
 
+<script>
+let activeFilter = null;
+
+function filterCat(cat) {
+  if (activeFilter === cat) {
+    activeFilter = null;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('filtered-out'));
+    document.querySelectorAll('.section-label').forEach(l => l.classList.remove('active-filter'));
+    document.querySelectorAll('.sidebar-item').forEach(i => {
+      i.classList.toggle('active', i.textContent.trim() === 'pneumatic-system');
+    });
+    return;
+  }
+  activeFilter = cat;
+  document.querySelectorAll('.section').forEach(s => {
+    const label = s.querySelector('.section-label');
+    if (!label) return;
+    const labelTxt = label.textContent.replace('✕ ยกเลิก','').trim();
+    if (labelTxt === cat) {
+      s.classList.remove('filtered-out');
+      label.classList.add('active-filter');
+    } else {
+      s.classList.add('filtered-out');
+      label.classList.remove('active-filter');
+    }
+  });
+  document.querySelectorAll('.sidebar-item').forEach(i => {
+    i.classList.toggle('active', i.textContent.trim() === cat);
+  });
+  const target = document.querySelector('.section:not(.filtered-out)');
+  if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+</script>
 <script src="../navbar.js" data-depth="1"></script>
 </body>
