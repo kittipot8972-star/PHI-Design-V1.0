@@ -69,6 +69,11 @@
   .section.search-hidden { display: none; }
 
   /* SEARCH ACTIVE BAR */
+  .section-label { cursor:pointer; display:inline-flex; align-items:center; gap:8px; user-select:none; }
+  .section-label:hover { color: var(--orange); }
+  .filter-badge { font-size:10px; background:var(--orange); color:white; padding:2px 8px; border-radius:10px; display:none; font-weight:500; }
+  .section-label.active-filter .filter-badge { display:inline; }
+  .section.filtered-out { display:none; }
 </style>
 </head>
 <body>
