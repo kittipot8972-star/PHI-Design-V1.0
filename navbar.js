@@ -95,6 +95,7 @@
       {n:'1',i:'📋',t:'BOM List', h:'BOM List.html'},
       {n:'2',i:'📊',t:'Solenoid Valve & Manifold Selector', h:'Solenoid Valve & Manifold Selector.html'},
       {n:'3',i:'📈',t:'Product-Page-Generator', h:'Product_Page_Generator.html'},
+      {n:'3',i:'📈',t:'PHI_Selector', h:'PHI_Selector.html'},
     ]},
     { label:'📂 &nbsp;PHI INTEGRATION', items:[
       {n:'1',i:'🔵',t:'PHI Stock Inventory Store', h:'https://docs.google.com/spreadsheets/d/1BzKfYmTSlQxDh1qpAPqkQGsLG8rQy3dNygvmt0vWO-Y/edit?gid=984590829#gid=984590829'},
