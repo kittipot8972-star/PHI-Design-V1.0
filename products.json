@@ -1,0 +1,400 @@
+{
+  "version": "1.0",
+  "updated": "2026-05-01",
+  "categories": {
+    "solenoid_valve": {
+      "label": "Solenoid Valve",
+      "description": "เลือก Series และขนาด Bore",
+      "series": {
+        "VFS": {
+          "label": "VFS Series",
+          "description": "5/2 way, Direct Acting",
+          "variants": [
+            {
+              "part_no": "VFS-1200-5A",
+              "label": "VFS-1200 / Bore 6mm",
+              "bore_mm": 6,
+              "port": "1/8\"",
+              "voltage": "24VDC",
+              "flow_cv": 0.18,
+              "step_file": "models/solenoid/VFS-1200-5A.step",
+              "preview_img": "previews/VFS-1200-5A.png",
+              "step_available": false
+            },
+            {
+              "part_no": "VFS-1500-5A",
+              "label": "VFS-1500 / Bore 10mm",
+              "bore_mm": 10,
+              "port": "1/4\"",
+              "voltage": "24VDC",
+              "flow_cv": 0.40,
+              "step_file": "models/solenoid/VFS-1500-5A.step",
+              "preview_img": "previews/VFS-1500-5A.png",
+              "step_available": false
+            },
+            {
+              "part_no": "VFS-2120-5A",
+              "label": "VFS-2120 / Bore 15mm",
+              "bore_mm": 15,
+              "port": "1/4\"",
+              "voltage": "24VDC",
+              "flow_cv": 0.70,
+              "step_file": "models/solenoid/VFS-2120-5A.step",
+              "preview_img": "previews/VFS-2120-5A.png",
+              "step_available": false
+            }
+          ]
+        },
+        "SY": {
+          "label": "SY Series",
+          "description": "5/2 way, Pilot Operated",
+          "variants": [
+            {
+              "part_no": "SY3120-5LZD",
+              "label": "SY3120 / Bore 10mm",
+              "bore_mm": 10,
+              "port": "1/8\"",
+              "voltage": "24VDC",
+              "flow_cv": 0.50,
+              "step_file": "models/solenoid/SY3120-5LZD.step",
+              "preview_img": "previews/SY3120-5LZD.png",
+              "step_available": false
+            },
+            {
+              "part_no": "SY5120-5LZD",
+              "label": "SY5120 / Bore 15mm",
+              "bore_mm": 15,
+              "port": "1/4\"",
+              "voltage": "24VDC",
+              "flow_cv": 1.00,
+              "step_file": "models/solenoid/SY5120-5LZD.step",
+              "preview_img": "previews/SY5120-5LZD.png",
+              "step_available": false
+            },
+            {
+              "part_no": "SY7120-5LZD",
+              "label": "SY7120 / Bore 20mm",
+              "bore_mm": 20,
+              "port": "3/8\"",
+              "voltage": "24VDC",
+              "flow_cv": 1.60,
+              "step_file": "models/solenoid/SY7120-5LZD.step",
+              "preview_img": "previews/SY7120-5LZD.png",
+              "step_available": false
+            }
+          ]
+        },
+        "VQ": {
+          "label": "VQ Series",
+          "description": "5/2 way, High Speed",
+          "variants": [
+            {
+              "part_no": "VQ1100-5B",
+              "label": "VQ1100 / Bore 6mm",
+              "bore_mm": 6,
+              "port": "M5",
+              "voltage": "24VDC",
+              "flow_cv": 0.10,
+              "step_file": "models/solenoid/VQ1100-5B.step",
+              "preview_img": "previews/VQ1100-5B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "VQ2100-5B",
+              "label": "VQ2100 / Bore 10mm",
+              "bore_mm": 10,
+              "port": "1/8\"",
+              "voltage": "24VDC",
+              "flow_cv": 0.35,
+              "step_file": "models/solenoid/VQ2100-5B.step",
+              "preview_img": "previews/VQ2100-5B.png",
+              "step_available": false
+            }
+          ]
+        }
+      }
+    },
+    "manifold": {
+      "label": "Manifold",
+      "description": "เลือก Station และ Port Size",
+      "series": {
+        "SS5V1": {
+          "label": "SS5V1 Series",
+          "description": "สำหรับ VFS/SY Series",
+          "variants": [
+            {
+              "part_no": "SS5V1-W10S-02B",
+              "label": "SS5V1 / 2 Station",
+              "stations": 2,
+              "port": "1/8\"",
+              "compatible_series": ["VFS", "SY"],
+              "step_file": "models/manifold/SS5V1-W10S-02B.step",
+              "preview_img": "previews/SS5V1-W10S-02B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "SS5V1-W10S-04B",
+              "label": "SS5V1 / 4 Station",
+              "stations": 4,
+              "port": "1/8\"",
+              "compatible_series": ["VFS", "SY"],
+              "step_file": "models/manifold/SS5V1-W10S-04B.step",
+              "preview_img": "previews/SS5V1-W10S-04B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "SS5V1-W10S-06B",
+              "label": "SS5V1 / 6 Station",
+              "stations": 6,
+              "port": "1/4\"",
+              "compatible_series": ["VFS", "SY"],
+              "step_file": "models/manifold/SS5V1-W10S-06B.step",
+              "preview_img": "previews/SS5V1-W10S-06B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "SS5V1-W10S-08B",
+              "label": "SS5V1 / 8 Station",
+              "stations": 8,
+              "port": "1/4\"",
+              "compatible_series": ["VFS", "SY"],
+              "step_file": "models/manifold/SS5V1-W10S-08B.step",
+              "preview_img": "previews/SS5V1-W10S-08B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "SS5V1-W10S-10B",
+              "label": "SS5V1 / 10 Station",
+              "stations": 10,
+              "port": "3/8\"",
+              "compatible_series": ["VFS", "SY"],
+              "step_file": "models/manifold/SS5V1-W10S-10B.step",
+              "preview_img": "previews/SS5V1-W10S-10B.png",
+              "step_available": false
+            }
+          ]
+        },
+        "D-sub": {
+          "label": "D-sub Manifold",
+          "description": "สำหรับ VQ Series",
+          "variants": [
+            {
+              "part_no": "SS5Q13-02B",
+              "label": "D-sub / 2 Station",
+              "stations": 2,
+              "port": "M5",
+              "compatible_series": ["VQ"],
+              "step_file": "models/manifold/SS5Q13-02B.step",
+              "preview_img": "previews/SS5Q13-02B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "SS5Q13-04B",
+              "label": "D-sub / 4 Station",
+              "stations": 4,
+              "port": "M5",
+              "compatible_series": ["VQ"],
+              "step_file": "models/manifold/SS5Q13-04B.step",
+              "preview_img": "previews/SS5Q13-04B.png",
+              "step_available": false
+            }
+          ]
+        }
+      }
+    },
+    "cylinder": {
+      "label": "Cylinder",
+      "description": "เลือก Bore และ Stroke",
+      "series": {
+        "CA2": {
+          "label": "CA2 Series",
+          "description": "Double Acting, Standard",
+          "variants": [
+            {
+              "part_no": "CA2B32-25",
+              "label": "CA2B32 / Bore 32 × 25mm",
+              "bore_mm": 32,
+              "stroke_mm": 25,
+              "type": "Double Acting",
+              "step_file": "models/cylinder/CA2B32-25.step",
+              "preview_img": "previews/CA2B32-25.png",
+              "step_available": false
+            },
+            {
+              "part_no": "CA2B32-50",
+              "label": "CA2B32 / Bore 32 × 50mm",
+              "bore_mm": 32,
+              "stroke_mm": 50,
+              "type": "Double Acting",
+              "step_file": "models/cylinder/CA2B32-50.step",
+              "preview_img": "previews/CA2B32-50.png",
+              "step_available": false
+            },
+            {
+              "part_no": "CA2B50-50",
+              "label": "CA2B50 / Bore 50 × 50mm",
+              "bore_mm": 50,
+              "stroke_mm": 50,
+              "type": "Double Acting",
+              "step_file": "models/cylinder/CA2B50-50.step",
+              "preview_img": "previews/CA2B50-50.png",
+              "step_available": false
+            },
+            {
+              "part_no": "CA2B50-100",
+              "label": "CA2B50 / Bore 50 × 100mm",
+              "bore_mm": 50,
+              "stroke_mm": 100,
+              "type": "Double Acting",
+              "step_file": "models/cylinder/CA2B50-100.step",
+              "preview_img": "previews/CA2B50-100.png",
+              "step_available": false
+            }
+          ]
+        },
+        "CM2": {
+          "label": "CM2 Series",
+          "description": "Double Acting, Compact",
+          "variants": [
+            {
+              "part_no": "CM2B20-25",
+              "label": "CM2B20 / Bore 20 × 25mm",
+              "bore_mm": 20,
+              "stroke_mm": 25,
+              "type": "Double Acting",
+              "step_file": "models/cylinder/CM2B20-25.step",
+              "preview_img": "previews/CM2B20-25.png",
+              "step_available": false
+            },
+            {
+              "part_no": "CM2B20-50",
+              "label": "CM2B20 / Bore 20 × 50mm",
+              "bore_mm": 20,
+              "stroke_mm": 50,
+              "type": "Double Acting",
+              "step_file": "models/cylinder/CM2B20-50.step",
+              "preview_img": "previews/CM2B20-50.png",
+              "step_available": false
+            }
+          ]
+        }
+      }
+    },
+    "fitting": {
+      "label": "Fitting / Tubing",
+      "description": "เลือก Fitting และขนาดท่อ",
+      "series": {
+        "KQ2": {
+          "label": "KQ2 One-touch Fitting",
+          "description": "Push-in, หลากหลายรูปแบบ",
+          "variants": [
+            {
+              "part_no": "KQ2H06-01S",
+              "label": "KQ2H / Ø6 × 1/8\" Straight",
+              "tube_od_mm": 6,
+              "thread": "1/8\"",
+              "type": "Straight",
+              "step_file": "models/fitting/KQ2H06-01S.step",
+              "preview_img": "previews/KQ2H06-01S.png",
+              "step_available": false
+            },
+            {
+              "part_no": "KQ2H08-02S",
+              "label": "KQ2H / Ø8 × 1/4\" Straight",
+              "tube_od_mm": 8,
+              "thread": "1/4\"",
+              "type": "Straight",
+              "step_file": "models/fitting/KQ2H08-02S.step",
+              "preview_img": "previews/KQ2H08-02S.png",
+              "step_available": false
+            },
+            {
+              "part_no": "KQ2L06-01S",
+              "label": "KQ2L / Ø6 × 1/8\" Elbow",
+              "tube_od_mm": 6,
+              "thread": "1/8\"",
+              "type": "Elbow",
+              "step_file": "models/fitting/KQ2L06-01S.step",
+              "preview_img": "previews/KQ2L06-01S.png",
+              "step_available": false
+            },
+            {
+              "part_no": "KQ2U06",
+              "label": "KQ2U / Ø6 Union Straight",
+              "tube_od_mm": 6,
+              "thread": null,
+              "type": "Union",
+              "step_file": "models/fitting/KQ2U06.step",
+              "preview_img": "previews/KQ2U06.png",
+              "step_available": false
+            }
+          ]
+        },
+        "TU": {
+          "label": "TU Polyurethane Tube",
+          "description": "ท่อ PU ตัดตามความยาว",
+          "variants": [
+            {
+              "part_no": "TU0425B",
+              "label": "TU / Ø4×2.5 Blue",
+              "od_mm": 4,
+              "id_mm": 2.5,
+              "color": "Blue",
+              "unit": "per meter",
+              "step_file": null,
+              "preview_img": "previews/TU0425B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "TU0604B",
+              "label": "TU / Ø6×4 Blue",
+              "od_mm": 6,
+              "id_mm": 4,
+              "color": "Blue",
+              "unit": "per meter",
+              "step_file": null,
+              "preview_img": "previews/TU0604B.png",
+              "step_available": false
+            },
+            {
+              "part_no": "TU0805B",
+              "label": "TU / Ø8×5 Blue",
+              "od_mm": 8,
+              "id_mm": 5,
+              "color": "Blue",
+              "unit": "per meter",
+              "step_file": null,
+              "preview_img": "previews/TU0805B.png",
+              "step_available": false
+            }
+          ]
+        }
+      }
+    }
+  },
+
+  "assembly_rules": {
+    "manifold_auto_select": {
+      "description": "เลือก Manifold ที่เหมาะสมจาก valve series และจำนวน station",
+      "rules": [
+        {
+          "valve_series": ["VFS", "SY"],
+          "manifold_series": "SS5V1"
+        },
+        {
+          "valve_series": ["VQ"],
+          "manifold_series": "D-sub"
+        }
+      ]
+    },
+    "fitting_suggestion": {
+      "description": "แนะนำ Fitting จาก port size ของ valve",
+      "rules": [
+        { "port": "M5",   "suggested_fitting": "KQ2H04-M5S", "tube_od": 4 },
+        { "port": "1/8\"", "suggested_fitting": "KQ2H06-01S", "tube_od": 6 },
+        { "port": "1/4\"", "suggested_fitting": "KQ2H08-02S", "tube_od": 8 },
+        { "port": "3/8\"", "suggested_fitting": "KQ2H10-03S", "tube_od": 10 }
+      ]
+    }
+  }
+}

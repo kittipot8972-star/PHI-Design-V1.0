@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHI — Pneumatic Assembly Selector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root {
+  --bg: #0d0f12;
+  --bg2: #141720;
+  --bg3: #1c2030;
+  --bg4: #232840;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --accent: #3b82f6;
+  --accent2: #60a5fa;
+  --accent-dim: rgba(59,130,246,0.15);
+  --accent-glow: rgba(59,130,246,0.35);
+  --text: #e8eaf0;
+  --text2: #8b91a8;
+  --text3: #555d7a;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --red: #ef4444;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Sarabun', sans-serif;
+  --r: 8px;
+  --r2: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* --- TOPBAR --- */
+.topbar {
+  height: 52px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--accent2);
+}
+.logo span { color: var(--text3); }
+.topbar-title {
+  font-size: 12px;
+  color: var(--text3);
+  font-family: var(--mono);
+}
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.step-pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  transition: all 0.2s;
+}
+.step-pill.active { border-color: var(--accent); color: var(--accent2); background: var(--accent-dim); }
+.step-pill.done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+/* --- MAIN LAYOUT --- */
+.main { display: grid; grid-template-columns: 340px 1fr 300px; height: calc(100vh - 52px); overflow: hidden; }
+
+/* --- SIDEBAR LEFT (SELECTOR) --- */
+.sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.cat-header {
+  padding: 6px 20px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cat-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.cat-icon.valve { background: rgba(59,130,246,0.15); color: var(--accent2); }
+.cat-icon.manifold { background: rgba(139,92,246,0.15); color: #c084fc; }
+.cat-icon.cylinder { background: rgba(34,197,94,0.15); color: #4ade80; }
+.cat-icon.fitting { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+.cat-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--text2); text-transform: uppercase; }
+.cat-sub { font-size: 10px; color: var(--text3); margin-left: auto; font-family: var(--mono); }
+
+.series-block { margin-bottom: 4px; }
+.series-label {
+  padding: 4px 20px 4px 48px;
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--text3);
+  letter-spacing: 0.05em;
+}
+
+.part-item {
+  padding: 8px 20px 8px 48px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.part-item:hover { background: rgba(255,255,255,0.03); }
+.part-item.selected {
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+}
+.part-item.selected.manifold-item { background: rgba(139,92,246,0.1); border-left-color: #7c3aed; }
+.part-item.selected.cylinder-item { background: var(--green-dim); border-left-color: var(--green); }
+.part-item.selected.fitting-item { background: var(--amber-dim); border-left-color: var(--amber); }
+
+.part-check {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  transition: all 0.15s;
+}
+.part-item.selected .part-check { background: var(--accent); border-color: var(--accent); color: #fff; }
+.part-item.selected.manifold-item .part-check { background: #7c3aed; border-color: #7c3aed; }
+.part-item.selected.cylinder-item .part-check { background: var(--green); border-color: var(--green); color: #000; }
+.part-item.selected.fitting-item .part-check { background: var(--amber); border-color: var(--amber); color: #000; }
+
+.part-info { flex: 1; min-width: 0; }
+.part-name { font-size: 12px; color: var(--text); line-height: 1.3; }
+.part-no { font-size: 10px; font-family: var(--mono); color: var(--text3); margin-top: 1px; }
+
+.step-badge {
+  font-size: 9px;
+  font-family: var(--mono);
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.step-badge.yes { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+.step-badge.no { background: rgba(255,255,255,0.04); color: var(--text3); border: 1px solid var(--border); }
+
+.divider-line { height: 1px; background: var(--border); margin: 12px 20px; }
+
+/* qty row for fitting */
+.qty-row {
+  padding: 4px 20px 4px 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.qty-label { font-size: 11px; color: var(--text3); flex: 1; }
+.qty-ctrl { display: flex; align-items: center; gap: 4px; }
+.qty-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.qty-btn:hover { border-color: var(--accent); color: var(--accent2); }
+.qty-val { font-family: var(--mono); font-size: 12px; color: var(--text); min-width: 20px; text-align: center; }
+
+/* --- CENTER (3D PREVIEW) --- */
+.preview-area {
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.preview-header {
+  padding: 16px 24px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.preview-header-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.preview-header-sub { font-size: 11px; color: var(--text3); margin-top: 1px; font-family: var(--mono); }
+.view-tabs { margin-left: auto; display: flex; gap: 4px; }
+.view-tab {
+  padding: 4px 12px;
+  font-size: 10px;
+  font-family: var(--mono);
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.view-tab.active { border-color: var(--accent); color: var(--accent2); background: var(--accent-dim); }
+
+.preview-canvas {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Assembly view */
+.assembly-view {
+  width: 100%;
+  max-width: 560px;
+}
+.assembly-slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 12px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  transition: all 0.2s;
+  animation: slideIn 0.3s ease;
+}
+.assembly-slot.filled { border-color: var(--border2); }
+.assembly-slot.valve-slot.filled { border-left: 3px solid var(--accent); }
+.assembly-slot.manifold-slot.filled { border-left: 3px solid #7c3aed; }
+.assembly-slot.cylinder-slot.filled { border-left: 3px solid var(--green); }
+.assembly-slot.fitting-slot.filled { border-left: 3px solid var(--amber); }
+@keyframes slideIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.slot-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.slot-info { flex: 1; min-width: 0; }
+.slot-label { font-size: 10px; font-family: var(--mono); color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.slot-name { font-size: 13px; color: var(--text); margin-top: 2px; font-weight: 500; }
+.slot-partno { font-size: 10px; font-family: var(--mono); color: var(--text3); margin-top: 2px; }
+.slot-empty { font-size: 12px; color: var(--text3); font-style: italic; }
+
+.slot-step-tag {
+  font-size: 9px;
+  font-family: var(--mono);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.slot-step-tag.ready { background: var(--green-dim); color: var(--green); }
+.slot-step-tag.pending { background: rgba(245,158,11,0.1); color: var(--amber); }
+
+/* Preview image area */
+.preview-img-area {
+  width: 100%;
+  max-width: 560px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.preview-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  overflow: hidden;
+}
+.preview-card-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  font-size: 11px;
+  font-family: var(--mono);
+  position: relative;
+}
+.preview-card-img img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
+.preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text3);
+}
+.preview-card-label {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text3);
+  font-family: var(--mono);
+}
+.preview-card-label strong { color: var(--text2); }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: var(--text3);
+}
+.empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+.empty-title { font-size: 14px; color: var(--text2); margin-bottom: 6px; }
+.empty-sub { font-size: 12px; }
+
+/* --- SIDEBAR RIGHT (BOM + DOWNLOAD) --- */
+.bom-panel {
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.bom-header {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.bom-title { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.04em; }
+.bom-sub { font-size: 10px; color: var(--text3); font-family: var(--mono); margin-top: 2px; }
+.bom-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+}
+.bom-list::-webkit-scrollbar { width: 3px; }
+.bom-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.bom-row {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.bom-row-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+.bom-part-no { font-family: var(--mono); font-size: 10px; color: var(--accent2); }
+.bom-qty { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.bom-desc { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.bom-step-status { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+.bom-step-dot { width: 5px; height: 5px; border-radius: 50%; }
+.bom-step-dot.ready { background: var(--green); }
+.bom-step-dot.pending { background: var(--amber); }
+.bom-step-text { font-size: 9px; font-family: var(--mono); color: var(--text3); }
+
+.bom-empty { padding: 24px 16px; text-align: center; color: var(--text3); font-size: 12px; }
+
+.bom-footer { padding: 14px 14px 16px; border-top: 1px solid var(--border); }
+.bom-summary {
+  background: var(--bg3);
+  border-radius: var(--r);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.bom-stat { }
+.bom-stat-label { font-size: 9px; font-family: var(--mono); color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.bom-stat-val { font-size: 16px; font-family: var(--mono); font-weight: 500; color: var(--text); margin-top: 2px; }
+.bom-stat-val.ready { color: var(--green); }
+.bom-stat-val.pending { color: var(--amber); }
+
+.btn-download {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: var(--r);
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+.btn-download.primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-download.primary:hover { background: #2563eb; transform: translateY(-1px); }
+.btn-download.primary:disabled { background: var(--bg4); color: var(--text3); cursor: not-allowed; transform: none; }
+.btn-download.secondary {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+}
+.btn-download.secondary:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-dim); }
+.btn-download.secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.download-note { font-size: 10px; color: var(--text3); text-align: center; font-family: var(--mono); }
+
+/* Notification */
+.notif {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 300px;
+  animation: notifIn 0.25s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+@keyframes notifIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Progress bar */
+.progress-bar-wrap {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.4s ease;
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="logo">PHI<span>.</span>DESIGN</div>
+  <div class="topbar-title">Pneumatic Assembly Selector</div>
+  <div class="topbar-right">
+    <div class="step-pill active" id="pill-select">01 SELECT</div>
+    <div class="step-pill" id="pill-preview">02 PREVIEW</div>
+    <div class="step-pill" id="pill-export">03 EXPORT</div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- LEFT SIDEBAR: SELECTOR -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- CENTER: 3D PREVIEW -->
+  <main class="preview-area">
+    <div class="preview-header">
+      <div>
+        <div class="preview-header-title">Assembly Preview</div>
+        <div class="preview-header-sub" id="preview-sub">เลือกอุปกรณ์เพื่อเริ่มประกอบ</div>
+      </div>
+      <div class="view-tabs">
+        <div class="view-tab active" onclick="switchView('assembly')" id="tab-assembly">Assembly</div>
+        <div class="view-tab" onclick="switchView('render')" id="tab-render">Render</div>
+      </div>
+    </div>
+
+    <div class="preview-canvas" id="preview-canvas">
+      <div class="empty-state">
+        <div class="empty-icon">⬡</div>
+        <div class="empty-title">ยังไม่มีชิ้นส่วน</div>
+        <div class="empty-sub">เลือกอุปกรณ์จากแผงซ้ายเพื่อเริ่มต้น</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RIGHT PANEL: BOM + DOWNLOAD -->
+  <aside class="bom-panel">
+    <div class="bom-header">
+      <div class="bom-title">Bill of Materials</div>
+      <div class="bom-sub" id="bom-count">0 รายการ</div>
+    </div>
+    <div class="bom-list" id="bom-list">
+      <div class="bom-empty">ยังไม่มีรายการ</div>
+    </div>
+    <div class="bom-footer">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
+      <div class="bom-summary">
+        <div class="bom-stat">
+          <div class="bom-stat-label">รายการทั้งหมด</div>
+          <div class="bom-stat-val" id="stat-total">0</div>
+        </div>
+        <div class="bom-stat">
+          <div class="bom-stat-label">STEP พร้อม</div>
+          <div class="bom-stat-val ready" id="stat-ready">0</div>
+        </div>
+        <div class="bom-stat">
+          <div class="bom-stat-label">รอ STEP</div>
+          <div class="bom-stat-val pending" id="stat-pending">0</div>
+        </div>
+        <div class="bom-stat">
+          <div class="bom-stat-label">ชิ้นส่วน</div>
+          <div class="bom-stat-val" id="stat-parts">0</div>
+        </div>
+      </div>
+
+      <button class="btn-download primary" id="btn-step" onclick="downloadSTEP()" disabled>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download Assembly STEP
+      </button>
+      <button class="btn-download secondary" id="btn-bom" onclick="downloadBOM()" disabled>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Export BOM (CSV)
+      </button>
+      <div class="download-note" id="download-note">เลือกอุปกรณ์ก่อนดาวน์โหลด</div>
+    </div>
+  </aside>
+</div>
+
+<script>
+let PRODUCTS = null;
+let selection = {
+  solenoid_valve: null,
+  manifold: null,
+  cylinder: null,
+  fitting: null,
+  fittingQty: 4
+};
+let currentView = 'assembly';
+let notifTimer = null;
+
+// Load products data (inline for GitHub Pages compatibility)
+const PRODUCTS_DATA = {
+  "categories": {
+    "solenoid_valve": {
+      "label": "Solenoid Valve",
+      "series": {
+        "VFS": { "label": "VFS Series", "description": "5/2 way, Direct Acting",
+          "variants": [
+            { "part_no": "VFS-1200-5A", "label": "VFS-1200 / Bore 6mm", "bore_mm": 6, "port": "1/8\"", "voltage": "24VDC", "step_available": false },
+            { "part_no": "VFS-1500-5A", "label": "VFS-1500 / Bore 10mm", "bore_mm": 10, "port": "1/4\"", "voltage": "24VDC", "step_available": false },
+            { "part_no": "VFS-2120-5A", "label": "VFS-2120 / Bore 15mm", "bore_mm": 15, "port": "1/4\"", "voltage": "24VDC", "step_available": false }
+          ]
+        },
+        "SY": { "label": "SY Series", "description": "5/2 way, Pilot Operated",
+          "variants": [
+            { "part_no": "SY3120-5LZD", "label": "SY3120 / Bore 10mm", "bore_mm": 10, "port": "1/8\"", "voltage": "24VDC", "step_available": false },
+            { "part_no": "SY5120-5LZD", "label": "SY5120 / Bore 15mm", "bore_mm": 15, "port": "1/4\"", "voltage": "24VDC", "step_available": false },
+            { "part_no": "SY7120-5LZD", "label": "SY7120 / Bore 20mm", "bore_mm": 20, "port": "3/8\"", "voltage": "24VDC", "step_available": false }
+          ]
+        },
+        "VQ": { "label": "VQ Series", "description": "5/2 way, High Speed",
+          "variants": [
+            { "part_no": "VQ1100-5B", "label": "VQ1100 / Bore 6mm", "bore_mm": 6, "port": "M5", "voltage": "24VDC", "step_available": false },
+            { "part_no": "VQ2100-5B", "label": "VQ2100 / Bore 10mm", "bore_mm": 10, "port": "1/8\"", "voltage": "24VDC", "step_available": false }
+          ]
+        }
+      }
+    },
+    "manifold": {
+      "label": "Manifold",
+      "series": {
+        "SS5V1": { "label": "SS5V1 Series", "description": "สำหรับ VFS / SY Series",
+          "variants": [
+            { "part_no": "SS5V1-W10S-02B", "label": "SS5V1 / 2 Station", "stations": 2, "compatible_series": ["VFS","SY"], "step_available": false },
+            { "part_no": "SS5V1-W10S-04B", "label": "SS5V1 / 4 Station", "stations": 4, "compatible_series": ["VFS","SY"], "step_available": false },
+            { "part_no": "SS5V1-W10S-06B", "label": "SS5V1 / 6 Station", "stations": 6, "compatible_series": ["VFS","SY"], "step_available": false },
+            { "part_no": "SS5V1-W10S-08B", "label": "SS5V1 / 8 Station", "stations": 8, "compatible_series": ["VFS","SY"], "step_available": false },
+            { "part_no": "SS5V1-W10S-10B", "label": "SS5V1 / 10 Station", "stations": 10, "compatible_series": ["VFS","SY"], "step_available": false }
+          ]
+        },
+        "D-sub": { "label": "D-sub Manifold", "description": "สำหรับ VQ Series",
+          "variants": [
+            { "part_no": "SS5Q13-02B", "label": "D-sub / 2 Station", "stations": 2, "compatible_series": ["VQ"], "step_available": false },
+            { "part_no": "SS5Q13-04B", "label": "D-sub / 4 Station", "stations": 4, "compatible_series": ["VQ"], "step_available": false }
+          ]
+        }
+      }
+    },
+    "cylinder": {
+      "label": "Cylinder",
+      "series": {
+        "CA2": { "label": "CA2 Series", "description": "Double Acting, Standard",
+          "variants": [
+            { "part_no": "CA2B32-25",  "label": "CA2B32 / Bore 32 × 25mm",  "bore_mm": 32, "stroke_mm": 25, "step_available": false },
+            { "part_no": "CA2B32-50",  "label": "CA2B32 / Bore 32 × 50mm",  "bore_mm": 32, "stroke_mm": 50, "step_available": false },
+            { "part_no": "CA2B50-50",  "label": "CA2B50 / Bore 50 × 50mm",  "bore_mm": 50, "stroke_mm": 50, "step_available": false },
+            { "part_no": "CA2B50-100", "label": "CA2B50 / Bore 50 × 100mm", "bore_mm": 50, "stroke_mm": 100,"step_available": false }
+          ]
+        },
+        "CM2": { "label": "CM2 Series", "description": "Double Acting, Compact",
+          "variants": [
+            { "part_no": "CM2B20-25", "label": "CM2B20 / Bore 20 × 25mm", "bore_mm": 20, "stroke_mm": 25, "step_available": false },
+            { "part_no": "CM2B20-50", "label": "CM2B20 / Bore 20 × 50mm", "bore_mm": 20, "stroke_mm": 50, "step_available": false }
+          ]
+        }
+      }
+    },
+    "fitting": {
+      "label": "Fitting / Tubing",
+      "series": {
+        "KQ2": { "label": "KQ2 One-touch Fitting", "description": "Push-in fitting",
+          "variants": [
+            { "part_no": "KQ2H06-01S", "label": "KQ2H / Ø6 × 1/8\" Straight", "type": "Straight", "step_available": false },
+            { "part_no": "KQ2H08-02S", "label": "KQ2H / Ø8 × 1/4\" Straight", "type": "Straight", "step_available": false },
+            { "part_no": "KQ2L06-01S", "label": "KQ2L / Ø6 × 1/8\" Elbow",    "type": "Elbow",    "step_available": false },
+            { "part_no": "KQ2U06",     "label": "KQ2U / Ø6 Union Straight",    "type": "Union",    "step_available": false }
+          ]
+        },
+        "TU": { "label": "TU Polyurethane Tube", "description": "ท่อ PU ตัดตามความยาว",
+          "variants": [
+            { "part_no": "TU0425B", "label": "TU / Ø4×2.5 Blue",  "unit": "per meter", "step_available": false },
+            { "part_no": "TU0604B", "label": "TU / Ø6×4 Blue",    "unit": "per meter", "step_available": false },
+            { "part_no": "TU0805B", "label": "TU / Ø8×5 Blue",    "unit": "per meter", "step_available": false }
+          ]
+        }
+      }
+    }
+  }
+};
+
+PRODUCTS = PRODUCTS_DATA;
+
+// ---- BUILD SIDEBAR ----
+const CAT_META = {
+  solenoid_valve: { icon: '⬡', cls: 'valve',    label: 'Solenoid Valve',    itemCls: '' },
+  manifold:       { icon: '▦', cls: 'manifold',  label: 'Manifold',          itemCls: 'manifold-item' },
+  cylinder:       { icon: '⬤', cls: 'cylinder',  label: 'Cylinder',          itemCls: 'cylinder-item' },
+  fitting:        { icon: '◈', cls: 'fitting',   label: 'Fitting / Tubing',  itemCls: 'fitting-item' }
+};
+
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = '';
+  for (const [catKey, cat] of Object.entries(PRODUCTS.categories)) {
+    const meta = CAT_META[catKey];
+    const hdr = document.createElement('div');
+    hdr.className = 'cat-header';
+    hdr.innerHTML = `
+      <div class="cat-icon ${meta.cls}">${meta.icon}</div>
+      <div class="cat-title">${meta.label}</div>
+      <div class="cat-sub">${Object.keys(cat.series).length} series</div>`;
+    sb.appendChild(hdr);
+
+    for (const [serKey, ser] of Object.entries(cat.series)) {
+      const sb2 = document.createElement('div');
+      sb2.className = 'series-block';
+      sb2.innerHTML = `<div class="series-label">${ser.label} — ${ser.description}</div>`;
+
+      for (const variant of ser.variants) {
+        const item = document.createElement('div');
+        const selKey = `${catKey}__${variant.part_no}`;
+        item.className = `part-item ${meta.itemCls}`;
+        item.dataset.cat = catKey;
+        item.dataset.partno = variant.part_no;
+        item.dataset.serkey = serKey;
+        item.innerHTML = `
+          <div class="part-check" id="chk-${selKey}">✓</div>
+          <div class="part-info">
+            <div class="part-name">${variant.label}</div>
+            <div class="part-no">${variant.part_no}</div>
+          </div>
+          <div class="step-badge ${variant.step_available ? 'yes' : 'no'}">${variant.step_available ? 'STEP' : 'TBD'}</div>`;
+        item.addEventListener('click', () => selectPart(catKey, variant, serKey, item));
+        sb2.appendChild(item);
+      }
+      sb.appendChild(sb2);
+    }
+
+    // Qty control for fitting
+    if (catKey === 'fitting') {
+      const qRow = document.createElement('div');
+      qRow.className = 'qty-row';
+      qRow.innerHTML = `
+        <div class="qty-label">จำนวน Fitting</div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-val" id="qty-display">${selection.fittingQty}</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>`;
+      sb.appendChild(qRow);
+    }
+
+    if (catKey !== 'fitting') {
+      const div = document.createElement('div');
+      div.className = 'divider-line';
+      sb.appendChild(div);
+    }
+  }
+}
+
+function selectPart(catKey, variant, serKey, clickedEl) {
+  // Deselect others in same category
+  document.querySelectorAll(`.part-item[data-cat="${catKey}"]`).forEach(el => el.classList.remove('selected'));
+  // Toggle
+  const wasSelected = selection[catKey] && selection[catKey].part_no === variant.part_no;
+  if (wasSelected) {
+    selection[catKey] = null;
+  } else {
+    selection[catKey] = { ...variant, _serKey: serKey };
+    clickedEl.classList.add('selected');
+  }
+  updateUI();
+}
+
+function changeQty(delta) {
+  selection.fittingQty = Math.max(1, Math.min(20, selection.fittingQty + delta));
+  document.getElementById('qty-display').textContent = selection.fittingQty;
+  updateUI();
+}
+
+// ---- UPDATE UI ----
+function updateUI() {
+  updatePills();
+  updatePreview();
+  updateBOM();
+}
+
+function updatePills() {
+  const count = Object.values(selection).filter((v,i) => i < 4 && v !== null).length;
+  const p2 = document.getElementById('pill-preview');
+  const p3 = document.getElementById('pill-export');
+  p2.className = count > 0 ? 'step-pill active' : 'step-pill';
+  p3.className = count > 0 ? 'step-pill active' : 'step-pill';
+}
+
+function updatePreview() {
+  const canvas = document.getElementById('preview-canvas');
+  const sub = document.getElementById('preview-sub');
+  const hasAny = Object.entries(selection).some(([k, v]) => k !== 'fittingQty' && v !== null);
+
+  if (!hasAny) {
+    canvas.innerHTML = `<div class="empty-state"><div class="empty-icon">⬡</div><div class="empty-title">ยังไม่มีชิ้นส่วน</div><div class="empty-sub">เลือกอุปกรณ์จากแผงซ้าย</div></div>`;
+    sub.textContent = 'เลือกอุปกรณ์เพื่อเริ่มประกอบ';
+    return;
+  }
+
+  const selectedCount = [selection.solenoid_valve, selection.manifold, selection.cylinder, selection.fitting].filter(Boolean).length;
+  sub.textContent = `${selectedCount} รายการที่เลือก`;
+
+  if (currentView === 'assembly') renderAssemblyView(canvas);
+  else renderRenderView(canvas);
+}
+
+const SLOT_ICONS = {
+  solenoid_valve: '⬡',
+  manifold: '▦',
+  cylinder: '⬤',
+  fitting: '◈'
+};
+const SLOT_LABELS = {
+  solenoid_valve: 'Solenoid Valve',
+  manifold: 'Manifold',
+  cylinder: 'Cylinder',
+  fitting: 'Fitting'
+};
+const SLOT_CLASSES = {
+  solenoid_valve: 'valve-slot',
+  manifold: 'manifold-slot',
+  cylinder: 'cylinder-slot',
+  fitting: 'fitting-slot'
+};
+
+function renderAssemblyView(canvas) {
+  const cats = ['solenoid_valve', 'manifold', 'cylinder', 'fitting'];
+  let html = '<div class="assembly-view">';
+  for (const cat of cats) {
+    const sel = selection[cat];
+    const isFilled = sel !== null;
+    const sc = SLOT_CLASSES[cat];
+    html += `<div class="assembly-slot ${sc} ${isFilled ? 'filled' : ''}">
+      <div class="slot-icon">${SLOT_ICONS[cat]}</div>
+      <div class="slot-info">
+        <div class="slot-label">${SLOT_LABELS[cat]}</div>`;
+    if (isFilled) {
+      const qty = cat === 'fitting' ? ` × ${selection.fittingQty}` : '';
+      html += `<div class="slot-name">${sel.label}${qty}</div>
+        <div class="slot-partno">${sel.part_no}</div>`;
+    } else {
+      html += `<div class="slot-empty">— ยังไม่ได้เลือก</div>`;
+    }
+    html += `</div>`;
+    if (isFilled) {
+      const stepOk = sel.step_available;
+      html += `<div class="slot-step-tag ${stepOk ? 'ready' : 'pending'}">${stepOk ? '✓ STEP' : '○ TBD'}</div>`;
+    }
+    html += `</div>`;
+  }
+  // Connection line visual
+  const valveOk = selection.solenoid_valve && selection.manifold;
+  if (valveOk) {
+    html += `<div style="padding:8px 16px;font-size:11px;color:var(--text3);font-family:var(--mono);border:1px dashed var(--border);border-radius:8px;text-align:center;">
+      ▦ ${selection.manifold.part_no} ← ${selection.solenoid_valve._serKey} Series — compatible ✓
+    </div>`;
+  }
+  html += '</div>';
+  canvas.innerHTML = html;
+}
+
+function renderRenderView(canvas) {
+  const cats = ['solenoid_valve', 'manifold', 'cylinder', 'fitting'];
+  let html = '<div class="preview-img-area">';
+  for (const cat of cats) {
+    const sel = selection[cat];
+    if (!sel) continue;
+    const previewSrc = sel.preview_img || null;
+    html += `<div class="preview-card">
+      <div class="preview-card-img">`;
+    if (previewSrc) {
+      html += `<img src="${previewSrc}" alt="${sel.part_no}" onerror="this.parentElement.innerHTML=placeholderHTML('${sel.part_no}')">`;
+    } else {
+      html += `<div class="preview-placeholder">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="24" height="24" rx="4" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/><path d="M12 20l4-8 4 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>${sel.part_no}</span>
+        <span style="font-size:9px;opacity:0.6">preview ยังไม่มี</span>
+      </div>`;
+    }
+    html += `</div>
+      <div class="preview-card-label"><strong>${SLOT_LABELS[cat]}</strong> · ${sel.part_no}</div>
+    </div>`;
+  }
+  if (!html.includes('preview-card')) {
+    html += '<div style="grid-column:1/-1;text-align:center;color:var(--text3);font-size:12px;padding:40px 0;">เลือกอุปกรณ์เพื่อดู preview</div>';
+  }
+  html += '</div>';
+  canvas.innerHTML = html;
+}
+
+function switchView(v) {
+  currentView = v;
+  document.getElementById('tab-assembly').classList.toggle('active', v === 'assembly');
+  document.getElementById('tab-render').classList.toggle('active', v === 'render');
+  updatePreview();
+}
+
+// ---- BOM ----
+function updateBOM() {
+  const listEl = document.getElementById('bom-list');
+  const cats = ['solenoid_valve', 'manifold', 'cylinder', 'fitting'];
+  const rows = [];
+  for (const cat of cats) {
+    const sel = selection[cat];
+    if (!sel) continue;
+    const qty = cat === 'fitting' ? selection.fittingQty : 1;
+    rows.push({ cat, sel, qty });
+  }
+
+  if (rows.length === 0) {
+    listEl.innerHTML = '<div class="bom-empty">ยังไม่มีรายการ</div>';
+    document.getElementById('bom-count').textContent = '0 รายการ';
+    document.getElementById('stat-total').textContent = '0';
+    document.getElementById('stat-ready').textContent = '0';
+    document.getElementById('stat-pending').textContent = '0';
+    document.getElementById('stat-parts').textContent = '0';
+    document.getElementById('progress-bar').style.width = '0%';
+    document.getElementById('btn-step').disabled = true;
+    document.getElementById('btn-bom').disabled = true;
+    document.getElementById('download-note').textContent = 'เลือกอุปกรณ์ก่อนดาวน์โหลด';
+    return;
+  }
+
+  const ready = rows.filter(r => r.sel.step_available).length;
+  const total = rows.length;
+  const pct = Math.round((ready / total) * 100);
+
+  listEl.innerHTML = rows.map(({ cat, sel, qty }) => `
+    <div class="bom-row">
+      <div class="bom-row-top">
+        <div class="bom-part-no">${sel.part_no}</div>
+        <div class="bom-qty">×${qty}</div>
+      </div>
+      <div class="bom-desc">${sel.label}</div>
+      <div class="bom-step-status">
+        <div class="bom-step-dot ${sel.step_available ? 'ready' : 'pending'}"></div>
+        <div class="bom-step-text">${sel.step_available ? 'STEP พร้อม' : 'รอ STEP file'}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('bom-count').textContent = `${total} รายการ`;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-ready').textContent = ready;
+  document.getElementById('stat-pending').textContent = total - ready;
+  document.getElementById('stat-parts').textContent = rows.reduce((s, r) => s + r.qty, 0);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('btn-step').disabled = false;
+  document.getElementById('btn-bom').disabled = false;
+
+  if (ready === total) {
+    document.getElementById('download-note').textContent = 'STEP files พร้อมทั้งหมด';
+  } else {
+    document.getElementById('download-note').textContent = `STEP ${ready}/${total} ไฟล์พร้อม — TBD จะถูก placeholder`;
+  }
+}
+
+// ---- DOWNLOAD STEP ----
+async function downloadSTEP() {
+  const cats = ['solenoid_valve', 'manifold', 'cylinder', 'fitting'];
+  const rows = cats.map(c => selection[c]).filter(Boolean);
+  if (rows.length === 0) return;
+
+  showNotif('⬡', 'กำลังสร้าง Assembly STEP...', '#3b82f6');
+
+  const zip = new JSZip();
+  const assemblyLines = [];
+  const now = new Date().toISOString().split('T')[0];
+
+  // STEP AP214 Assembly file (structural placeholder)
+  assemblyLines.push(`ISO-10303-21;`);
+  assemblyLines.push(`HEADER;`);
+  assemblyLines.push(`FILE_DESCRIPTION(('PHI Pneumatic Assembly','Generated by PHI Design Selector'),'2;1');`);
+  assemblyLines.push(`FILE_NAME('PHI_Assembly_${now}.step','${now}',('PHI Integration Design'),(''),'',' ','');`);
+  assemblyLines.push(`FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));`);
+  assemblyLines.push(`ENDSEC;`);
+  assemblyLines.push(`DATA;`);
+
+  let entityId = 1;
+  const componentRefs = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const part = rows[i];
+    const qty = part === selection.fitting ? selection.fittingQty : 1;
+    const name = part.part_no.replace(/[^A-Za-z0-9_-]/g, '_');
+
+    // Product definition
+    assemblyLines.push(`#${entityId}=PRODUCT('${name}','${part.label}','',());`);
+    assemblyLines.push(`#${entityId+1}=PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE('','',#${entityId},.NOT_KNOWN.);`);
+    assemblyLines.push(`#${entityId+2}=PRODUCT_DEFINITION('design','',#${entityId+1},#${entityId+3});`);
+    assemblyLines.push(`#${entityId+3}=PRODUCT_DEFINITION_CONTEXT('part definition',#${entityId+4},'design');`);
+    assemblyLines.push(`#${entityId+4}=APPLICATION_CONTEXT('automotive design');`);
+    assemblyLines.push(`#${entityId+5}=PRODUCT_RELATED_PRODUCT_CATEGORY('part',$,(#${entityId}));`);
+
+    for (let q = 0; q < qty; q++) {
+      componentRefs.push({ entityId, part, posIndex: q });
+    }
+    entityId += 6;
+
+    // Add placeholder step content if not available
+    if (!part.step_available) {
+      // Create placeholder individual STEP file for each part
+      const placeholderStep = `ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('${part.part_no}','PHI placeholder STEP'),'2;1');\nFILE_NAME('${name}.step','${now}',('PHI Integration Design'),(''),'',' ','');\nFILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));\nENDSEC;\nDATA;\n/* PLACEHOLDER: Replace with actual STEP geometry for ${part.part_no} */\n/* Part: ${part.label} */\nENDSEC;\nEND-ISO-10303-21;\n`;
+      zip.folder('parts').file(`${name}.step`, placeholderStep);
+    }
+  }
+
+  assemblyLines.push(`ENDSEC;`);
+  assemblyLines.push(`END-ISO-10303-21;`);
+
+  zip.file(`PHI_Assembly_${now}.step`, assemblyLines.join('\n'));
+
+  // BOM CSV
+  const bomCSV = generateBOMCSV();
+  zip.file(`PHI_BOM_${now}.csv`, bomCSV);
+
+  // README
+  const readme = `PHI Pneumatic Assembly Set
+Generated: ${now}
+================================
+
+FILES:
+- PHI_Assembly_${now}.step  → AP214 Assembly file
+- PHI_BOM_${now}.csv        → Bill of Materials
+- parts/[part_no].step      → Individual part files
+
+SELECTED PARTS:
+${rows.map(p => `- ${p.part_no}  ${p.label}  [STEP: ${p.step_available ? 'READY' : 'PLACEHOLDER'}]`).join('\n')}
+
+NOTE: Parts marked [PLACEHOLDER] require actual STEP geometry.
+      Replace files in /parts/ folder with real STEP files.
+
+Generated by PHI Integration Design Selector v1.0
+`;
+  zip.file('README.txt', readme);
+
+  try {
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `PHI_Assembly_Set_${now}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showNotif('✓', 'ดาวน์โหลด Assembly Set เรียบร้อย', '#22c55e');
+    document.getElementById('pill-export').classList.add('done');
+  } catch (e) {
+    showNotif('✗', 'เกิดข้อผิดพลาด กรุณาลองใหม่', '#ef4444');
+  }
+}
+
+function generateBOMCSV() {
+  const cats = ['solenoid_valve', 'manifold', 'cylinder', 'fitting'];
+  const rows = [['No.', 'Category', 'Part No.', 'Description', 'Qty', 'STEP Status', 'STEP Path']];
+  let n = 1;
+  for (const cat of cats) {
+    const sel = selection[cat];
+    if (!sel) continue;
+    const qty = cat === 'fitting' ? selection.fittingQty : 1;
+    rows.push([
+      n++,
+      SLOT_LABELS[cat],
+      sel.part_no,
+      `"${sel.label}"`,
+      qty,
+      sel.step_available ? 'READY' : 'PLACEHOLDER',
+      sel.step_file || `models/${cat}/${sel.part_no}.step`
+    ]);
+  }
+  return rows.map(r => r.join(',')).join('\n');
+}
+
+function downloadBOM() {
+  const csv = generateBOMCSV();
+  const now = new Date().toISOString().split('T')[0];
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PHI_BOM_${now}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showNotif('✓', 'Export BOM CSV เรียบร้อย', '#22c55e');
+}
+
+function showNotif(icon, msg, color) {
+  document.querySelectorAll('.notif').forEach(n => n.remove());
+  if (notifTimer) clearTimeout(notifTimer);
+  const n = document.createElement('div');
+  n.className = 'notif';
+  n.innerHTML = `<div class="notif-dot" style="background:${color}"></div><div>${msg}</div>`;
+  document.body.appendChild(n);
+  notifTimer = setTimeout(() => n.remove(), 3000);
+}
+
+// ---- INIT ----
+buildSidebar();
+updateUI();
+</script>
+</body>
+</html>
