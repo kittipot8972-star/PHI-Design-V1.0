@@ -25,26 +25,62 @@ header{background:var(--black2);border-bottom:2px solid var(--orange);box-shadow
 .logo-text .line1{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);letter-spacing:2px;}
 .logo-text .line1 span{color:var(--orange);}
 
-/* ── TAB NAV ── */
-.tab-nav{display:flex;gap:4px;}
-.tab-btn{padding:7px 18px;border-radius:4px;font-size:12px;font-weight:700;font-family:'Barlow',sans-serif;letter-spacing:.05em;cursor:pointer;border:1px solid transparent;transition:.2s;color:var(--gray4);background:transparent;}
-.tab-btn:hover{color:var(--orange-light);border-color:var(--charcoal);}
-.tab-btn.active{background:var(--orange);color:#fff;border-color:var(--orange-dark);}
-.tab-btn .tab-icon{margin-right:5px;}
-
 /* ── BREADCRUMB ── */
 .breadcrumb{max-width:1280px;margin:0 auto;padding:10px 20px;font-size:12px;color:var(--gray3);}
 .breadcrumb a{color:var(--orange-light);text-decoration:none;}
-
-/* ── PAGE WRAPPER ── */
 .page-wrapper{max-width:1280px;margin:0 auto;padding:0 20px 60px;}
 .page-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--white);margin-bottom:6px;}
 .page-sub{font-size:13px;color:var(--gray3);}
 .product-header{background:var(--black2);border:1px solid var(--black4);border-radius:6px;padding:20px;margin-bottom:4px;}
 
-/* ── TAB PANELS ── */
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
+/* ══════════════════════════════════════════
+   ASSEMBLY SET — Section ใหม่ (auto-sync)
+══════════════════════════════════════════ */
+/* Assembly cards */
+.asm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:4px;}
+.asm-card{background:var(--black3);border:1px solid var(--black4);border-radius:6px;padding:14px 16px;border-left:3px solid var(--black4);animation:cardIn .25s ease;}
+@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.asm-card.card-sv{border-left-color:var(--orange);}
+.asm-card.card-mf{border-left-color:var(--blue);}
+.asm-card.card-bk{border-left-color:var(--charcoal);}
+.asm-card-cat{font-size:10px;color:var(--gray3);text-transform:uppercase;letter-spacing:.05em;font-family:'Barlow',sans-serif;display:flex;align-items:center;gap:5px;margin-bottom:5px;}
+.asm-card-pno{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;color:var(--orange-light);margin-bottom:2px;}
+.asm-card-desc{font-size:11px;color:var(--gray4);line-height:1.4;}
+.asm-card-qty{font-size:10px;color:var(--gray3);margin-top:4px;font-family:'Barlow',sans-serif;}
+.asm-card-step{display:inline-block;font-size:9px;font-family:'Barlow',sans-serif;padding:1px 6px;border-radius:3px;margin-top:5px;font-weight:700;}
+.step-ok{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.25);}
+.step-tbd{background:rgba(245,158,11,.08);color:#f59e0b;border:1px solid rgba(245,158,11,.2);}
+
+/* BOM + Download row */
+.asm-bottom{display:grid;grid-template-columns:1fr 280px;gap:14px;margin-top:14px;}
+.bom-table-wrap{background:var(--black3);border:1px solid var(--black4);border-radius:6px;overflow:hidden;}
+.bom-table{width:100%;border-collapse:collapse;}
+.bom-table th{padding:8px 14px;background:rgba(255,255,255,.03);color:var(--gray4);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--black4);text-align:left;font-family:'Barlow',sans-serif;}
+.bom-table td{padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;vertical-align:middle;}
+.bom-table tr:last-child td{border-bottom:none;}
+.bom-pno{font-family:'Barlow',sans-serif;font-weight:700;color:var(--orange-light);font-size:12px;}
+.bom-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle;}
+.bom-dot.g{background:var(--green);}
+.bom-dot.a{background:#f59e0b;}
+
+/* Download panel */
+.dl-panel{background:var(--black3);border:1px solid var(--black4);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.dl-panel-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--white);}
+.prog-wrap{height:2px;background:var(--charcoal);border-radius:1px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--orange);border-radius:1px;transition:.4s;}
+.dl-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dl-stat-lbl{font-size:9px;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;font-family:'Barlow',sans-serif;}
+.dl-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text-light);line-height:1.1;}
+.dl-stat-val.g{color:var(--green);}
+.dl-stat-val.a{color:#f59e0b;}
+.btn-dl{width:100%;padding:9px;border-radius:4px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:.2s;letter-spacing:.05em;}
+.btn-dl.primary{background:var(--orange);color:#fff;}
+.btn-dl.primary:hover{background:var(--orange-dark);transform:translateY(-1px);}
+.btn-dl.primary:disabled{background:var(--black4);color:var(--gray3);cursor:not-allowed;transform:none;}
+.btn-dl.secondary{background:transparent;border:1px solid var(--charcoal);color:var(--gray4);}
+.btn-dl.secondary:hover{border-color:var(--orange);color:var(--orange-light);}
+.btn-dl.secondary:disabled{opacity:.4;cursor:not-allowed;}
+.dl-note{font-size:10px;color:var(--gray3);text-align:center;font-family:'Barlow',sans-serif;}
 
 /* ── SECTION ── */
 .section{background:var(--black2);border:1px solid var(--black4);border-radius:6px;margin-top:20px;overflow:hidden;}
@@ -247,14 +283,7 @@ select:focus{border-color:var(--orange);}
       <img src="../img/PHI.png" width="45" onerror="this.style.display='none'">
       <div class="logo-text"><div class="line1"><span>PHI</span> INTEGRATION DESIGN</div></div>
     </div>
-    <div class="tab-nav">
-      <button class="tab-btn active" id="tb1" onclick="switchTab(1)">
-        <span class="tab-icon">⚡</span>Solenoid Valve Selector
-      </button>
-      <button class="tab-btn" id="tb2" onclick="switchTab(2)">
-        <span class="tab-icon">🔩</span>3D Assembly Set
-      </button>
-    </div>
+    <div style="font-family:'Barlow',sans-serif;font-size:12px;color:var(--gray3);letter-spacing:.04em;">⚡ Solenoid Valve Selector &nbsp;+&nbsp; 🔩 3D Assembly Set</div>
   </div>
 </header>
 
@@ -302,16 +331,14 @@ select:focus{border-color:var(--orange);}
 <!-- ════ PAGE WRAPPER ════ -->
 <div class="page-wrapper">
 
-  <!-- ── PAGE HEADER (dynamic) ── -->
   <div class="product-header">
-    <div class="page-title" id="pageTitle">Solenoid Valve &amp; Manifold Selector</div>
-    <div class="page-sub" id="pageSub">เลือกการใช้งานกระบอกลมและ Series เพื่อคำนวณ Solenoid Valve และ Manifold ที่เหมาะสม</div>
+    <div class="page-title">Solenoid Valve &amp; Manifold Selector</div>
+    <div class="page-sub">เลือกการใช้งานกระบอกลมและ Series เพื่อคำนวณ Solenoid Valve และ Manifold — ผลลัพธ์จะประกอบเป็น Assembly Set อัตโนมัติ</div>
   </div>
 
   <!-- ════════════════════════════════════════
-       PANEL 1 — SOLENOID VALVE SELECTOR (หลัก)
+       SOLENOID VALVE SELECTOR
   ════════════════════════════════════════ -->
-  <div id="panel1" class="tab-panel active">
 
     <!-- SOLENOID VALVE INPUT -->
     <div class="section">
@@ -378,49 +405,38 @@ select:focus{border-color:var(--orange);}
       </div>
     </div>
 
-  </div><!-- /panel1 -->
 
   <!-- ════════════════════════════════════════
-       PANEL 2 — 3D ASSEMBLY SET
+       3D ASSEMBLY SET — auto-sync จาก selector
   ════════════════════════════════════════ -->
-  <div id="panel2" class="tab-panel">
-    <div class="asm-layout">
-
-      <!-- LEFT: Part Selector -->
-      <div class="asm-left" id="asmLeft"></div>
-
-      <!-- CENTER: Preview -->
-      <div class="asm-center">
-        <div class="asm-preview-hdr">
-          <div class="asm-preview-title">ASSEMBLY PREVIEW</div>
-          <div class="view-tabs">
-            <div class="view-tab active" id="vt1" onclick="switchView('assembly')">Assembly</div>
-            <div class="view-tab" id="vt2" onclick="switchView('render')">Render</div>
-          </div>
-        </div>
-        <div class="asm-canvas" id="asmCanvas">
-          <div class="asm-empty">
-            <div class="asm-empty-icon">⬡</div>
-            <div class="asm-empty-title">ยังไม่มีชิ้นส่วน</div>
-            <div class="asm-empty-sub">เลือกอุปกรณ์จากแผงซ้ายเพื่อเริ่มต้น</div>
-          </div>
-        </div>
+  <div class="section" id="asmSection" style="display:none;">
+    <div class="section-title">
+      <span>🔩 3D ASSEMBLY SET
+        <span style="font-size:11px;color:var(--gray3);font-weight:400;" id="asmLabel"></span>
+      </span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="font-size:11px;color:var(--gray3);font-family:'Barlow',sans-serif;" id="asmStepStatus"></span>
       </div>
-
-      <!-- RIGHT: BOM + Download -->
-      <div class="asm-right">
-        <div class="bom-hdr">
-          <div class="bom-hdr-title">BILL OF MATERIALS</div>
-          <div class="bom-hdr-sub" id="bomCount">0 รายการ</div>
+    </div>
+    <div class="section-body">
+      <!-- Assembly Cards -->
+      <div class="asm-cards" id="asmCards"></div>
+      <!-- BOM + Download -->
+      <div class="asm-bottom">
+        <div class="bom-table-wrap">
+          <table class="bom-table">
+            <thead><tr><th>#</th><th>Part No.</th><th>รายการ</th><th>ประเภท</th><th>จำนวน</th><th>STEP</th></tr></thead>
+            <tbody id="asmBomTbody"><tr><td colspan="6" style="padding:20px;text-align:center;color:var(--gray3);">ยังไม่มีรายการ</td></tr></tbody>
+          </table>
         </div>
-        <div class="bom-list" id="bomList"><div class="bom-empty">ยังไม่มีรายการ</div></div>
-        <div class="bom-footer">
+        <div class="dl-panel">
+          <div class="dl-panel-title">DOWNLOAD SET</div>
           <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-          <div class="bom-stats">
-            <div><div class="bstat-lbl">รายการ</div><div class="bstat-val" id="stTotal">0</div></div>
-            <div><div class="bstat-lbl">STEP พร้อม</div><div class="bstat-val g" id="stReady">0</div></div>
-            <div><div class="bstat-lbl">รอ STEP</div><div class="bstat-val a" id="stPending">0</div></div>
-            <div><div class="bstat-lbl">ชิ้นรวม</div><div class="bstat-val" id="stParts">0</div></div>
+          <div class="dl-stats">
+            <div><div class="dl-stat-lbl">รายการ</div><div class="dl-stat-val" id="stTotal">0</div></div>
+            <div><div class="dl-stat-lbl">STEP พร้อม</div><div class="dl-stat-val g" id="stReady">0</div></div>
+            <div><div class="dl-stat-lbl">รอ STEP</div><div class="dl-stat-val a" id="stPending">0</div></div>
+            <div><div class="dl-stat-lbl">ชิ้นส่วนรวม</div><div class="dl-stat-val" id="stParts">0</div></div>
           </div>
           <button class="btn-dl primary" id="btnStep" onclick="downloadSTEP()" disabled>
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -430,33 +446,202 @@ select:focus{border-color:var(--orange);}
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             EXPORT BOM (CSV)
           </button>
-          <div class="dl-note" id="dlNote">เลือกอุปกรณ์ก่อนดาวน์โหลด</div>
+          <div class="dl-note" id="dlNote">เลือก Solenoid Valve ด้านบนเพื่อเริ่มต้น</div>
         </div>
       </div>
-
     </div>
-  </div><!-- /panel2 -->
+  </div>
 
 </div><!-- /page-wrapper -->
 
 <script>
 // ══════════════════════════════════════════════════
-// TAB SWITCH
+// ASSEMBLY SET — sync อัตโนมัติจาก rows
 // ══════════════════════════════════════════════════
-function switchTab(n) {
-  document.getElementById('panel1').classList.toggle('active', n===1);
-  document.getElementById('panel2').classList.toggle('active', n===2);
-  document.getElementById('tb1').classList.toggle('active', n===1);
-  document.getElementById('tb2').classList.toggle('active', n===2);
-  if (n===1) {
-    document.getElementById('pageTitle').innerHTML = 'Solenoid Valve &amp; Manifold Selector';
-    document.getElementById('pageSub').textContent = 'เลือกการใช้งานกระบอกลมและ Series เพื่อคำนวณ Solenoid Valve และ Manifold ที่เหมาะสม';
-    document.getElementById('bcCurrent').textContent = 'Solenoid Valve Selector';
-  } else {
-    document.getElementById('pageTitle').textContent = '3D Assembly Set';
-    document.getElementById('pageSub').textContent = 'เลือกชิ้นส่วนแต่ละประเภท ประกอบ Assembly และดาวน์โหลด STEP Set';
-    document.getElementById('bcCurrent').textContent = '3D Assembly Set';
+const BLANKING_PART = {SY3:'SY3000-26-10A',SY5:'SY5000-26-20A',SY7:'SY7000-26-20A',SY9:'SY9000-26-1A'};
+let notifTimer = null;
+
+function syncAssemblySet() {
+  const sec = document.getElementById('asmSection');
+  if (rows.length === 0) { sec.style.display = 'none'; resetDlPanel(); return; }
+  sec.style.display = 'block';
+
+  // ── Build full BOM from selector ──
+  const bomItems = []; // {partNo, desc, type, qty, series, stepAvailable}
+
+  // Group rows by series
+  const groups = {};
+  rows.forEach(r => {
+    if (!groups[r.size]) groups[r.size] = [];
+    groups[r.size].push(r);
+  });
+
+  Object.values(groups).forEach(grp => {
+    const size = grp[0].size;
+    const count = grp.length;
+    const spare = count > 10 ? 4 : 2;
+    const raw = count + spare;
+    const station = raw % 2 === 0 ? raw : raw + 1;
+    const blanks = station - count;
+    const prefix = MANIFOLD_PREFIX[size] || '';
+    function toEven(n){return n%2===0?n:n+1;}
+
+    // SV entries (unique part numbers)
+    const svGroups = {};
+    grp.forEach(r => {
+      const pno = getPartNo(r.orientation, r.size);
+      if (!svGroups[pno]) svGroups[pno] = {partNo:pno, desc:`Solenoid Valve ${size} ${r.orientation==='H'?'Horizontal':'Vertical'}`, type:'SV', series:size, qty:0, stepAvailable:false};
+      svGroups[pno].qty++;
+    });
+    Object.values(svGroups).forEach(sv => bomItems.push(sv));
+
+    // Manifold entries (split into units ≤10)
+    function splitStations(total, svCount) {
+      const lastDigit = svCount % 10;
+      if (lastDigit===8||lastDigit===9||lastDigit===0) {
+        const half=toEven(Math.min(Math.ceil(total/2),10));const rest=toEven(total-half);
+        if(rest<=10)return[half,rest];const units=[half];let r=rest;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;
+      }
+      const units=[];let r=total;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;
+    }
+    const mfUnits = splitStations(station, count);
+    mfUnits.forEach((take, idx) => {
+      const pno = prefix + String(take).padStart(2,'0');
+      bomItems.push({partNo:pno, desc:`Manifold ${size} Series / ${take} Station${mfUnits.length>1?' (ตัวที่'+(idx+1)+')':''}`, type:'MF', series:size, qty:1, stepAvailable:false});
+    });
+
+    // Blanking plates
+    if (blanks > 0) {
+      const bkPno = BLANKING_PART[size] || 'BLANK';
+      bomItems.push({partNo:bkPno, desc:`Blanking Plate ${size} Series`, type:'BK', series:size, qty:blanks, stepAvailable:false});
+    }
+  });
+
+  // ── Render Assembly Cards ──
+  const cards = document.getElementById('asmCards');
+  const TYPE_CFG = {
+    SV:{label:'Solenoid Valve', icon:'⚡', cls:'card-sv'},
+    MF:{label:'Manifold',       icon:'🔧', cls:'card-mf'},
+    BK:{label:'Blanking Plate', icon:'◻', cls:'card-bk'},
+  };
+  cards.innerHTML = bomItems.map(item => {
+    const tc = TYPE_CFG[item.type] || {label:item.type,icon:'◈',cls:''};
+    return `<div class="asm-card ${tc.cls}">
+      <div class="asm-card-cat"><span>${tc.icon}</span>${tc.label} — <span style="color:var(--gray4)">${item.series}</span></div>
+      <div class="asm-card-pno">${item.partNo}</div>
+      <div class="asm-card-desc">${item.desc}</div>
+      <div class="asm-card-qty">× ${item.qty} ชิ้น</div>
+      <span class="asm-card-step ${item.stepAvailable?'step-ok':'step-tbd'}">${item.stepAvailable?'✓ STEP READY':'○ รอ STEP file'}</span>
+    </div>`;
+  }).join('');
+
+  // ── Render BOM table ──
+  const tbody = document.getElementById('asmBomTbody');
+  tbody.innerHTML = bomItems.map((item, i) => {
+    const tc = TYPE_CFG[item.type] || {label:item.type,icon:'◈',cls:''};
+    const typeTag = item.type==='SV'?'<span class="tag-type tag-sv">Solenoid Valve</span>':
+                    item.type==='MF'?'<span class="tag-type tag-mf">Manifold</span>':
+                    '<span class="tag-type tag-bk">Blanking Plate</span>';
+    return `<tr>
+      <td style="color:var(--gray3);font-size:11px;">${i+1}</td>
+      <td class="bom-pno">${item.partNo}</td>
+      <td style="color:var(--gray4);font-size:12px;">${item.desc}</td>
+      <td>${typeTag}</td>
+      <td style="font-family:'Barlow',sans-serif;font-weight:700;color:var(--text-light);">× ${item.qty}</td>
+      <td><span class="bom-dot ${item.stepAvailable?'g':'a'}"></span><span style="font-size:11px;color:var(--gray3);">${item.stepAvailable?'Ready':'TBD'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // ── Update stats ──
+  const total = bomItems.length;
+  const ready = bomItems.filter(b => b.stepAvailable).length;
+  const pct = total ? Math.round(ready/total*100) : 0;
+  const totalPcs = bomItems.reduce((s,b) => s+b.qty, 0);
+  document.getElementById('stTotal').textContent = total;
+  document.getElementById('stReady').textContent = ready;
+  document.getElementById('stPending').textContent = total - ready;
+  document.getElementById('stParts').textContent = totalPcs;
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('btnStep').disabled = total === 0;
+  document.getElementById('btnCSV').disabled = total === 0;
+  document.getElementById('asmLabel').textContent = `${rows.length} Solenoid Valve → ${total} รายการ`;
+  document.getElementById('asmStepStatus').textContent = ready===total && total>0 ? '✓ STEP พร้อมทั้งหมด' : `STEP ${ready}/${total}`;
+  document.getElementById('dlNote').textContent = ready===total && total>0 ? 'STEP files พร้อมทั้งหมด' : `STEP ${ready}/${total} ไฟล์พร้อม — TBD จะเป็น placeholder`;
+
+  window._asmBomItems = bomItems;
+}
+
+function resetDlPanel() {
+  ['stTotal','stReady','stPending','stParts'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('btnStep').disabled=true;
+  document.getElementById('btnCSV').disabled=true;
+  document.getElementById('dlNote').textContent='เลือก Solenoid Valve ด้านบนเพื่อเริ่มต้น';
+}
+
+async function downloadSTEP() {
+  const bomItems = window._asmBomItems || [];
+  if (!bomItems.length) return;
+  showNotif('กำลังสร้าง Assembly STEP Set…');
+  const zip = new JSZip();
+  const now = new Date().toISOString().split('T')[0];
+  const lines = [
+    'ISO-10303-21;','HEADER;',
+    `FILE_DESCRIPTION(('PHI Pneumatic Assembly - Solenoid Valve Set','PHI Integration Design'),'2;1');`,
+    `FILE_NAME('PHI_Assembly_${now}.step','${now}',('PHI Integration Design'),(''),'',' ','');`,
+    `FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));`,
+    'ENDSEC;','DATA;'
+  ];
+  let eid = 1;
+  for (const item of bomItems) {
+    const name = item.partNo.replace(/[^A-Za-z0-9_-]/g,'_');
+    lines.push(`#${eid}=PRODUCT('${name}','${item.desc}','',());`);
+    lines.push(`#${eid+1}=PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE('','',#${eid},.NOT_KNOWN.);`);
+    lines.push(`#${eid+2}=PRODUCT_DEFINITION('design','',#${eid+1},#${eid+3});`);
+    lines.push(`#${eid+3}=PRODUCT_DEFINITION_CONTEXT('part definition',#${eid+4},'design');`);
+    lines.push(`#${eid+4}=APPLICATION_CONTEXT('automotive design');`);
+    eid += 5;
+    const ph = `ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('${item.partNo}'),'2;1');\nFILE_NAME('${name}.step','${now}',('PHI'),(''),'',' ','');\nFILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));\nENDSEC;\nDATA;\n/* ${item.stepAvailable?'STEP READY':'PLACEHOLDER — Replace with actual STEP geometry'} */\n/* Part No.: ${item.partNo} */\n/* Description: ${item.desc} */\n/* Quantity: ${item.qty} */\nENDSEC;\nEND-ISO-10303-21;\n`;
+    zip.folder('parts').file(`${name}.step`, ph);
   }
+  lines.push('ENDSEC;','END-ISO-10303-21;');
+  zip.file(`PHI_Assembly_${now}.step`, lines.join('\n'));
+  zip.file(`PHI_BOM_${now}.csv`, generateCSV());
+  zip.file('README.txt', `PHI Pneumatic Assembly Set\nGenerated: ${now}\n\nSELECTED PARTS:\n${bomItems.map(p=>`- [x${p.qty}] ${p.partNo}  ${p.desc}  [${p.stepAvailable?'STEP READY':'PLACEHOLDER'}]`).join('\n')}\n\nNOTE: PLACEHOLDER files require actual STEP geometry files.\nReplace files in /parts/ folder with real STEP files from manufacturer.\n\nGenerated by PHI Integration Design Selector\n`);
+  try {
+    const blob = await zip.generateAsync({type:'blob'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download=`PHI_Assembly_Set_${now}.zip`; a.click();
+    URL.revokeObjectURL(url);
+    showNotif('ดาวน์โหลด Assembly Set เรียบร้อย ✓','green');
+  } catch(e) { showNotif('เกิดข้อผิดพลาด กรุณาลองใหม่','red'); }
+}
+
+function generateCSV() {
+  const bomItems = window._asmBomItems || [];
+  const r = [['No.','Part No.','Description','Type','Series','Qty','STEP Status']];
+  bomItems.forEach((item,i) => r.push([i+1, item.partNo, `"${item.desc}"`, item.type, item.series, item.qty, item.stepAvailable?'READY':'PLACEHOLDER']));
+  return r.map(row=>row.join(',')).join('\n');
+}
+
+function downloadCSV() {
+  const csv = generateCSV();
+  const now = new Date().toISOString().split('T')[0];
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`PHI_BOM_${now}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showNotif('Export BOM CSV เรียบร้อย ✓','green');
+}
+
+function showNotif(msg, color='orange') {
+  document.querySelectorAll('.notif').forEach(n=>n.remove());
+  if(notifTimer)clearTimeout(notifTimer);
+  const n=document.createElement('div');n.className='notif';
+  const c=color==='green'?'var(--green)':color==='red'?'#ef4444':'var(--orange)';
+  n.style.borderLeftColor=c;n.innerHTML=`<span style="color:${c};font-size:14px;">●</span> ${msg}`;
+  document.body.appendChild(n);notifTimer=setTimeout(()=>n.remove(),3200);
 }
 
 // ══════════════════════════════════════════════════
@@ -528,7 +713,7 @@ function render() {
       </div>`;
     }).join('');
   }
-  calcResult(); loadProductList(); drawDiagram();
+  calcResult(); loadProductList(); drawDiagram(); syncAssemblySet();
 }
 
 function setOrientation(id,v){const r=rows.find(r=>r.id===id);if(r){r.orientation=v;render();}}
@@ -734,375 +919,10 @@ function downloadDiagram(svgId,size){
   const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=w*scale;canvas.height=h*scale;const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.drawImage(img,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Assembly_${size}_Series.png`;a.click();URL.revokeObjectURL(a.href);},'image/png');};img.src=url;
 }
 
-// ══════════════════════════════════════════════════
-// PANEL 2 — 3D ASSEMBLY SET
-// ══════════════════════════════════════════════════
-
-// ── Products data (from products.json) ──
-const ASM_CATALOG = {
-  solenoid_valve:{
-    label:'Solenoid Valve', icon:'⚡',
-    colorClass:'filled-sv',
-    series:{
-      SY:{label:'SY Series',desc:'5/2 way, Pilot Operated',parts:[
-        {part_no:'SY3320-5LZ-M5',label:'SY3320 Vertical / M5',step_available:false,preview_img:''},
-        {part_no:'SY3420-5LZ-M5',label:'SY3420 Horizontal / M5',step_available:false,preview_img:''},
-        {part_no:'SY5320-5LZ-01',label:'SY5320 Vertical / 1/8"',step_available:false,preview_img:''},
-        {part_no:'SY5420-5LZ-01',label:'SY5420 Horizontal / 1/8"',step_available:false,preview_img:''},
-        {part_no:'SY7320-5LZ-02',label:'SY7320 Vertical / 1/4"',step_available:false,preview_img:''},
-        {part_no:'SY7420-5LZ-02',label:'SY7420 Horizontal / 1/4"',step_available:false,preview_img:''},
-        {part_no:'SY9320-5LZ-03',label:'SY9320 Vertical / 3/8"',step_available:false,preview_img:''},
-        {part_no:'SY9420-5LZ-03',label:'SY9420 Horizontal / 3/8"',step_available:false,preview_img:''},
-      ]},
-      VFS:{label:'VFS Series',desc:'5/2 way, Direct Acting',parts:[
-        {part_no:'VFS-1200-5A',label:'VFS-1200 / Bore 6mm',step_available:false,preview_img:'models/solenoid/VFS-1200-5A.step',preview_img:'previews/VFS-1200-5A.png'},
-        {part_no:'VFS-1500-5A',label:'VFS-1500 / Bore 10mm',step_available:false,preview_img:'previews/VFS-1500-5A.png'},
-        {part_no:'VFS-2120-5A',label:'VFS-2120 / Bore 15mm',step_available:false,preview_img:'previews/VFS-2120-5A.png'},
-      ]},
-      VQ:{label:'VQ Series',desc:'5/2 way, High Speed',parts:[
-        {part_no:'VQ1100-5B',label:'VQ1100 / Bore 6mm',step_available:false,preview_img:'previews/VQ1100-5B.png'},
-        {part_no:'VQ2100-5B',label:'VQ2100 / Bore 10mm',step_available:false,preview_img:'previews/VQ2100-5B.png'},
-      ]},
-    }
-  },
-  manifold:{
-    label:'Manifold', icon:'🔧',
-    colorClass:'filled-mf',
-    series:{
-      SS5Y:{label:'SS5Y Series',desc:'สำหรับ SY Series',parts:[
-        {part_no:'SS5Y3-20-04',label:'SS5Y3 / 4 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y3-20-06',label:'SS5Y3 / 6 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y3-20-08',label:'SS5Y3 / 8 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y3-20-10',label:'SS5Y3 / 10 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y5-20-04',label:'SS5Y5 / 4 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y5-20-06',label:'SS5Y5 / 6 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y5-20-08',label:'SS5Y5 / 8 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y5-20-10',label:'SS5Y5 / 10 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y7-20-04',label:'SS5Y7 / 4 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y7-20-06',label:'SS5Y7 / 6 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Y7-20-10',label:'SS5Y7 / 10 Station',step_available:false,preview_img:''},
-      ]},
-      SS5V1:{label:'SS5V1 Series',desc:'สำหรับ VFS/SY Series',parts:[
-        {part_no:'SS5V1-W10S-02B',label:'SS5V1 / 2 Station',step_available:false,preview_img:'previews/SS5V1-W10S-02B.png'},
-        {part_no:'SS5V1-W10S-04B',label:'SS5V1 / 4 Station',step_available:false,preview_img:'previews/SS5V1-W10S-04B.png'},
-        {part_no:'SS5V1-W10S-06B',label:'SS5V1 / 6 Station',step_available:false,preview_img:'previews/SS5V1-W10S-06B.png'},
-        {part_no:'SS5V1-W10S-08B',label:'SS5V1 / 8 Station',step_available:false,preview_img:'previews/SS5V1-W10S-08B.png'},
-        {part_no:'SS5V1-W10S-10B',label:'SS5V1 / 10 Station',step_available:false,preview_img:'previews/SS5V1-W10S-10B.png'},
-      ]},
-      Dsub:{label:'D-sub Manifold',desc:'สำหรับ VQ Series',parts:[
-        {part_no:'SS5Q13-02B',label:'D-sub / 2 Station',step_available:false,preview_img:''},
-        {part_no:'SS5Q13-04B',label:'D-sub / 4 Station',step_available:false,preview_img:''},
-      ]},
-    }
-  },
-  cylinder:{
-    label:'Cylinder', icon:'⬤',
-    colorClass:'filled-cy',
-    series:{
-      CA2:{label:'CA2 Series',desc:'Double Acting, Standard',parts:[
-        {part_no:'CA2B32-25',label:'CA2B32 / Bore 32×25mm',step_available:false,preview_img:'previews/CA2B32-25.png'},
-        {part_no:'CA2B32-50',label:'CA2B32 / Bore 32×50mm',step_available:false,preview_img:'previews/CA2B32-50.png'},
-        {part_no:'CA2B50-50',label:'CA2B50 / Bore 50×50mm',step_available:false,preview_img:'previews/CA2B50-50.png'},
-        {part_no:'CA2B50-100',label:'CA2B50 / Bore 50×100mm',step_available:false,preview_img:'previews/CA2B50-100.png'},
-      ]},
-      CM2:{label:'CM2 Series',desc:'Double Acting, Compact',parts:[
-        {part_no:'CM2B20-25',label:'CM2B20 / Bore 20×25mm',step_available:false,preview_img:'previews/CM2B20-25.png'},
-        {part_no:'CM2B20-50',label:'CM2B20 / Bore 20×50mm',step_available:false,preview_img:'previews/CM2B20-50.png'},
-      ]},
-    }
-  },
-  fitting:{
-    label:'Fitting / Tubing', icon:'◈',
-    colorClass:'filled-ft',
-    series:{
-      KQ2:{label:'KQ2 One-touch Fitting',desc:'Push-in fitting',parts:[
-        {part_no:'KQ2H06-01S',label:'KQ2H / Ø6×1/8" Straight',step_available:false,preview_img:'previews/KQ2H06-01S.png'},
-        {part_no:'KQ2H08-02S',label:'KQ2H / Ø8×1/4" Straight',step_available:false,preview_img:'previews/KQ2H08-02S.png'},
-        {part_no:'KQ2L06-01S',label:'KQ2L / Ø6×1/8" Elbow',step_available:false,preview_img:'previews/KQ2L06-01S.png'},
-        {part_no:'KQ2U06',label:'KQ2U / Ø6 Union Straight',step_available:false,preview_img:'previews/KQ2U06.png'},
-      ]},
-      TU:{label:'TU Polyurethane Tube',desc:'ท่อ PU ตัดตามความยาว',parts:[
-        {part_no:'TU0425B',label:'TU / Ø4×2.5 Blue',step_available:false,preview_img:'previews/TU0425B.png'},
-        {part_no:'TU0604B',label:'TU / Ø6×4 Blue',step_available:false,preview_img:'previews/TU0604B.png'},
-        {part_no:'TU0805B',label:'TU / Ø8×5 Blue',step_available:false,preview_img:'previews/TU0805B.png'},
-      ]},
-    }
-  },
-};
-
-const CAT_LABELS = {solenoid_valve:'Solenoid Valve',manifold:'Manifold',cylinder:'Cylinder',fitting:'Fitting / Tubing'};
-let asmSel = {solenoid_valve:null,manifold:null,cylinder:null,fitting:null,fittingQty:4};
-let asmView = 'assembly';
-let notifTimer = null;
-
-function buildAsmSidebar() {
-  const sb = document.getElementById('asmLeft');
-  sb.innerHTML = '';
-  for (const [catKey, cat] of Object.entries(ASM_CATALOG)) {
-    // Category header
-    const hdr = document.createElement('div');
-    hdr.className = 'asm-cat-hdr';
-    hdr.innerHTML = `<span class="asm-cat-icon">${cat.icon}</span><span class="asm-cat-label">${cat.label}</span>`;
-    sb.appendChild(hdr);
-
-    for (const [serKey, ser] of Object.entries(cat.series)) {
-      const slbl = document.createElement('div');
-      slbl.className = 'asm-series-lbl';
-      slbl.textContent = `${ser.label} — ${ser.desc}`;
-      sb.appendChild(slbl);
-
-      for (const part of ser.parts) {
-        const row = document.createElement('div');
-        row.className = 'asm-part-row';
-        row.dataset.cat = catKey;
-        row.dataset.pno = part.part_no;
-        row.innerHTML = `
-          <div class="asm-chk">✓</div>
-          <div class="asm-part-info">
-            <div class="asm-part-name">${part.label}</div>
-            <div class="asm-part-no">${part.part_no}</div>
-          </div>
-          <div class="step-badge ${part.step_available?'step-ok':'step-tbd'}">${part.step_available?'STEP':'TBD'}</div>`;
-        row.addEventListener('click', () => asmSelect(catKey, part, row));
-        sb.appendChild(row);
-      }
-    }
-
-    // Qty control for fitting
-    if (catKey === 'fitting') {
-      const qr = document.createElement('div');
-      qr.className = 'qty-ctrl-row';
-      qr.innerHTML = `<span class="qty-lbl">จำนวน Fitting</span>
-        <div class="qty-btns">
-          <button class="qty-btn" onclick="changeQty(-1)">−</button>
-          <div class="qty-val" id="qtyDisp">${asmSel.fittingQty}</div>
-          <button class="qty-btn" onclick="changeQty(1)">+</button>
-        </div>`;
-      sb.appendChild(qr);
-    }
-    const div = document.createElement('div');
-    div.className = 'asm-divider';
-    sb.appendChild(div);
-  }
-}
-
-function asmSelect(catKey, part, clickedRow) {
-  document.querySelectorAll(`.asm-part-row[data-cat="${catKey}"]`).forEach(r => r.classList.remove('selected'));
-  const wasSame = asmSel[catKey] && asmSel[catKey].part_no === part.part_no;
-  asmSel[catKey] = wasSame ? null : {...part};
-  if (!wasSame) clickedRow.classList.add('selected');
-  refreshAsmUI();
-}
-
-function changeQty(d) {
-  asmSel.fittingQty = Math.max(1, Math.min(20, asmSel.fittingQty + d));
-  const el = document.getElementById('qtyDisp');
-  if (el) el.textContent = asmSel.fittingQty;
-  refreshAsmUI();
-}
-
-function refreshAsmUI() {
-  updatePreview();
-  updateBOM();
-}
-
-function updatePreview() {
-  const canvas = document.getElementById('asmCanvas');
-  const hasAny = Object.entries(asmSel).some(([k,v]) => k !== 'fittingQty' && v !== null);
-  if (!hasAny) {
-    canvas.innerHTML = `<div class="asm-empty"><div class="asm-empty-icon">⬡</div><div class="asm-empty-title">ยังไม่มีชิ้นส่วน</div><div class="asm-empty-sub">เลือกอุปกรณ์จากแผงซ้าย</div></div>`;
-    return;
-  }
-  if (asmView === 'assembly') renderAssemblySlots(canvas);
-  else renderRenderGrid(canvas);
-}
-
-function renderAssemblySlots(canvas) {
-  const cats = ['solenoid_valve','manifold','cylinder','fitting'];
-  let html = '<div class="asm-slots">';
-  for (const cat of cats) {
-    const sel = asmSel[cat];
-    const filled = sel !== null;
-    const cc = filled ? ASM_CATALOG[cat].colorClass : '';
-    html += `<div class="asm-slot ${cc}">
-      <div class="slot-icon">${ASM_CATALOG[cat].icon}</div>
-      <div class="slot-body">
-        <div class="slot-cat">${CAT_LABELS[cat]}</div>`;
-    if (filled) {
-      const qty = cat === 'fitting' ? ` × ${asmSel.fittingQty}` : '';
-      html += `<div class="slot-name">${sel.label}${qty}</div>
-        <div class="slot-pno">${sel.part_no}</div>`;
-    } else {
-      html += `<div class="slot-empty">— ยังไม่ได้เลือก</div>`;
-    }
-    html += `</div>`;
-    if (filled) html += `<div class="slot-step ${sel.step_available?'rdy':'tbd'}">${sel.step_available?'✓ STEP':'○ TBD'}</div>`;
-    html += `</div>`;
-  }
-  // Compatibility note
-  if (asmSel.solenoid_valve && asmSel.manifold) {
-    html += `<div class="compat-note">🔧 ${asmSel.manifold.part_no} ← compatible with ${asmSel.solenoid_valve.part_no}</div>`;
-  }
-  html += '</div>';
-  canvas.innerHTML = html;
-}
-
-function renderRenderGrid(canvas) {
-  const cats = ['solenoid_valve','manifold','cylinder','fitting'];
-  let html = '<div class="render-grid">';
-  for (const cat of cats) {
-    const sel = asmSel[cat]; if (!sel) continue;
-    html += `<div class="render-card">
-      <div class="render-img">`;
-    if (sel.preview_img) {
-      html += `<img src="${sel.preview_img}" alt="${sel.part_no}" onerror="this.parentElement.innerHTML='<div class=\\'render-placeholder\\'><div class=\\'rp-icon\\'>${ASM_CATALOG[cat].icon}</div><div class=\\'rp-pno\\'>${sel.part_no}</div><div class=\\'rp-note\\'>ไม่พบ preview</div></div>'">`;
-    } else {
-      html += `<div class="render-placeholder"><div class="rp-icon">${ASM_CATALOG[cat].icon}</div><div class="rp-pno">${sel.part_no}</div><div class="rp-note">preview ยังไม่มี</div></div>`;
-    }
-    html += `</div><div class="render-lbl"><strong>${CAT_LABELS[cat]}</strong> · ${sel.part_no}</div></div>`;
-  }
-  if (!html.includes('render-card>')) html += `<div style="grid-column:1/-1;text-align:center;color:var(--gray3);padding:40px;font-size:12px;">เลือกอุปกรณ์เพื่อดู preview</div>`;
-  html += '</div>';
-  canvas.innerHTML = html;
-}
-
-function switchView(v) {
-  asmView = v;
-  document.getElementById('vt1').classList.toggle('active', v==='assembly');
-  document.getElementById('vt2').classList.toggle('active', v==='render');
-  updatePreview();
-}
-
-function updateBOM() {
-  const listEl = document.getElementById('bomList');
-  const cats = ['solenoid_valve','manifold','cylinder','fitting'];
-  const bomItems = [];
-  for (const cat of cats) {
-    const sel = asmSel[cat]; if (!sel) continue;
-    const qty = cat === 'fitting' ? asmSel.fittingQty : 1;
-    bomItems.push({cat, sel, qty});
-  }
-  if (bomItems.length === 0) {
-    listEl.innerHTML = '<div class="bom-empty">ยังไม่มีรายการ</div>';
-    ['bomCount','stTotal','stReady','stPending','stParts'].forEach(id => document.getElementById(id).textContent = id==='bomCount'?'0 รายการ':'0');
-    document.getElementById('progFill').style.width = '0%';
-    document.getElementById('btnStep').disabled = true;
-    document.getElementById('btnCSV').disabled = true;
-    document.getElementById('dlNote').textContent = 'เลือกอุปกรณ์ก่อนดาวน์โหลด';
-    return;
-  }
-  const ready = bomItems.filter(b => b.sel.step_available).length;
-  const total = bomItems.length;
-  const pct = Math.round(ready / total * 100);
-  listEl.innerHTML = bomItems.map(({cat,sel,qty}) => `
-    <div class="bom-row">
-      <div class="bom-row-top">
-        <div class="bom-pno">${sel.part_no}</div>
-        <div class="bom-qty">×${qty}</div>
-      </div>
-      <div class="bom-desc">${sel.label}</div>
-      <div class="bom-status">
-        <div class="bom-dot ${sel.step_available?'g':'a'}"></div>
-        <div class="bom-dot-txt">${sel.step_available?'STEP พร้อม':'รอ STEP file'}</div>
-      </div>
-    </div>`).join('');
-  document.getElementById('bomCount').textContent = total + ' รายการ';
-  document.getElementById('stTotal').textContent = total;
-  document.getElementById('stReady').textContent = ready;
-  document.getElementById('stPending').textContent = total - ready;
-  document.getElementById('stParts').textContent = bomItems.reduce((s,b) => s + b.qty, 0);
-  document.getElementById('progFill').style.width = pct + '%';
-  document.getElementById('btnStep').disabled = false;
-  document.getElementById('btnCSV').disabled = false;
-  document.getElementById('dlNote').textContent = ready === total ? 'STEP files พร้อมทั้งหมด' : `STEP ${ready}/${total} ไฟล์พร้อม`;
-}
-
-async function downloadSTEP() {
-  const cats = ['solenoid_valve','manifold','cylinder','fitting'];
-  const bomItems = cats.map(c => asmSel[c]).filter(Boolean);
-  if (!bomItems.length) return;
-  showNotif('กำลังสร้าง Assembly STEP Set…');
-  const zip = new JSZip();
-  const now = new Date().toISOString().split('T')[0];
-
-  // Assembly STEP (AP214)
-  const lines = [
-    'ISO-10303-21;','HEADER;',
-    `FILE_DESCRIPTION(('PHI Pneumatic Assembly','PHI Integration Design'),'2;1');`,
-    `FILE_NAME('PHI_Assembly_${now}.step','${now}',('PHI Integration Design'),(''),'',' ','');`,
-    `FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));`,
-    'ENDSEC;','DATA;'
-  ];
-  let eid = 1;
-  for (const part of bomItems) {
-    const name = part.part_no.replace(/[^A-Za-z0-9_-]/g,'_');
-    lines.push(`#${eid}=PRODUCT('${name}','${part.label}','',());`);
-    lines.push(`#${eid+1}=PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE('','',#${eid},.NOT_KNOWN.);`);
-    lines.push(`#${eid+2}=PRODUCT_DEFINITION('design','',#${eid+1},#${eid+3});`);
-    lines.push(`#${eid+3}=PRODUCT_DEFINITION_CONTEXT('part definition',#${eid+4},'design');`);
-    lines.push(`#${eid+4}=APPLICATION_CONTEXT('automotive design');`);
-    eid += 5;
-    if (!part.step_available) {
-      const ph = `ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('${part.part_no}'),'2;1');\nFILE_NAME('${name}.step','${now}',('PHI'),(''),'',' ','');\nFILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));\nENDSEC;\nDATA;\n/* PLACEHOLDER — Replace with actual STEP geometry */\n/* Part No.: ${part.part_no} */\n/* Description: ${part.label} */\nENDSEC;\nEND-ISO-10303-21;\n`;
-      zip.folder('parts').file(`${name}.step`, ph);
-    }
-  }
-  lines.push('ENDSEC;','END-ISO-10303-21;');
-  zip.file(`PHI_Assembly_${now}.step`, lines.join('\n'));
-  zip.file(`PHI_BOM_${now}.csv`, generateCSV());
-  zip.file('README.txt', `PHI Pneumatic Assembly Set\nGenerated: ${now}\n\nSELECTED PARTS:\n${bomItems.map(p=>`- ${p.part_no}  ${p.label}  [${p.step_available?'STEP READY':'PLACEHOLDER'}]`).join('\n')}\n\nNOTE: PLACEHOLDER files need real STEP geometry.\nGenerated by PHI Integration Design Selector V2\n`);
-
-  try {
-    const blob = await zip.generateAsync({type:'blob'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `PHI_Assembly_Set_${now}.zip`; a.click();
-    URL.revokeObjectURL(url);
-    showNotif('ดาวน์โหลด Assembly Set เรียบร้อย ✓','green');
-    document.getElementById('tb2').style.background='';
-  } catch(e) {
-    showNotif('เกิดข้อผิดพลาด กรุณาลองใหม่','red');
-  }
-}
-
-function generateCSV() {
-  const cats = ['solenoid_valve','manifold','cylinder','fitting'];
-  const rows2 = [['No.','Category','Part No.','Description','Qty','STEP Status','File Path']];
-  let n = 1;
-  for (const cat of cats) {
-    const sel = asmSel[cat]; if (!sel) continue;
-    const qty = cat === 'fitting' ? asmSel.fittingQty : 1;
-    rows2.push([n++, CAT_LABELS[cat], sel.part_no, `"${sel.label}"`, qty, sel.step_available?'READY':'PLACEHOLDER', sel.step_file||`models/${cat}/${sel.part_no}.step`]);
-  }
-  return rows2.map(r => r.join(',')).join('\n');
-}
-
-function downloadCSV() {
-  const csv = generateCSV();
-  const now = new Date().toISOString().split('T')[0];
-  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `PHI_BOM_${now}.csv`; a.click();
-  URL.revokeObjectURL(url);
-  showNotif('Export BOM CSV เรียบร้อย ✓','green');
-}
-
-function showNotif(msg, color='orange') {
-  document.querySelectorAll('.notif').forEach(n => n.remove());
-  if (notifTimer) clearTimeout(notifTimer);
-  const n = document.createElement('div'); n.className = 'notif';
-  const c = color==='green'?'var(--green)':color==='red'?'#ef4444':'var(--orange)';
-  n.style.borderLeftColor = c;
-  n.innerHTML = `<span style="color:${c};font-size:14px;">●</span> ${msg}`;
-  document.body.appendChild(n);
-  notifTimer = setTimeout(() => n.remove(), 3200);
-}
 
 // ── INIT ──
 addRow();
 loadProductList();
-buildAsmSidebar();
 </script>
 </body>
 </html>
