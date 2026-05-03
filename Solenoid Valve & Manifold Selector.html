@@ -7,861 +7,682 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-:root {
-  --orange:#f5620a; --orange-dark:#c44600; --orange-light:#ff8c42;
-  --orange-glow:rgba(245,98,10,0.18);
-  --black:#0d0d0d; --black2:#161616; --black3:#1e1e1e; --black4:#2a2a2a;
-  --charcoal:#333; --gray3:#888; --gray4:#aaa;
-  --text-light:#e8e8e8; --white:#ffffff;
-  --green:#2ecc71; --blue:#3498db; --purple:#9b59b6;
+:root{
+  --or:#f5620a;--or2:#c44600;--orl:#ff8c42;
+  --bk:#0d0d0d;--bk2:#161616;--bk3:#1e1e1e;--bk4:#2a2a2a;
+  --ch:#333;--g3:#888;--g4:#aaa;
+  --tl:#e8e8e8;--wh:#fff;
+  --gn:#2ecc71;--bl:#3498db;--am:#f59e0b;--rd:#ef4444;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Noto Sans Thai','Barlow',sans-serif;background:var(--black);color:var(--text-light);font-size:14px;line-height:1.5;}
+body{font-family:'Noto Sans Thai','Barlow',sans-serif;background:var(--bk);color:var(--tl);font-size:14px;line-height:1.5;}
 
-/* ── HEADER ── */
-header{background:var(--black2);border-bottom:2px solid var(--orange);box-shadow:0 4px 20px rgba(0,0,0,0.6);position:sticky;top:0;z-index:200;}
-.header-main{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
-.logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
-.logo-text .line1{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);letter-spacing:2px;}
-.logo-text .line1 span{color:var(--orange);}
+/* HEADER */
+header{background:var(--bk2);border-bottom:2px solid var(--or);box-shadow:0 4px 20px rgba(0,0,0,.6);position:sticky;top:0;z-index:200;}
+.hdr{max-width:1400px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:16px;}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;}
+.logo-text span{color:var(--or);}
+.api-status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;font-family:'Barlow',sans-serif;}
+.api-dot{width:7px;height:7px;border-radius:50%;background:var(--g3);}
+.api-dot.ok{background:var(--gn);}
+.api-dot.err{background:var(--rd);}
+.api-lbl{color:var(--g3);}
 
-/* ── BREADCRUMB ── */
-.breadcrumb{max-width:1280px;margin:0 auto;padding:10px 20px;font-size:12px;color:var(--gray3);}
-.breadcrumb a{color:var(--orange-light);text-decoration:none;}
-.page-wrapper{max-width:1280px;margin:0 auto;padding:0 20px 60px;}
-.page-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--white);margin-bottom:6px;}
-.page-sub{font-size:13px;color:var(--gray3);}
-.product-header{background:var(--black2);border:1px solid var(--black4);border-radius:6px;padding:20px;margin-bottom:4px;}
+/* BREADCRUMB */
+.bc{max-width:1400px;margin:0 auto;padding:8px 24px;font-size:12px;color:var(--g3);}
+.bc a{color:var(--orl);text-decoration:none;}
 
-/* ══════════════════════════════════════════
-   ASSEMBLY SET — Section ใหม่ (auto-sync)
-══════════════════════════════════════════ */
+/* LAYOUT */
+.wrap{max-width:1400px;margin:0 auto;padding:0 24px 60px;}
+.grid{display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:start;}
+
+/* SECTION */
+.sec{background:var(--bk2);border:1px solid var(--bk4);border-radius:6px;margin-top:20px;overflow:hidden;}
+.sec-title{background:var(--bk4);padding:11px 18px;font-weight:700;color:var(--orl);border-bottom:1px solid var(--or);display:flex;justify-content:space-between;align-items:center;font-family:'Barlow',sans-serif;letter-spacing:.04em;gap:8px;flex-wrap:wrap;}
+.sec-body{padding:18px;}
+
+/* VALVE TABLE */
+.vh{display:grid;grid-template-columns:36px 170px 1fr 116px 136px 116px 34px;gap:8px;padding:0 0 8px;border-bottom:1px solid var(--bk4);margin-bottom:8px;}
+.vh span{font-size:11px;color:var(--g3);text-transform:uppercase;letter-spacing:.05em;}
+.vr{display:grid;grid-template-columns:36px 170px 1fr 116px 136px 116px 34px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--bk4);}
+.vr:last-child{border-bottom:none;}
+.rn{font-size:12px;color:var(--g3);text-align:center;}
+select{background:var(--bk3);border:1px solid var(--ch);border-radius:4px;padding:7px 9px;font-size:13px;font-family:inherit;color:var(--tl);cursor:pointer;outline:none;width:100%;}
+select:focus{border-color:var(--or);}
+.ptag{background:var(--bk3);border:1px solid var(--ch);color:var(--orl);padding:6px 10px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Barlow',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bdel{background:#3a1a1a;border:1px solid #663333;color:#ff6666;border-radius:4px;width:34px;height:34px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bdel:hover{background:#551a1a;}
+.badd{background:var(--bk3);border:1px solid var(--ch);border-radius:4px;padding:9px 18px;font-size:13px;font-family:inherit;color:var(--g4);cursor:pointer;width:100%;margin-top:10px;transition:.2s;}
+.badd:hover{border-color:var(--or);color:var(--orl);}
+
+/* METRICS */
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.metric{background:var(--bk3);border:1px solid var(--bk4);border-radius:6px;padding:14px 18px;}
+.ml{font-size:11px;color:var(--g3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.mv{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--orl);line-height:1;}
+.mn{font-size:11px;color:var(--g3);margin-top:3px;}
+
+/* MANIFOLD TABLE */
+.mt{width:100%;border-collapse:collapse;}
+.mt th{padding:9px 14px;background:var(--bk3);color:var(--g4);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bk4);text-align:left;}
+.mt td{padding:11px 14px;border-bottom:1px solid var(--bk4);font-size:13px;}
+.mt tr:last-child td{border-bottom:none;}
+.pno{color:var(--orl);font-weight:700;font-family:'Barlow',sans-serif;font-size:14px;}
+.sb{background:var(--bk4);border:1px solid var(--ch);color:var(--g4);padding:2px 8px;border-radius:3px;font-size:11px;}
+.empty-state{text-align:center;padding:36px;color:var(--g3);font-size:13px;}
+
+/* PRODUCT TABLE */
+.pt{width:100%;border-collapse:collapse;}
+.pt th{padding:9px 14px;background:var(--bk3);color:var(--g4);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bk4);text-align:left;}
+.pt td{padding:11px 14px;border-bottom:1px solid var(--bk4);font-size:13px;vertical-align:middle;}
+.pt tr:last-child td{border-bottom:none;}
+.nlb{font-size:11px;color:var(--g3);background:var(--bk4);border:1px solid var(--ch);padding:2px 8px;border-radius:3px;}
+.tt{padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;}
+.tsv{background:rgba(46,204,113,.12);color:#2ecc71;border:1px solid rgba(46,204,113,.3);}
+.tmf{background:rgba(52,152,219,.12);color:#66ccff;border:1px solid rgba(52,152,219,.3);}
+.tbk{background:rgba(155,89,182,.12);color:#c39bd3;border:1px solid rgba(155,89,182,.3);}
+
+/* DIAGRAM */
+.btn-dldiag{background:linear-gradient(135deg,#1a6aaa,#1a4a8a);color:#fff;border:1px solid #3a8acc;padding:5px 14px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:.2s;}
+.btn-dldiag:hover{background:linear-gradient(135deg,#2a7abb,#1a5aaa);transform:translateY(-1px);}
+
+/* ══════════════════
+   RIGHT PANEL — ASSEMBLY
+══════════════════ */
+.asm-panel{background:var(--bk2);border:1px solid var(--bk4);border-radius:6px;overflow:hidden;margin-top:20px;position:sticky;top:72px;}
+.asm-hdr{background:var(--bk4);padding:11px 18px;border-bottom:1px solid var(--or);display:flex;align-items:center;justify-content:space-between;}
+.asm-hdr h3{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:#fff;}
+
 /* Assembly cards */
-.asm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:4px;}
-.asm-card{background:var(--black3);border:1px solid var(--black4);border-radius:6px;padding:14px 16px;border-left:3px solid var(--black4);animation:cardIn .25s ease;}
-@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.asm-card.card-sv{border-left-color:var(--orange);}
-.asm-card.card-mf{border-left-color:var(--blue);}
-.asm-card.card-bk{border-left-color:var(--charcoal);}
-.asm-card-cat{font-size:10px;color:var(--gray3);text-transform:uppercase;letter-spacing:.05em;font-family:'Barlow',sans-serif;display:flex;align-items:center;gap:5px;margin-bottom:5px;}
-.asm-card-pno{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;color:var(--orange-light);margin-bottom:2px;}
-.asm-card-desc{font-size:11px;color:var(--gray4);line-height:1.4;}
-.asm-card-qty{font-size:10px;color:var(--gray3);margin-top:4px;font-family:'Barlow',sans-serif;}
-.asm-card-step{display:inline-block;font-size:9px;font-family:'Barlow',sans-serif;padding:1px 6px;border-radius:3px;margin-top:5px;font-weight:700;}
-.step-ok{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.25);}
-.step-tbd{background:rgba(245,158,11,.08);color:#f59e0b;border:1px solid rgba(245,158,11,.2);}
+.asm-cards{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.acard{background:var(--bk3);border:1px solid var(--bk4);border-radius:4px;padding:10px 12px;border-left:3px solid var(--bk4);animation:cIn .2s ease;}
+@keyframes cIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.acard.sv{border-left-color:var(--or);}
+.acard.mf{border-left-color:var(--bl);}
+.acard.bk{border-left-color:var(--ch);}
+.acard-cat{font-size:9px;color:var(--g3);text-transform:uppercase;letter-spacing:.05em;font-family:'Barlow',sans-serif;margin-bottom:4px;}
+.acard-pno{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:var(--orl);margin-bottom:2px;}
+.acard-desc{font-size:10px;color:var(--g4);}
+.acard-qty{font-size:9px;color:var(--g3);margin-top:3px;font-family:'Barlow',sans-serif;}
+.acard-step{display:inline-block;font-size:8px;font-family:'Barlow',sans-serif;padding:1px 5px;border-radius:3px;margin-top:4px;font-weight:700;}
+.stok{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.25);}
+.sttbd{background:rgba(245,158,11,.08);color:var(--am);border:1px solid rgba(245,158,11,.2);}
 
-/* BOM + Download row */
-.asm-bottom{display:grid;grid-template-columns:1fr 280px;gap:14px;margin-top:14px;}
-.bom-table-wrap{background:var(--black3);border:1px solid var(--black4);border-radius:6px;overflow:hidden;}
-.bom-table{width:100%;border-collapse:collapse;}
-.bom-table th{padding:8px 14px;background:rgba(255,255,255,.03);color:var(--gray4);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--black4);text-align:left;font-family:'Barlow',sans-serif;}
-.bom-table td{padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;vertical-align:middle;}
-.bom-table tr:last-child td{border-bottom:none;}
-.bom-pno{font-family:'Barlow',sans-serif;font-weight:700;color:var(--orange-light);font-size:12px;}
-.bom-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle;}
-.bom-dot.g{background:var(--green);}
-.bom-dot.a{background:#f59e0b;}
-
-/* Download panel */
-.dl-panel{background:var(--black3);border:1px solid var(--black4);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px;}
-.dl-panel-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--white);}
-.prog-wrap{height:2px;background:var(--charcoal);border-radius:1px;overflow:hidden;}
-.prog-fill{height:100%;background:var(--orange);border-radius:1px;transition:.4s;}
-.dl-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.dl-stat-lbl{font-size:9px;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;font-family:'Barlow',sans-serif;}
-.dl-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text-light);line-height:1.1;}
-.dl-stat-val.g{color:var(--green);}
-.dl-stat-val.a{color:#f59e0b;}
-.btn-dl{width:100%;padding:9px;border-radius:4px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:.2s;letter-spacing:.05em;}
-.btn-dl.primary{background:var(--orange);color:#fff;}
-.btn-dl.primary:hover{background:var(--orange-dark);transform:translateY(-1px);}
-.btn-dl.primary:disabled{background:var(--black4);color:var(--gray3);cursor:not-allowed;transform:none;}
-.btn-dl.secondary{background:transparent;border:1px solid var(--charcoal);color:var(--gray4);}
-.btn-dl.secondary:hover{border-color:var(--orange);color:var(--orange-light);}
-.btn-dl.secondary:disabled{opacity:.4;cursor:not-allowed;}
-.dl-note{font-size:10px;color:var(--gray3);text-align:center;font-family:'Barlow',sans-serif;}
-
-/* ── SECTION ── */
-.section{background:var(--black2);border:1px solid var(--black4);border-radius:6px;margin-top:20px;overflow:hidden;}
-.section-title{background:var(--black4);padding:12px 20px;font-weight:700;color:var(--orange-light);border-bottom:1px solid var(--orange);display:flex;justify-content:space-between;align-items:center;font-family:'Barlow',sans-serif;letter-spacing:.04em;gap:8px;flex-wrap:wrap;}
-.section-body{padding:20px;}
-
-/* ── VALVE ROWS ── */
-.valve-header{display:grid;grid-template-columns:40px 180px 1fr 120px 140px 120px 36px;gap:10px;padding:0 0 8px;border-bottom:1px solid var(--black4);margin-bottom:10px;}
-.valve-header span{font-size:11px;color:var(--gray3);text-transform:uppercase;letter-spacing:.05em;}
-.valve-row{display:grid;grid-template-columns:40px 180px 1fr 120px 140px 120px 36px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--black4);}
-.valve-row:last-child{border-bottom:none;}
-.row-num{font-size:12px;color:var(--gray3);text-align:center;}
-select{background:var(--black3);border:1px solid var(--charcoal);border-radius:4px;padding:8px 10px;font-size:13px;font-family:inherit;color:var(--text-light);cursor:pointer;outline:none;width:100%;}
-select:focus{border-color:var(--orange);}
-.part-tag{background:var(--black3);border:1px solid var(--charcoal);color:var(--orange-light);padding:6px 12px;border-radius:4px;font-size:12px;font-weight:700;font-family:'Barlow',sans-serif;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.btn-del{background:#3a1a1a;border:1px solid #663333;color:#ff6666;border-radius:4px;width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.btn-del:hover{background:#551a1a;}
-.btn-add{background:var(--black3);border:1px solid var(--charcoal);border-radius:4px;padding:10px 20px;font-size:13px;font-family:inherit;color:var(--gray4);cursor:pointer;width:100%;margin-top:12px;transition:.2s;}
-.btn-add:hover{border-color:var(--orange);color:var(--orange-light);}
-
-/* ── RESULT ── */
-.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;}
-.metric{background:var(--black3);border:1px solid var(--black4);border-radius:6px;padding:16px 20px;}
-.metric-label{font-size:11px;color:var(--gray3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
-.metric-val{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--orange-light);line-height:1;}
-.metric-note{font-size:11px;color:var(--gray3);margin-top:4px;}
-
-/* ── MANIFOLD TABLE ── */
-.manifold-table{width:100%;border-collapse:collapse;}
-.manifold-table th{padding:10px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--black4);text-align:left;}
-.manifold-table td{padding:12px 16px;border-bottom:1px solid var(--black4);font-size:13px;}
-.manifold-table tr:last-child td{border-bottom:none;}
-.manifold-table tr:hover td{background:rgba(255,255,255,0.02);}
-.part-no{color:var(--orange-light);font-weight:700;font-family:'Barlow',sans-serif;font-size:14px;}
-.series-badge{background:var(--black4);border:1px solid var(--charcoal);color:var(--gray4);padding:2px 10px;border-radius:3px;font-size:11px;}
-
-/* ── BUTTONS ── */
-.btn-export{background:var(--orange);color:white;border:none;padding:8px 20px;border-radius:4px;cursor:pointer;font-weight:700;font-size:13px;font-family:inherit;}
-.btn-export:hover{background:var(--orange-dark);}
-.btn-export:disabled{opacity:.35;cursor:not-allowed;}
-.btn-dl-all{background:var(--orange);color:white;border:none;padding:4px 12px;border-radius:3px;cursor:pointer;font-size:11px;font-weight:700;font-family:inherit;white-space:nowrap;}
-.btn-dl-all:hover{background:var(--orange-dark);}
-.btn-dl-all:disabled{opacity:.35;cursor:not-allowed;}
-.btn-dl-diagram{background:linear-gradient(135deg,#1a6aaa,#1a4a8a);color:#fff;border:1px solid #3a8acc;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:.2s;box-shadow:0 2px 8px rgba(26,106,170,0.3);}
-.btn-dl-diagram:hover{background:linear-gradient(135deg,#2a7abb,#1a5aaa);box-shadow:0 4px 14px rgba(26,106,170,0.5);transform:translateY(-1px);}
-#diagramDownloadWrap{display:flex;gap:8px;flex-wrap:wrap;}
-
-/* ── PRODUCT TABLE ── */
-.empty-state{text-align:center;padding:40px;color:var(--gray3);font-size:13px;}
-.product-table{width:100%;border-collapse:collapse;}
-.product-table th{padding:10px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--black4);text-align:left;}
-.product-table td{padding:12px 16px;border-bottom:1px solid var(--black4);font-size:13px;vertical-align:middle;}
-.product-table tr:last-child td{border-bottom:none;}
-.product-link{color:var(--orange-light);font-weight:700;font-family:'Barlow',sans-serif;font-size:14px;text-decoration:none;}
-.product-link:hover{color:var(--orange);text-decoration:underline;}
-.tag-series{background:var(--black4);border:1px solid var(--charcoal);color:var(--gray4);padding:2px 10px;border-radius:3px;font-size:11px;}
-.tag-type{padding:2px 10px;border-radius:3px;font-size:11px;font-weight:700;}
-.tag-sv{background:rgba(46,204,113,0.12);color:#2ecc71;border:1px solid rgba(46,204,113,0.3);}
-.tag-mf{background:rgba(52,152,219,0.12);color:#66ccff;border:1px solid rgba(52,152,219,0.3);}
-.tag-ft{background:rgba(245,98,10,0.12);color:var(--orange-light);border:1px solid rgba(245,98,10,0.3);}
-.tag-bk{background:rgba(155,89,182,0.12);color:#c39bd3;border:1px solid rgba(155,89,182,0.3);}
-.no-link-badge{font-size:11px;color:var(--gray3);background:var(--black4);border:1px solid var(--charcoal);padding:2px 10px;border-radius:3px;}
-
-/* ═══════════════════════════════════════
-   PANEL 2 — 3D ASSEMBLY SET
-═══════════════════════════════════════ */
-.asm-layout{display:grid;grid-template-columns:290px 1fr 268px;min-height:640px;border:1px solid var(--black4);border-radius:6px;overflow:hidden;margin-top:20px;}
-
-/* LEFT — Part Selector */
-.asm-left{background:var(--black2);border-right:1px solid var(--black4);overflow-y:auto;max-height:700px;}
-.asm-left::-webkit-scrollbar{width:3px;}
-.asm-left::-webkit-scrollbar-thumb{background:var(--charcoal);}
-
-.asm-cat-hdr{padding:9px 16px;background:var(--black4);border-bottom:1px solid var(--black4);display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1;}
-.asm-cat-icon{font-size:14px;width:22px;text-align:center;}
-.asm-cat-label{font-size:11px;font-weight:700;color:var(--orange-light);text-transform:uppercase;letter-spacing:.07em;font-family:'Barlow',sans-serif;}
-.asm-series-lbl{padding:5px 16px 3px 40px;font-size:10px;color:var(--gray3);font-family:'Barlow',sans-serif;letter-spacing:.03em;border-bottom:1px solid rgba(255,255,255,0.03);}
-
-.asm-part-row{display:flex;align-items:center;gap:8px;padding:7px 16px 7px 40px;cursor:pointer;border-left:2px solid transparent;transition:.15s;}
-.asm-part-row:hover{background:rgba(245,98,10,0.05);}
-.asm-part-row.selected{border-left-color:var(--orange);background:rgba(245,98,10,0.08);}
-.asm-chk{width:13px;height:13px;border-radius:3px;border:1px solid var(--charcoal);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:.15s;}
-.asm-part-row.selected .asm-chk{background:var(--orange);border-color:var(--orange);color:#fff;}
-.asm-part-info{flex:1;min-width:0;}
-.asm-part-name{font-size:12px;color:var(--text-light);line-height:1.3;}
-.asm-part-no{font-size:10px;color:var(--gray3);font-family:'Barlow',sans-serif;margin-top:1px;}
-.step-badge{font-size:9px;font-family:'Barlow',sans-serif;padding:1px 5px;border-radius:3px;flex-shrink:0;font-weight:700;}
-.step-ok{background:rgba(46,204,113,0.1);color:#2ecc71;border:1px solid rgba(46,204,113,0.25);}
-.step-tbd{background:rgba(255,255,255,0.04);color:var(--gray3);border:1px solid var(--charcoal);}
-
-.asm-divider{height:1px;background:var(--black4);margin:2px 0;}
-.qty-ctrl-row{padding:6px 16px 6px 40px;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.2);}
-.qty-lbl{font-size:11px;color:var(--gray4);flex:1;}
-.qty-btns{display:flex;align-items:center;gap:4px;}
-.qty-btn{width:22px;height:22px;border-radius:4px;border:1px solid var(--charcoal);background:var(--black3);color:var(--gray4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.15s;}
-.qty-btn:hover{border-color:var(--orange);color:var(--orange-light);}
-.qty-val{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;color:var(--text-light);min-width:22px;text-align:center;}
-
-/* CENTER — Preview */
-.asm-center{background:var(--black);display:flex;flex-direction:column;}
-.asm-preview-hdr{padding:12px 18px;border-bottom:1px solid var(--black4);background:var(--black2);display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.asm-preview-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--white);}
-.view-tabs{margin-left:auto;display:flex;gap:4px;}
-.view-tab{padding:4px 12px;font-size:11px;font-weight:700;font-family:'Barlow',sans-serif;border-radius:4px;border:1px solid var(--charcoal);color:var(--gray3);cursor:pointer;transition:.15s;letter-spacing:.03em;}
-.view-tab.active{border-color:var(--orange);color:var(--orange-light);background:rgba(245,98,10,0.08);}
-.asm-canvas{flex:1;padding:20px;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;min-height:400px;}
-
-/* Assembly slot cards */
-.asm-slots{width:100%;max-width:500px;}
-.asm-slot{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:10px 14px;background:var(--black2);border:1px solid var(--black4);border-left:3px solid var(--black4);border-radius:4px;transition:.2s;animation:slideUp .25s ease;}
-@keyframes slideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.asm-slot.filled-sv{border-left-color:var(--orange);}
-.asm-slot.filled-mf{border-left-color:var(--blue);}
-.asm-slot.filled-cy{border-left-color:var(--green);}
-.asm-slot.filled-ft{border-left-color:var(--purple);}
-.slot-icon{width:36px;height:36px;border-radius:4px;background:var(--black4);border:1px solid var(--charcoal);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.slot-body{flex:1;min-width:0;}
-.slot-cat{font-size:10px;color:var(--gray3);text-transform:uppercase;letter-spacing:.05em;font-family:'Barlow',sans-serif;}
-.slot-name{font-size:13px;font-weight:700;color:var(--text-light);font-family:'Barlow',sans-serif;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.slot-pno{font-size:10px;color:var(--orange-light);font-family:'Barlow',sans-serif;margin-top:1px;}
-.slot-empty{font-size:12px;color:var(--gray3);font-style:italic;}
-.slot-step{font-size:9px;font-family:'Barlow',sans-serif;padding:2px 6px;border-radius:3px;flex-shrink:0;font-weight:700;}
-.slot-step.rdy{background:rgba(46,204,113,0.1);color:#2ecc71;}
-.slot-step.tbd{background:rgba(245,158,11,0.1);color:#f59e0b;}
-
-/* Compat note */
-.compat-note{margin-top:6px;padding:7px 12px;font-size:11px;color:var(--gray3);border:1px dashed var(--charcoal);border-radius:4px;font-family:'Barlow',sans-serif;}
-
-/* Render grid */
-.render-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:500px;}
-.render-card{background:var(--black2);border:1px solid var(--black4);border-radius:4px;overflow:hidden;}
-.render-img{aspect-ratio:4/3;background:var(--black3);display:flex;align-items:center;justify-content:center;}
-.render-img img{width:100%;height:100%;object-fit:contain;padding:8px;}
-.render-placeholder{text-align:center;color:var(--gray3);}
-.render-placeholder .rp-icon{font-size:22px;margin-bottom:4px;opacity:.3;}
-.render-placeholder .rp-pno{font-size:10px;font-family:'Barlow',sans-serif;}
-.render-placeholder .rp-note{font-size:9px;opacity:.5;margin-top:2px;}
-.render-lbl{padding:6px 10px;border-top:1px solid var(--black4);font-size:10px;color:var(--gray3);font-family:'Barlow',sans-serif;}
-.render-lbl strong{color:var(--orange-light);}
-
-/* Empty state */
-.asm-empty{text-align:center;color:var(--gray3);padding:60px 20px;}
-.asm-empty-icon{font-size:40px;opacity:.25;margin-bottom:12px;}
-.asm-empty-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--gray4);margin-bottom:6px;}
-.asm-empty-sub{font-size:12px;}
-
-/* RIGHT — BOM panel */
-.asm-right{background:var(--black2);border-left:1px solid var(--black4);display:flex;flex-direction:column;overflow:hidden;}
-.bom-hdr{padding:12px 14px;border-bottom:1px solid var(--black4);background:var(--black4);flex-shrink:0;}
-.bom-hdr-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--white);}
-.bom-hdr-sub{font-size:10px;color:var(--gray3);font-family:'Barlow',sans-serif;margin-top:2px;}
-.bom-list{flex:1;overflow-y:auto;padding:6px 0;}
+/* BOM */
+.bom-wrap{border-top:1px solid var(--bk4);}
+.bom-hdr{padding:10px 16px;background:var(--bk4);border-bottom:1px solid var(--bk4);display:flex;align-items:center;justify-content:space-between;}
+.bom-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#fff;}
+.bom-count{font-size:10px;color:var(--g3);font-family:'Barlow',sans-serif;}
+.bom-list{padding:4px 0;max-height:180px;overflow-y:auto;}
 .bom-list::-webkit-scrollbar{width:3px;}
-.bom-list::-webkit-scrollbar-thumb{background:var(--charcoal);}
-.bom-row{padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.04);animation:fadeIn .2s ease;}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.bom-row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:4px;}
-.bom-pno{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--orange-light);}
-.bom-qty{font-family:'Barlow',sans-serif;font-size:10px;color:var(--gray3);}
-.bom-desc{font-size:11px;color:var(--gray4);margin-top:2px;line-height:1.3;}
-.bom-status{display:flex;align-items:center;gap:4px;margin-top:4px;}
-.bom-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
-.bom-dot.g{background:var(--green);}
-.bom-dot.a{background:#f59e0b;}
-.bom-dot-txt{font-size:9px;color:var(--gray3);font-family:'Barlow',sans-serif;}
-.bom-empty{padding:30px 14px;text-align:center;color:var(--gray3);font-size:12px;}
+.bom-list::-webkit-scrollbar-thumb{background:var(--ch);}
+.brow{padding:7px 14px;border-bottom:1px solid rgba(255,255,255,.04);}
+.brow:last-child{border-bottom:none;}
+.brow-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.bpno{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--orl);}
+.bqty{font-family:'Barlow',sans-serif;font-size:10px;color:var(--g3);}
+.bdesc{font-size:11px;color:var(--g4);margin-top:2px;}
 
-.bom-footer{padding:12px 14px;border-top:1px solid var(--black4);flex-shrink:0;}
-.prog-wrap{height:2px;background:var(--charcoal);border-radius:1px;margin-bottom:10px;overflow:hidden;}
-.prog-fill{height:100%;background:var(--orange);border-radius:1px;transition:.4s;}
-.bom-stats{background:var(--black3);border-radius:4px;padding:8px 10px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.bstat-lbl{font-size:9px;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;font-family:'Barlow',sans-serif;}
-.bstat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text-light);line-height:1.1;}
-.bstat-val.g{color:var(--green);}
-.bstat-val.a{color:#f59e0b;}
+/* DOWNLOAD SECTION */
+.dl-sec{padding:14px;border-top:1px solid var(--bk4);}
+.prog-w{height:2px;background:var(--ch);border-radius:1px;margin-bottom:10px;overflow:hidden;}
+.prog-f{height:100%;background:var(--or);border-radius:1px;transition:.4s;}
+.dl-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
+.dsl{font-size:9px;color:var(--g3);text-transform:uppercase;letter-spacing:.04em;font-family:'Barlow',sans-serif;}
+.dsv{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--tl);line-height:1.1;}
+.dsv.gn{color:var(--gn);}
+.dsv.am{color:var(--am);}
+.btn-dl{width:100%;padding:10px;border-radius:4px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:.2s;margin-bottom:6px;letter-spacing:.05em;}
+.btn-dl.pr{background:var(--or);color:#fff;}
+.btn-dl.pr:hover{background:var(--or2);transform:translateY(-1px);}
+.btn-dl.pr:disabled{background:var(--bk4);color:var(--g3);cursor:not-allowed;transform:none;}
+.btn-dl.sc{background:transparent;border:1px solid var(--ch);color:var(--g4);}
+.btn-dl.sc:hover{border-color:var(--or);color:var(--orl);}
+.btn-dl.sc:disabled{opacity:.4;cursor:not-allowed;}
+.dl-note{font-size:10px;color:var(--g3);text-align:center;font-family:'Barlow',sans-serif;}
 
-.btn-dl{width:100%;padding:9px;border-radius:4px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:.2s;margin-bottom:6px;letter-spacing:.05em;}
-.btn-dl.primary{background:var(--orange);color:#fff;}
-.btn-dl.primary:hover{background:var(--orange-dark);transform:translateY(-1px);}
-.btn-dl.primary:disabled{background:var(--black4);color:var(--gray3);cursor:not-allowed;transform:none;}
-.btn-dl.secondary{background:transparent;border:1px solid var(--charcoal);color:var(--gray4);}
-.btn-dl.secondary:hover{border-color:var(--orange);color:var(--orange-light);}
-.btn-dl.secondary:disabled{opacity:.4;cursor:not-allowed;}
-.dl-note{font-size:10px;color:var(--gray3);text-align:center;font-family:'Barlow',sans-serif;}
+/* Assembly progress overlay */
+.asm-progress{display:none;padding:14px;text-align:center;border-top:1px solid var(--bk4);}
+.asm-progress.show{display:block;}
+.asm-spinner{width:28px;height:28px;border:2px solid var(--bk4);border-top-color:var(--or);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.asm-progress-text{font-size:12px;color:var(--g3);font-family:'Barlow',sans-serif;}
+.asm-prog-bar-w{height:2px;background:var(--bk4);border-radius:1px;margin-top:8px;overflow:hidden;}
+.asm-prog-bar{height:100%;background:var(--or);border-radius:1px;animation:indeterminate 1.5s ease-in-out infinite;}
+@keyframes indeterminate{0%{width:0;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0;margin-left:100%}}
 
-/* ── BORE POPUP ── */
-#borePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;}
+/* Notif */
+.notif{position:fixed;bottom:20px;right:20px;background:var(--bk3);border:1px solid var(--ch);border-left:3px solid var(--or);border-radius:4px;padding:10px 16px;font-size:12px;color:var(--tl);z-index:999;display:flex;align-items:center;gap:8px;max-width:280px;animation:nIn .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+@keyframes nIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── NOTIFICATION ── */
-.notif{position:fixed;bottom:20px;right:20px;background:var(--black3);border:1px solid var(--charcoal);border-left:3px solid var(--orange);border-radius:4px;padding:10px 16px;font-size:12px;color:var(--text-light);z-index:999;display:flex;align-items:center;gap:8px;max-width:300px;animation:ntfIn .25s ease;box-shadow:0 8px 28px rgba(0,0,0,.6);}
-@keyframes ntfIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* Bore popup */
+#borePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;}
+#borePopup>div{background:var(--bk2);border:1px solid var(--bk4);border-top:2px solid var(--or);border-radius:6px;width:360px;max-height:80vh;overflow-y:auto;}
+
+/* API config modal */
+.api-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;}
+.api-modal.show{display:flex;}
+.api-modal-box{background:var(--bk2);border:1px solid var(--bk4);border-top:2px solid var(--or);border-radius:6px;padding:24px;width:380px;}
+.api-modal-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:#fff;margin-bottom:12px;}
+.api-input{width:100%;background:var(--bk3);border:1px solid var(--ch);color:var(--tl);border-radius:4px;padding:8px 12px;font-family:'Barlow',sans-serif;font-size:13px;margin-bottom:10px;}
+.api-input:focus{outline:none;border-color:var(--or);}
+.api-note{font-size:11px;color:var(--g3);margin-bottom:14px;line-height:1.5;}
 </style>
 </head>
 <body>
 
-<!-- ════ HEADER ════ -->
 <header>
-  <div class="header-main">
-    <div class="logo">
-      <img src="../img/PHI.png" width="45" onerror="this.style.display='none'">
-      <div class="logo-text"><div class="line1"><span>PHI</span> INTEGRATION DESIGN</div></div>
+  <div class="hdr">
+    <div>
+      <img src="../img/PHI.png" width="44" onerror="this.style.display='none'">
     </div>
-    <div style="font-family:'Barlow',sans-serif;font-size:12px;color:var(--gray3);letter-spacing:.04em;">⚡ Solenoid Valve Selector &nbsp;+&nbsp; 🔩 3D Assembly Set</div>
+    <div class="logo-text"><span>PHI</span> INTEGRATION DESIGN</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:12px;color:var(--g4);letter-spacing:.04em;">Solenoid Valve &amp; Assembly Selector</div>
+    <div class="api-status">
+      <div class="api-dot" id="apiDot"></div>
+      <span class="api-lbl" id="apiLbl">Assembly API: ตรวจสอบ...</span>
+      <button onclick="document.getElementById('apiModal').classList.add('show')" style="background:var(--bk3);border:1px solid var(--ch);color:var(--g4);border-radius:3px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:'Barlow',sans-serif;margin-left:4px;">⚙ ตั้งค่า</button>
+    </div>
   </div>
 </header>
 
-<div class="breadcrumb">
-  <a href="../index.html">หน้าแรก</a> › <a href="#">Calculator Design</a> ›
-  <span id="bcCurrent" style="color:var(--gray3)">Solenoid Valve Selector</span>
-</div>
+<div class="bc"><a href="../index.html">หน้าแรก</a> › <span style="color:var(--g3)">Solenoid Valve Selector</span></div>
 
-<!-- ════ BORE POPUP ════ -->
+<!-- BORE POPUP -->
 <div id="borePopup">
-  <div style="background:var(--black2);border:1px solid var(--black4);border-top:2px solid var(--orange);border-radius:6px;width:360px;max-height:80vh;overflow-y:auto;">
-    <div style="padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--black4);position:sticky;top:0;background:var(--black2);">
-      <span style="font-weight:700;color:var(--orange-light);font-size:13px;">📋 ตารางเทียบ Bore → สายลม</span>
-      <button onclick="document.getElementById('borePopup').style.display='none'" style="background:none;border:none;color:var(--gray3);font-size:20px;cursor:pointer;">✕</button>
+  <div>
+    <div style="padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bk4);position:sticky;top:0;background:var(--bk2);">
+      <span style="font-weight:700;color:var(--orl);font-size:13px;">📋 ตารางเทียบ Bore → สายลม</span>
+      <button onclick="document.getElementById('borePopup').style.display='none'" style="background:none;border:none;color:var(--g3);font-size:20px;cursor:pointer;">✕</button>
     </div>
-    <table style="width:100%;border-collapse:collapse;">
-      <thead><tr>
-        <th style="padding:8px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--black4);text-align:left;">Bore (mm)</th>
-        <th style="padding:8px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--black4);text-align:left;">สายลมแนะนำ (OD mm)</th>
-        <th style="padding:8px 16px;background:var(--black3);color:var(--gray4);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--black4);text-align:left;">หมายเหตุ</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">mini cylinder</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø10</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);"></td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø12</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4–6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);"></td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">4–6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);"></td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø20</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø25</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø32</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">6</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø40</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">8</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø50</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">10</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø63</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">10</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">SMC ref</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø80</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">10–12</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">เริ่ม flow สูง</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø100</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">12</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);"></td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø125</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">12–16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);color:var(--gray3);font-size:11px;">heavy load</td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø140</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);"></td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø160</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">16</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);"></td></tr>
-        <tr><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">Ø180</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);">16–20</td><td style="padding:8px 16px;border-bottom:1px solid var(--black4);"></td></tr>
-        <tr><td style="padding:8px 16px;">Ø200</td><td style="padding:8px 16px;">20</td><td style="padding:8px 16px;color:var(--gray3);font-size:11px;">ใหญ่มาก</td></tr>
-      </tbody>
-    </table>
+    <table style="width:100%;border-collapse:collapse;" id="boreTbl"></table>
   </div>
 </div>
 
-<!-- ════ PAGE WRAPPER ════ -->
-<div class="page-wrapper">
-
-  <div class="product-header">
-    <div class="page-title">Solenoid Valve &amp; Manifold Selector</div>
-    <div class="page-sub">เลือกการใช้งานกระบอกลมและ Series เพื่อคำนวณ Solenoid Valve และ Manifold — ผลลัพธ์จะประกอบเป็น Assembly Set อัตโนมัติ</div>
+<!-- API SETTINGS MODAL -->
+<div class="api-modal" id="apiModal">
+  <div class="api-modal-box">
+    <div class="api-modal-title">Assembly API Settings</div>
+    <div class="api-note">กรอก URL ของ Python backend ที่รัน assembler/api.py<br>ค่าเริ่มต้น: http://localhost:5050</div>
+    <input class="api-input" id="apiUrlInput" placeholder="http://localhost:5050" value="http://localhost:5050">
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveApiUrl()" style="flex:1;background:var(--or);color:#fff;border:none;padding:9px;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;">บันทึก &amp; ทดสอบ</button>
+      <button onclick="document.getElementById('apiModal').classList.remove('show')" style="background:var(--bk3);border:1px solid var(--ch);color:var(--g4);padding:9px 16px;border-radius:4px;cursor:pointer;font-family:inherit;font-size:13px;">ปิด</button>
+    </div>
   </div>
+</div>
 
-  <!-- ════════════════════════════════════════
-       SOLENOID VALVE SELECTOR
-  ════════════════════════════════════════ -->
+<div class="wrap">
+<div class="grid">
 
-    <!-- SOLENOID VALVE INPUT -->
-    <div class="section">
-      <div class="section-title">
-        <span>⚡ SOLENOID VALVE
-          <button onclick="toggleBoreTable(event)" style="background:var(--black4);border:1px solid var(--charcoal);color:var(--gray4);border-radius:3px;padding:2px 8px;font-size:11px;cursor:pointer;font-family:inherit;margin-left:8px;">📋 ดูตาราง Bore</button>
-        </span>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-export" style="background:#3a1a1a;border:1px solid #663333;color:#ff6666;font-weight:500;" onclick="clearAll()">✕ ล้างทั้งหมด</button>
-          <button class="btn-export" style="background:var(--black3);border:1px solid var(--charcoal);color:var(--gray4);font-weight:500;" onclick="addRow()">＋ เพิ่ม Solenoid Valve</button>
-        </div>
-      </div>
-      <div class="section-body">
-        <div class="valve-header">
-          <span>#</span><span>การใช้งาน</span><span>Series</span><span>Part No.</span><span>Typ.</span><span>Fittings (mm.)</span><span></span>
-        </div>
-        <div id="valveRows"></div>
-        <button class="btn-add" onclick="addRow()">＋ เพิ่ม Solenoid Valve</button>
-      </div>
-    </div>
+<!-- ══ LEFT: SELECTOR ══ -->
+<div>
 
-    <!-- RESULT SUMMARY -->
-    <div class="section">
-      <div class="section-title">📊 สรุปผลการเลือก</div>
-      <div class="section-body">
-        <div class="result-grid">
-          <div class="metric"><div class="metric-label">Solenoid Valve ทั้งหมด</div><div class="metric-val" id="totalValves">0</div><div class="metric-note">รายการ</div></div>
-          <div class="metric"><div class="metric-label">Station บน Manifold</div><div class="metric-val" id="totalStation">0</div><div class="metric-note" id="stationNote">valve + 2 spare (ปัดเลขคู่)</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MANIFOLD -->
-    <div class="section" id="manifoldSection">
-      <div class="section-title"><span>🔧 MANIFOLD VALVE ที่ต้องใช้</span></div>
-      <div style="overflow-x:auto;">
-        <table class="manifold-table">
-          <thead><tr><th>Series</th><th>จำนวน Solenoid Valve</th><th>Station (+ 2 spare)</th><th>Manifold Part No.</th><th>Solenoid Part No.</th></tr></thead>
-          <tbody id="manifoldTbody"><tr><td colspan="5" class="empty-state">ยังไม่มีรายการ — เพิ่ม Solenoid Valve ด้านบน</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ASSEMBLY DIAGRAM -->
-    <div class="section" id="diagramSection" style="display:none;">
-      <div class="section-title">
-        <span>🔩 Assembly Diagram <span style="font-size:11px;color:var(--gray3);font-weight:400;" id="diagramLabel"></span></span>
-        <div id="diagramDownloadWrap"></div>
-      </div>
-      <div style="overflow-x:auto;padding:20px;" id="diagramWrap"></div>
-    </div>
-
-    <!-- PRODUCT LIST -->
-    <div class="section">
-      <div class="section-title">
-        <span>📦 รายการสินค้าที่เกี่ยวข้อง <span style="font-size:11px;color:var(--gray3);font-weight:400;" id="productCount"></span></span>
-        <button class="btn-dl-all" id="dlAllBtn" onclick="downloadAll()" disabled>⬇️ ดาวน์โหลดทั้งหมด</button>
-      </div>
-      <div style="overflow-x:auto;">
-        <table class="product-table">
-          <thead><tr><th>#</th><th>ชื่อสินค้า</th><th>Series</th><th>ประเภท</th><th>Part No.</th><th>ดาวน์โหลด 3D</th></tr></thead>
-          <tbody id="productTbody"><tr><td colspan="6" class="empty-state">เพิ่ม Solenoid Valve เพื่อดูรายการ</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-
-  <!-- ════════════════════════════════════════
-       3D ASSEMBLY SET — auto-sync จาก selector
-  ════════════════════════════════════════ -->
-  <div class="section" id="asmSection" style="display:none;">
-    <div class="section-title">
-      <span>🔩 3D ASSEMBLY SET
-        <span style="font-size:11px;color:var(--gray3);font-weight:400;" id="asmLabel"></span>
+  <div class="sec">
+    <div class="sec-title">
+      <span>⚡ SOLENOID VALVE
+        <button onclick="toggleBoreTable(event)" style="background:var(--bk4);border:1px solid var(--ch);color:var(--g4);border-radius:3px;padding:2px 8px;font-size:11px;cursor:pointer;font-family:inherit;margin-left:8px;">📋 ดูตาราง Bore</button>
       </span>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span style="font-size:11px;color:var(--gray3);font-family:'Barlow',sans-serif;" id="asmStepStatus"></span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-dl sc" style="width:auto;padding:7px 14px;margin-bottom:0;" onclick="clearAll()">✕ ล้างทั้งหมด</button>
+        <button class="btn-dl pr" style="width:auto;padding:7px 14px;margin-bottom:0;" onclick="addRow()">＋ เพิ่ม</button>
       </div>
     </div>
-    <div class="section-body">
-      <!-- Assembly Cards -->
-      <div class="asm-cards" id="asmCards"></div>
-      <!-- BOM + Download -->
-      <div class="asm-bottom">
-        <div class="bom-table-wrap">
-          <table class="bom-table">
-            <thead><tr><th>#</th><th>Part No.</th><th>รายการ</th><th>ประเภท</th><th>จำนวน</th><th>STEP</th></tr></thead>
-            <tbody id="asmBomTbody"><tr><td colspan="6" style="padding:20px;text-align:center;color:var(--gray3);">ยังไม่มีรายการ</td></tr></tbody>
-          </table>
-        </div>
-        <div class="dl-panel">
-          <div class="dl-panel-title">DOWNLOAD SET</div>
-          <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-          <div class="dl-stats">
-            <div><div class="dl-stat-lbl">รายการ</div><div class="dl-stat-val" id="stTotal">0</div></div>
-            <div><div class="dl-stat-lbl">STEP พร้อม</div><div class="dl-stat-val g" id="stReady">0</div></div>
-            <div><div class="dl-stat-lbl">รอ STEP</div><div class="dl-stat-val a" id="stPending">0</div></div>
-            <div><div class="dl-stat-lbl">ชิ้นส่วนรวม</div><div class="dl-stat-val" id="stParts">0</div></div>
-          </div>
-          <button class="btn-dl primary" id="btnStep" onclick="downloadSTEP()" disabled>
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            DOWNLOAD ASSEMBLY STEP
-          </button>
-          <button class="btn-dl secondary" id="btnCSV" onclick="downloadCSV()" disabled>
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            EXPORT BOM (CSV)
-          </button>
-          <div class="dl-note" id="dlNote">เลือก Solenoid Valve ด้านบนเพื่อเริ่มต้น</div>
-        </div>
+    <div class="sec-body">
+      <div class="vh">
+        <span>#</span><span>การใช้งาน</span><span>Series</span><span>Part No.</span><span>Typ.</span><span>Fittings</span><span></span>
+      </div>
+      <div id="valveRows"></div>
+      <button class="badd" onclick="addRow()">＋ เพิ่ม Solenoid Valve</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">📊 สรุปผล</div>
+    <div class="sec-body">
+      <div class="rg">
+        <div class="metric"><div class="ml">Solenoid Valve</div><div class="mv" id="totalValves">0</div><div class="mn">รายการ</div></div>
+        <div class="metric"><div class="ml">Station บน Manifold</div><div class="mv" id="totalStation">0</div><div class="mn" id="stationNote">valve + 2 spare</div></div>
       </div>
     </div>
   </div>
 
-</div><!-- /page-wrapper -->
+  <div class="sec" id="manifoldSection">
+    <div class="sec-title">🔧 MANIFOLD ที่ต้องใช้</div>
+    <div style="overflow-x:auto;">
+      <table class="mt">
+        <thead><tr><th>Series</th><th>จำนวน SV</th><th>Station</th><th>Manifold Part No.</th><th>Solenoid Part No.</th></tr></thead>
+        <tbody id="manifoldTbody"><tr><td colspan="5" class="empty-state">ยังไม่มีรายการ</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec" id="diagramSection" style="display:none;">
+    <div class="sec-title">
+      <span>🔩 Assembly Diagram <span style="font-size:11px;color:var(--g3);font-weight:400;" id="diagramLabel"></span></span>
+      <div id="diagramDownloadWrap"></div>
+    </div>
+    <div style="overflow-x:auto;padding:18px;" id="diagramWrap"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">
+      <span>📦 รายการสินค้า <span style="font-size:11px;color:var(--g3);font-weight:400;" id="productCount"></span></span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="pt">
+        <thead><tr><th>#</th><th>ชื่อสินค้า</th><th>Series</th><th>ประเภท</th><th>Part No.</th><th>3D</th></tr></thead>
+        <tbody id="productTbody"><tr><td colspan="6" class="empty-state">เพิ่ม Solenoid Valve เพื่อดูรายการ</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ RIGHT: ASSEMBLY SET (auto-sync) ══ -->
+<div>
+  <div class="asm-panel">
+    <div class="asm-hdr">
+      <h3>🔩 ASSEMBLY SET</h3>
+      <span style="font-size:10px;color:var(--g3);font-family:'Barlow',sans-serif;" id="asmLabel">เลือก SV เพื่อเริ่ม</span>
+    </div>
+
+    <!-- Assembly cards (auto-generated) -->
+    <div class="asm-cards" id="asmCards">
+      <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--g3);font-size:12px;">เลือก Solenoid Valve ด้านซ้ายเพื่อเริ่มประกอบ</div>
+    </div>
+
+    <!-- BOM -->
+    <div class="bom-wrap">
+      <div class="bom-hdr">
+        <div class="bom-title">BILL OF MATERIALS</div>
+        <div class="bom-count" id="bomCount">0 รายการ</div>
+      </div>
+      <div class="bom-list" id="bomList"><div style="padding:18px;text-align:center;color:var(--g3);font-size:12px;">ยังไม่มีรายการ</div></div>
+    </div>
+
+    <!-- Assembly Progress -->
+    <div class="asm-progress" id="asmProgress">
+      <div class="asm-spinner"></div>
+      <div class="asm-progress-text" id="asmProgressText">กำลังประกอบ Assembly...</div>
+      <div class="asm-prog-bar-w"><div class="asm-prog-bar"></div></div>
+    </div>
+
+    <!-- Download -->
+    <div class="dl-sec">
+      <div class="prog-w"><div class="prog-f" id="progF" style="width:0%"></div></div>
+      <div class="dl-stats">
+        <div><div class="dsl">รายการ</div><div class="dsv" id="stTotal">0</div></div>
+        <div><div class="dsl">STEP พร้อม</div><div class="dsv gn" id="stReady">0</div></div>
+        <div><div class="dsl">ชิ้นรวม</div><div class="dsv" id="stParts">0</div></div>
+      </div>
+      <button class="btn-dl pr" id="btnAssemble" onclick="runAssemble()" disabled>
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        DOWNLOAD ASSEMBLY STEP
+      </button>
+      <button class="btn-dl sc" id="btnCSV" onclick="downloadCSV()" disabled>
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        EXPORT BOM (CSV)
+      </button>
+      <div class="dl-note" id="dlNote">เลือก Solenoid Valve ด้านซ้ายก่อน</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
 
 <script>
-// ══════════════════════════════════════════════════
-// ASSEMBLY SET — sync อัตโนมัติจาก rows
-// ══════════════════════════════════════════════════
-const BLANKING_PART = {SY3:'SY3000-26-10A',SY5:'SY5000-26-20A',SY7:'SY7000-26-20A',SY9:'SY9000-26-1A'};
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+let API_URL = localStorage.getItem('phi_api_url') || 'http://localhost:5050';
+document.getElementById('apiUrlInput').value = API_URL;
 let notifTimer = null;
+let currentBomItems = [];
 
-function syncAssemblySet() {
-  const sec = document.getElementById('asmSection');
-  if (rows.length === 0) { sec.style.display = 'none'; resetDlPanel(); return; }
-  sec.style.display = 'block';
-
-  // ── Build full BOM from selector ──
-  const bomItems = []; // {partNo, desc, type, qty, series, stepAvailable}
-
-  // Group rows by series
-  const groups = {};
-  rows.forEach(r => {
-    if (!groups[r.size]) groups[r.size] = [];
-    groups[r.size].push(r);
-  });
-
-  Object.values(groups).forEach(grp => {
-    const size = grp[0].size;
-    const count = grp.length;
-    const spare = count > 10 ? 4 : 2;
-    const raw = count + spare;
-    const station = raw % 2 === 0 ? raw : raw + 1;
-    const blanks = station - count;
-    const prefix = MANIFOLD_PREFIX[size] || '';
-    function toEven(n){return n%2===0?n:n+1;}
-
-    // SV entries (unique part numbers)
-    const svGroups = {};
-    grp.forEach(r => {
-      const pno = getPartNo(r.orientation, r.size);
-      if (!svGroups[pno]) svGroups[pno] = {partNo:pno, desc:`Solenoid Valve ${size} ${r.orientation==='H'?'Horizontal':'Vertical'}`, type:'SV', series:size, qty:0, stepAvailable:false};
-      svGroups[pno].qty++;
-    });
-    Object.values(svGroups).forEach(sv => bomItems.push(sv));
-
-    // Manifold entries (split into units ≤10)
-    function splitStations(total, svCount) {
-      const lastDigit = svCount % 10;
-      if (lastDigit===8||lastDigit===9||lastDigit===0) {
-        const half=toEven(Math.min(Math.ceil(total/2),10));const rest=toEven(total-half);
-        if(rest<=10)return[half,rest];const units=[half];let r=rest;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;
-      }
-      const units=[];let r=total;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;
-    }
-    const mfUnits = splitStations(station, count);
-    mfUnits.forEach((take, idx) => {
-      const pno = prefix + String(take).padStart(2,'0');
-      bomItems.push({partNo:pno, desc:`Manifold ${size} Series / ${take} Station${mfUnits.length>1?' (ตัวที่'+(idx+1)+')':''}`, type:'MF', series:size, qty:1, stepAvailable:false});
-    });
-
-    // Blanking plates
-    if (blanks > 0) {
-      const bkPno = BLANKING_PART[size] || 'BLANK';
-      bomItems.push({partNo:bkPno, desc:`Blanking Plate ${size} Series`, type:'BK', series:size, qty:blanks, stepAvailable:false});
-    }
-  });
-
-  // ── Render Assembly Cards ──
-  const cards = document.getElementById('asmCards');
-  const TYPE_CFG = {
-    SV:{label:'Solenoid Valve', icon:'⚡', cls:'card-sv'},
-    MF:{label:'Manifold',       icon:'🔧', cls:'card-mf'},
-    BK:{label:'Blanking Plate', icon:'◻', cls:'card-bk'},
-  };
-  cards.innerHTML = bomItems.map(item => {
-    const tc = TYPE_CFG[item.type] || {label:item.type,icon:'◈',cls:''};
-    return `<div class="asm-card ${tc.cls}">
-      <div class="asm-card-cat"><span>${tc.icon}</span>${tc.label} — <span style="color:var(--gray4)">${item.series}</span></div>
-      <div class="asm-card-pno">${item.partNo}</div>
-      <div class="asm-card-desc">${item.desc}</div>
-      <div class="asm-card-qty">× ${item.qty} ชิ้น</div>
-      <span class="asm-card-step ${item.stepAvailable?'step-ok':'step-tbd'}">${item.stepAvailable?'✓ STEP READY':'○ รอ STEP file'}</span>
-    </div>`;
-  }).join('');
-
-  // ── Render BOM table ──
-  const tbody = document.getElementById('asmBomTbody');
-  tbody.innerHTML = bomItems.map((item, i) => {
-    const tc = TYPE_CFG[item.type] || {label:item.type,icon:'◈',cls:''};
-    const typeTag = item.type==='SV'?'<span class="tag-type tag-sv">Solenoid Valve</span>':
-                    item.type==='MF'?'<span class="tag-type tag-mf">Manifold</span>':
-                    '<span class="tag-type tag-bk">Blanking Plate</span>';
-    return `<tr>
-      <td style="color:var(--gray3);font-size:11px;">${i+1}</td>
-      <td class="bom-pno">${item.partNo}</td>
-      <td style="color:var(--gray4);font-size:12px;">${item.desc}</td>
-      <td>${typeTag}</td>
-      <td style="font-family:'Barlow',sans-serif;font-weight:700;color:var(--text-light);">× ${item.qty}</td>
-      <td><span class="bom-dot ${item.stepAvailable?'g':'a'}"></span><span style="font-size:11px;color:var(--gray3);">${item.stepAvailable?'Ready':'TBD'}</span></td>
-    </tr>`;
-  }).join('');
-
-  // ── Update stats ──
-  const total = bomItems.length;
-  const ready = bomItems.filter(b => b.stepAvailable).length;
-  const pct = total ? Math.round(ready/total*100) : 0;
-  const totalPcs = bomItems.reduce((s,b) => s+b.qty, 0);
-  document.getElementById('stTotal').textContent = total;
-  document.getElementById('stReady').textContent = ready;
-  document.getElementById('stPending').textContent = total - ready;
-  document.getElementById('stParts').textContent = totalPcs;
-  document.getElementById('progFill').style.width = pct + '%';
-  document.getElementById('btnStep').disabled = total === 0;
-  document.getElementById('btnCSV').disabled = total === 0;
-  document.getElementById('asmLabel').textContent = `${rows.length} Solenoid Valve → ${total} รายการ`;
-  document.getElementById('asmStepStatus').textContent = ready===total && total>0 ? '✓ STEP พร้อมทั้งหมด' : `STEP ${ready}/${total}`;
-  document.getElementById('dlNote').textContent = ready===total && total>0 ? 'STEP files พร้อมทั้งหมด' : `STEP ${ready}/${total} ไฟล์พร้อม — TBD จะเป็น placeholder`;
-
-  window._asmBomItems = bomItems;
-}
-
-function resetDlPanel() {
-  ['stTotal','stReady','stPending','stParts'].forEach(id=>document.getElementById(id).textContent='0');
-  document.getElementById('progFill').style.width='0%';
-  document.getElementById('btnStep').disabled=true;
-  document.getElementById('btnCSV').disabled=true;
-  document.getElementById('dlNote').textContent='เลือก Solenoid Valve ด้านบนเพื่อเริ่มต้น';
-}
-
-async function downloadSTEP() {
-  const bomItems = window._asmBomItems || [];
-  if (!bomItems.length) return;
-  showNotif('กำลังสร้าง Assembly STEP Set…');
-  const zip = new JSZip();
-  const now = new Date().toISOString().split('T')[0];
-  const lines = [
-    'ISO-10303-21;','HEADER;',
-    `FILE_DESCRIPTION(('PHI Pneumatic Assembly - Solenoid Valve Set','PHI Integration Design'),'2;1');`,
-    `FILE_NAME('PHI_Assembly_${now}.step','${now}',('PHI Integration Design'),(''),'',' ','');`,
-    `FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));`,
-    'ENDSEC;','DATA;'
-  ];
-  let eid = 1;
-  for (const item of bomItems) {
-    const name = item.partNo.replace(/[^A-Za-z0-9_-]/g,'_');
-    lines.push(`#${eid}=PRODUCT('${name}','${item.desc}','',());`);
-    lines.push(`#${eid+1}=PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE('','',#${eid},.NOT_KNOWN.);`);
-    lines.push(`#${eid+2}=PRODUCT_DEFINITION('design','',#${eid+1},#${eid+3});`);
-    lines.push(`#${eid+3}=PRODUCT_DEFINITION_CONTEXT('part definition',#${eid+4},'design');`);
-    lines.push(`#${eid+4}=APPLICATION_CONTEXT('automotive design');`);
-    eid += 5;
-    const ph = `ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('${item.partNo}'),'2;1');\nFILE_NAME('${name}.step','${now}',('PHI'),(''),'',' ','');\nFILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));\nENDSEC;\nDATA;\n/* ${item.stepAvailable?'STEP READY':'PLACEHOLDER — Replace with actual STEP geometry'} */\n/* Part No.: ${item.partNo} */\n/* Description: ${item.desc} */\n/* Quantity: ${item.qty} */\nENDSEC;\nEND-ISO-10303-21;\n`;
-    zip.folder('parts').file(`${name}.step`, ph);
-  }
-  lines.push('ENDSEC;','END-ISO-10303-21;');
-  zip.file(`PHI_Assembly_${now}.step`, lines.join('\n'));
-  zip.file(`PHI_BOM_${now}.csv`, generateCSV());
-  zip.file('README.txt', `PHI Pneumatic Assembly Set\nGenerated: ${now}\n\nSELECTED PARTS:\n${bomItems.map(p=>`- [x${p.qty}] ${p.partNo}  ${p.desc}  [${p.stepAvailable?'STEP READY':'PLACEHOLDER'}]`).join('\n')}\n\nNOTE: PLACEHOLDER files require actual STEP geometry files.\nReplace files in /parts/ folder with real STEP files from manufacturer.\n\nGenerated by PHI Integration Design Selector\n`);
+async function checkApiStatus() {
   try {
-    const blob = await zip.generateAsync({type:'blob'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href=url; a.download=`PHI_Assembly_Set_${now}.zip`; a.click();
-    URL.revokeObjectURL(url);
-    showNotif('ดาวน์โหลด Assembly Set เรียบร้อย ✓','green');
-  } catch(e) { showNotif('เกิดข้อผิดพลาด กรุณาลองใหม่','red'); }
+    const r = await fetch(`${API_URL}/health`, {signal: AbortSignal.timeout(3000)});
+    const d = await r.json();
+    document.getElementById('apiDot').className = 'api-dot ok';
+    document.getElementById('apiLbl').textContent = `Assembly API: พร้อม (${d.engine})`;
+  } catch {
+    document.getElementById('apiDot').className = 'api-dot err';
+    document.getElementById('apiLbl').textContent = 'Assembly API: ไม่ได้เชื่อมต่อ';
+  }
 }
 
-function generateCSV() {
-  const bomItems = window._asmBomItems || [];
-  const r = [['No.','Part No.','Description','Type','Series','Qty','STEP Status']];
-  bomItems.forEach((item,i) => r.push([i+1, item.partNo, `"${item.desc}"`, item.type, item.series, item.qty, item.stepAvailable?'READY':'PLACEHOLDER']));
-  return r.map(row=>row.join(',')).join('\n');
+function saveApiUrl() {
+  API_URL = document.getElementById('apiUrlInput').value.trim().replace(/\/$/, '');
+  localStorage.setItem('phi_api_url', API_URL);
+  document.getElementById('apiModal').classList.remove('show');
+  checkApiStatus();
+  showNotif('บันทึก API URL แล้ว');
 }
 
-function downloadCSV() {
-  const csv = generateCSV();
-  const now = new Date().toISOString().split('T')[0];
-  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download=`PHI_BOM_${now}.csv`; a.click();
-  URL.revokeObjectURL(url);
-  showNotif('Export BOM CSV เรียบร้อย ✓','green');
-}
+checkApiStatus();
+setInterval(checkApiStatus, 15000);
 
-function showNotif(msg, color='orange') {
-  document.querySelectorAll('.notif').forEach(n=>n.remove());
-  if(notifTimer)clearTimeout(notifTimer);
-  const n=document.createElement('div');n.className='notif';
-  const c=color==='green'?'var(--green)':color==='red'?'#ef4444':'var(--orange)';
-  n.style.borderLeftColor=c;n.innerHTML=`<span style="color:${c};font-size:14px;">●</span> ${msg}`;
-  document.body.appendChild(n);notifTimer=setTimeout(()=>n.remove(),3200);
-}
-
-// ══════════════════════════════════════════════════
-// PANEL 1 — SOLENOID VALVE SELECTOR (ต้นฉบับ)
-// ══════════════════════════════════════════════════
-const SERIES_DATA = {
-  SY3:{V:'SY3320-5LZ-M5',H:'SY3420-5LZ-M5'},
-  SY5:{V:'SY5320-5LZ-01',H:'SY5420-5LZ-01'},
-  SY7:{V:'SY7320-5LZ-02',H:'SY7420-5LZ-02'},
-  SY9:{V:'SY9320-5LZ-03',H:'SY9420-5LZ-03'},
-};
-const MANIFOLD_PREFIX = {SY3:'SS5Y3-20-',SY5:'SS5Y5-20-',SY7:'SS5Y7-20-',SY9:'SS5Y9-20-'};
-let rows = [], nextId = 1;
+// ══════════════════════════════════════════════
+// SELECTOR LOGIC (original)
+// ══════════════════════════════════════════════
+const SD={SY3:{V:'SY3320-5LZ-M5',H:'SY3420-5LZ-M5'},SY5:{V:'SY5320-5LZ-01',H:'SY5420-5LZ-01'},SY7:{V:'SY7320-5LZ-02',H:'SY7420-5LZ-02'},SY9:{V:'SY9320-5LZ-03',H:'SY9420-5LZ-03'}};
+const MP={SY3:'SS5Y3-20-',SY5:'SS5Y5-20-',SY7:'SS5Y7-20-',SY9:'SS5Y9-20-'};
+const BP={SY3:'SY3000-26-10A',SY5:'SY5000-26-20A',SY7:'SY7000-26-20A',SY9:'SY9000-26-1A'};
+let rows=[],nextId=1;
 
 function clearAll(){rows=[];nextId=1;render();}
 function addRow(){rows.push({id:nextId++,orientation:'H',size:'SY5',typ:'L',fitting:'6'});render();}
 function removeRow(id){rows=rows.filter(r=>r.id!==id);render();}
-function getPartNo(o,s){return SERIES_DATA[s]?.[o]||'-';}
+function getPartNo(o,s){return SD[s]?.[o]||'-';}
 
-const FITTINGS_CONFIG = {
-  '4':{label:'4 mm.',partNo:''},'6':{label:'6 mm.',partNo:''},
-  '8':{label:'8 mm.',partNo:''},'10':{label:'10 mm.',partNo:''},
-  '12':{label:'12 mm.',partNo:''},'16':{label:'16 mm.',partNo:''},
-  '20':{label:'20 mm.',partNo:''},
-};
-const BORE_FITTINGS_MAP = {
-  '':['4','6','8','10','12'],'6':['4'],'10':['4'],'12':['4','6'],'16':['4','6'],
-  '20':['6'],'25':['6'],'32':['6'],'40':['8'],'50':['10'],'63':['10'],
-  '80':['10','12'],'100':['12'],'125':['12','16'],'140':['16'],
-  '160':['16'],'180':['16','20'],'200':['20'],
-};
-const BORE_FITTING = {
-  '6':'4','10':'4','12':'6','16':'6','20':'6','25':'6','32':'6',
-  '40':'8','50':'10','63':'10','80':'10','100':'12',
-  '125':'12','140':'16','160':'16','180':'16','200':'20'
-};
+const FC={'4':{label:'4 mm.'},'6':{label:'6 mm.'},'8':{label:'8 mm.'},'10':{label:'10 mm.'},'12':{label:'12 mm.'},'16':{label:'16 mm.'},'20':{label:'20 mm.'}};
+function getFOpts(sel){return Object.entries(FC).map(([v,c])=>`<option value="${v}"${sel===v?' selected':''}>${c.label}</option>`).join('');}
 
-function getFittingOptions(bore, sel) {
-  const opts = BORE_FITTINGS_MAP[bore]||BORE_FITTINGS_MAP[''];
-  return opts.map(v=>{const c=FITTINGS_CONFIG[v]||{label:v+' mm.',partNo:''};const l=c.partNo?`${c.partNo} (${c.label})`:c.label;return`<option value="${v}"${sel===v?' selected':''}>${l}</option>`;}).join('');
+function render(){
+  const c=document.getElementById('valveRows');
+  if(!rows.length){c.innerHTML='<div class="empty-state">ยังไม่มีรายการ — กดปุ่มเพิ่มด้านบน</div>';}
+  else{c.innerHTML=rows.map((r,i)=>{const part=getPartNo(r.orientation,r.size);
+    return`<div class="vr">
+      <div class="rn">${i+1}</div>
+      <select onchange="setO(${r.id},this.value)"><option value="H"${r.orientation==='H'?' selected':''}>🔵 Horizontal</option><option value="V"${r.orientation==='V'?' selected':''}>🟢 Vertical</option></select>
+      <select onchange="setS(${r.id},this.value)"><option value="SY3"${r.size==='SY3'?' selected':''}>SY3 Series</option><option value="SY5"${r.size==='SY5'?' selected':''}>SY5 Series</option><option value="SY7"${r.size==='SY7'?' selected':''}>SY7 Series</option><option value="SY9"${r.size==='SY9'?' selected':''}>SY9 Series</option></select>
+      <div class="ptag">${part}</div>
+      <select onchange="setT(${r.id},this.value)"><option value="straight"${r.typ==='straight'?' selected':''}>แบบตรง</option><option value="L"${r.typ==='L'?' selected':''}>แบบ L</option></select>
+      <select onchange="setF(${r.id},this.value)">${getFOpts(r.fitting)}</select>
+      <button class="bdel" onclick="removeRow(${r.id})">✕</button>
+    </div>`}).join('');}
+  calcResult();loadProductList();drawDiagram();syncAssembly();
 }
 
-function render() {
-  const c = document.getElementById('valveRows');
-  if (rows.length===0) {
-    c.innerHTML='<div class="empty-state">ยังไม่มีรายการ — กดปุ่มด้านบนเพื่อเพิ่ม</div>';
-  } else {
-    c.innerHTML = rows.map((r,i) => {
-      const part = getPartNo(r.orientation, r.size);
-      return `<div class="valve-row">
-        <div class="row-num">${i+1}</div>
-        <select onchange="setOrientation(${r.id},this.value)">
-          <option value="H"${r.orientation==='H'?' selected':''}>🔵 Horizontal</option>
-          <option value="V"${r.orientation==='V'?' selected':''}>🟢 Vertical</option>
-        </select>
-        <select onchange="setSize(${r.id},this.value)">
-          <option value="SY3"${r.size==='SY3'?' selected':''}>SY3 Series</option>
-          <option value="SY5"${r.size==='SY5'?' selected':''}>SY5 Series</option>
-          <option value="SY7"${r.size==='SY7'?' selected':''}>SY7 Series</option>
-          <option value="SY9"${r.size==='SY9'?' selected':''}>SY9 Series</option>
-        </select>
-        <div class="part-tag">${part}</div>
-        <select onchange="setTyp(${r.id},this.value)">
-          <option value="straight"${r.typ==='straight'?' selected':''}>แบบตรง</option>
-          <option value="L"${r.typ==='L'?' selected':''}>แบบ L</option>
-        </select>
-        <select onchange="setFitting(${r.id},this.value)">${getFittingOptions('',r.fitting)}</select>
-        <button class="btn-del" onclick="removeRow(${r.id})">✕</button>
-      </div>`;
-    }).join('');
-  }
-  calcResult(); loadProductList(); drawDiagram(); syncAssemblySet();
-}
+function setO(id,v){const r=rows.find(r=>r.id===id);if(r){r.orientation=v;render();}}
+function setS(id,v){const r=rows.find(r=>r.id===id);if(r){r.size=v;render();}}
+function setT(id,v){const r=rows.find(r=>r.id===id);if(r){r.typ=v;render();}}
+function setF(id,v){const r=rows.find(r=>r.id===id);if(r){r.fitting=v;render();}}
 
-function setOrientation(id,v){const r=rows.find(r=>r.id===id);if(r){r.orientation=v;render();}}
-function setSize(id,v){const r=rows.find(r=>r.id===id);if(r){r.size=v;render();}}
-function setTyp(id,v){const r=rows.find(r=>r.id===id);if(r){r.typ=v;render();}}
-function setFitting(id,v){const r=rows.find(r=>r.id===id);if(r){r.fitting=v;render();}}
+// Bore table
+const BT=[['Ø6','4','mini'],['Ø10','4',''],['Ø12','4–6',''],['Ø16','4–6',''],['Ø20','6','SMC ref'],['Ø25','6',''],['Ø32','6',''],['Ø40','8',''],['Ø50','10',''],['Ø63','10',''],['Ø80','10–12',''],['Ø100','12',''],['Ø125','12–16','heavy'],['Ø140','16',''],['Ø160','16',''],['Ø180','16–20',''],['Ø200','20','']];
+document.getElementById('boreTbl').innerHTML=`<thead><tr><th style="padding:8px 14px;background:var(--bk3);color:var(--g4);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--bk4);text-align:left;">Bore</th><th style="padding:8px 14px;background:var(--bk3);color:var(--g4);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--bk4);text-align:left;">สายลม (mm)</th><th style="padding:8px 14px;background:var(--bk3);color:var(--g4);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--bk4);text-align:left;">หมายเหตุ</th></tr></thead><tbody>${BT.map(([b,t,n])=>`<tr><td style="padding:7px 14px;border-bottom:1px solid var(--bk4);">${b}</td><td style="padding:7px 14px;border-bottom:1px solid var(--bk4);">${t}</td><td style="padding:7px 14px;border-bottom:1px solid var(--bk4);color:var(--g3);font-size:11px;">${n}</td></tr>`).join('')}</tbody>`;
+function toggleBoreTable(e){e.stopPropagation();const p=document.getElementById('borePopup');p.style.display=p.style.display==='none'?'flex':'none';}
+document.addEventListener('click',e=>{const p=document.getElementById('borePopup');if(p&&e.target===p)p.style.display='none';});
 
-function toggleBoreTable(e) {
-  e.stopPropagation();
-  const p=document.getElementById('borePopup');
-  p.style.display=p.style.display==='none'?'flex':'none';
-}
-document.addEventListener('click',function(e){
-  const p=document.getElementById('borePopup');
-  if(p&&e.target===p)p.style.display='none';
-});
-
-function calcResult() {
+function calcResult(){
   const total=rows.length;
   document.getElementById('totalValves').textContent=total;
   const spare=total>10?4:2;const raw=total+spare;const station=raw%2===0?raw:raw+1;
   document.getElementById('totalStation').textContent=total>0?station:0;
-  document.getElementById('stationNote').textContent=total>0
-    ?(raw!==station?`${total} valve + 2 spare = ${raw} → ปัดขึ้นเป็น ${station}`:`${total} valve + 2 spare = ${station}`)
-    :'valve + 2 spare (ปัดเลขคู่)';
-
+  document.getElementById('stationNote').textContent=total>0?`${total} valve + ${spare} spare = ${station}`:'valve + 2 spare';
   const tbody=document.getElementById('manifoldTbody');
   const mfSec=document.getElementById('manifoldSection');
-  if(rows.length<=1){mfSec.style.display='none';tbody.innerHTML='<tr><td colspan="5" class="empty-state">ยังไม่มีรายการ — เพิ่ม Solenoid Valve ด้านบน</td></tr>';return;}
+  if(rows.length<=1){mfSec.style.display='none';tbody.innerHTML='<tr><td colspan="5" class="empty-state">ยังไม่มีรายการ</td></tr>';return;}
   mfSec.style.display='block';
-
-  const groups={};
-  rows.forEach(r=>{if(!groups[r.size])groups[r.size]={size:r.size,rows:[]};groups[r.size].rows.push(r);});
+  const groups={};rows.forEach(r=>{if(!groups[r.size])groups[r.size]={size:r.size,rows:[]};groups[r.size].rows.push(r);});
   const allRows=[];
   Object.values(groups).forEach(g=>{
     const count=g.rows.length;const spare2=count>10?4:2;const raw2=count+spare2;const st=raw2%2===0?raw2:raw2+1;
-    const prefix=MANIFOLD_PREFIX[g.size]||'';
-    const solenoidParts=[...new Set(g.rows.map(r=>getPartNo(r.orientation,r.size)))];
-    const MAX=10;let remain=st;const manifoldUnits=[];
-    while(remain>0){const take=remain>MAX?MAX:remain;manifoldUnits.push(take);remain-=take;}
-    const noteStr=raw2!==st?`<span style="color:var(--gray3);font-size:11px">(${raw2}→${st})</span>`:'';
-    manifoldUnits.forEach((take,idx)=>{
-      const manifoldPart=prefix+String(take).padStart(2,'0');
-      const unitLabel=manifoldUnits.length>1?`<span style="color:var(--gray3);font-size:11px"> ตัวที่ ${idx+1}</span>`:'';
-      allRows.push(`<tr>
-        <td><span class="series-badge">${g.size}</span></td>
-        <td style="color:var(--text-light);font-weight:700;">${idx===0?count+' รายการ':''}</td>
-        <td>${idx===0?st+' station '+noteStr:''}</td>
-        <td><span class="part-no">${manifoldPart}</span>${unitLabel}</td>
-        <td style="font-size:12px;color:var(--gray4);">${idx===0?solenoidParts.join(', '):''}</td>
-      </tr>`);
+    const prefix=MP[g.size]||'';const svParts=[...new Set(g.rows.map(r=>getPartNo(r.orientation,r.size)))];
+    let remain=st;const units=[];const MAX=10;while(remain>0){const t=remain>MAX?MAX:remain;units.push(t);remain-=t;}
+    const noteStr=raw2!==st?`<span style="color:var(--g3);font-size:11px">(${raw2}→${st})</span>`:'';
+    units.forEach((take,idx)=>{const mp=prefix+String(take).padStart(2,'0');const ul=units.length>1?`<span style="color:var(--g3);font-size:11px"> ตัวที่${idx+1}</span>`:'';
+      allRows.push(`<tr><td><span class="sb">${g.size}</span></td><td style="color:var(--tl);font-weight:700;">${idx===0?count+' รายการ':''}</td><td>${idx===0?st+' station '+noteStr:''}</td><td><span class="pno">${mp}</span>${ul}</td><td style="font-size:12px;color:var(--g4);">${idx===0?svParts.join(', '):''}</td></tr>`);
     });
   });
   tbody.innerHTML=allRows.join('');
 }
 
-const PRODUCT_LIST=[
-  {title:'Solenoid Valve SY3 Series (Vertical)',   series:'SY3',type:'solenoid',partNo:'SY3320-5LZ-M5',url3d:''},
-  {title:'Solenoid Valve SY5 Series (Vertical)',   series:'SY5',type:'solenoid',partNo:'SY5320-5LZ-01',url3d:''},
-  {title:'Solenoid Valve SY7 Series (Vertical)',   series:'SY7',type:'solenoid',partNo:'SY7320-5LZ-02',url3d:''},
-  {title:'Solenoid Valve SY9 Series (Vertical)',   series:'SY9',type:'solenoid',partNo:'SY9320-5LZ-03',url3d:''},
-  {title:'Solenoid Valve SY3 Series (Horizontal)', series:'SY3',type:'solenoid',partNo:'SY3420-5LZ-M5',url3d:''},
-  {title:'Solenoid Valve SY5 Series (Horizontal)', series:'SY5',type:'solenoid',partNo:'SY5420-5LZ-01',url3d:''},
-  {title:'Solenoid Valve SY7 Series (Horizontal)', series:'SY7',type:'solenoid',partNo:'SY7420-5LZ-02',url3d:''},
-  {title:'Solenoid Valve SY9 Series (Horizontal)', series:'SY9',type:'solenoid',partNo:'SY9420-5LZ-03',url3d:''},
-  {title:'Manifold SY3 Series',    series:'SY3',type:'manifold',partNo:'SS5Y3-20-xx',url3d:''},
-  {title:'Manifold SY5 Series',    series:'SY5',type:'manifold',partNo:'SS5Y5-20-xx',url3d:''},
-  {title:'Manifold SY7 Series',    series:'SY7',type:'manifold',partNo:'SS5Y7-20-xx',url3d:''},
-  {title:'Manifold SY9 Series',    series:'SY9',type:'manifold',partNo:'SS5Y9-20-xx',url3d:''},
-  {title:'Blanking Plate SY3',     series:'SY3',type:'blanking',partNo:'SY3000-26-10A',url3d:''},
-  {title:'Blanking Plate SY5',     series:'SY5',type:'blanking',partNo:'SY5000-26-20A',url3d:''},
-  {title:'Blanking Plate SY7',     series:'SY7',type:'blanking',partNo:'SY7000-26-20A',url3d:''},
-  {title:'Blanking Plate SY9',     series:'SY9',type:'blanking',partNo:'SY9000-26-1A', url3d:''},
+const PL=[
+  {title:'Solenoid Valve SY3 (Vertical)',series:'SY3',type:'solenoid',partNo:'SY3320-5LZ-M5',url3d:''},
+  {title:'Solenoid Valve SY5 (Vertical)',series:'SY5',type:'solenoid',partNo:'SY5320-5LZ-01',url3d:''},
+  {title:'Solenoid Valve SY7 (Vertical)',series:'SY7',type:'solenoid',partNo:'SY7320-5LZ-02',url3d:''},
+  {title:'Solenoid Valve SY9 (Vertical)',series:'SY9',type:'solenoid',partNo:'SY9320-5LZ-03',url3d:''},
+  {title:'Solenoid Valve SY3 (Horizontal)',series:'SY3',type:'solenoid',partNo:'SY3420-5LZ-M5',url3d:''},
+  {title:'Solenoid Valve SY5 (Horizontal)',series:'SY5',type:'solenoid',partNo:'SY5420-5LZ-01',url3d:''},
+  {title:'Solenoid Valve SY7 (Horizontal)',series:'SY7',type:'solenoid',partNo:'SY7420-5LZ-02',url3d:''},
+  {title:'Solenoid Valve SY9 (Horizontal)',series:'SY9',type:'solenoid',partNo:'SY9420-5LZ-03',url3d:''},
+  {title:'Manifold SY3',series:'SY3',type:'manifold',partNo:'SS5Y3-20-xx',url3d:''},
+  {title:'Manifold SY5',series:'SY5',type:'manifold',partNo:'SS5Y5-20-xx',url3d:''},
+  {title:'Manifold SY7',series:'SY7',type:'manifold',partNo:'SS5Y7-20-xx',url3d:''},
+  {title:'Manifold SY9',series:'SY9',type:'manifold',partNo:'SS5Y9-20-xx',url3d:''},
+  {title:'Blanking Plate SY3',series:'SY3',type:'blanking',partNo:'SY3000-26-10A',url3d:''},
+  {title:'Blanking Plate SY5',series:'SY5',type:'blanking',partNo:'SY5000-26-20A',url3d:''},
+  {title:'Blanking Plate SY7',series:'SY7',type:'blanking',partNo:'SY7000-26-20A',url3d:''},
+  {title:'Blanking Plate SY9',series:'SY9',type:'blanking',partNo:'SY9000-26-1A',url3d:''},
 ];
 
-function loadProductList() {
+function loadProductList(){
   const tbody=document.getElementById('productTbody');
-  if(rows.length===0){tbody.innerHTML='<tr><td colspan="6" class="empty-state">เพิ่ม Solenoid Valve ด้านบนเพื่อดูรายการสินค้าที่เกี่ยวข้อง</td></tr>';document.getElementById('productCount').textContent='';return;}
-  const selectedSeries=new Set(rows.map(r=>r.size));
-  const selectedOrientations=new Set(rows.map(r=>r.orientation));
-  const manifoldCalc={};
-  selectedSeries.forEach(size=>{
-    const count=rows.filter(r=>r.size===size).length;const spare=count>10?4:2;const raw=count+spare;const st=raw%2===0?raw:raw+1;
-    function toEven2(n){return n%2===0?n:n+1;}
-    const units=[];let remain=st;const lastDigit=count%10;
-    if(lastDigit===8||lastDigit===9||lastDigit===0){const half=toEven2(Math.min(Math.ceil(st/2),10));const rest=toEven2(st-half);if(rest<=10){units.push(half);units.push(rest);}else{units.push(half);let r2=rest;while(r2>0){const take=toEven2(Math.min(r2,10));units.push(take);r2-=take;}}}
-    else{let r2=st;while(r2>0){const take=toEven2(Math.min(r2,10));units.push(take);r2-=take;}}
-    manifoldCalc[size]=units.map(u=>(MANIFOLD_PREFIX[size]||'')+String(u).padStart(2,'0'));
-  });
-  const filtered=PRODUCT_LIST.filter(item=>{
-    if(item.type==='solenoid'){return selectedSeries.has(item.series)&&((item.title.includes('Vertical')&&selectedOrientations.has('V'))||(item.title.includes('Horizontal')&&selectedOrientations.has('H')));}
-    if(item.type==='manifold')return rows.length>1&&selectedSeries.has(item.series);
-    if(item.type==='blanking')return rows.length>1&&selectedSeries.has(item.series);
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="6" class="empty-state">เพิ่ม Solenoid Valve เพื่อดูรายการ</td></tr>';document.getElementById('productCount').textContent='';return;}
+  const ss=new Set(rows.map(r=>r.size));const so=new Set(rows.map(r=>r.orientation));
+  const filtered=PL.filter(item=>{
+    if(item.type==='solenoid')return ss.has(item.series)&&((item.title.includes('Vertical')&&so.has('V'))||(item.title.includes('Horizontal')&&so.has('H')));
+    if(item.type==='manifold')return rows.length>1&&ss.has(item.series);
+    if(item.type==='blanking')return rows.length>1&&ss.has(item.series);
     return false;
   });
-  const expandedList=[];
-  filtered.forEach(item=>{
-    if(item.type==='manifold'){const units=manifoldCalc[item.series]||[item.partNo];units.forEach((partNo,idx)=>{expandedList.push({...item,partNo,unitLabel:units.length>1?` (ตัวที่ ${idx+1})`:''});});}
-    else{expandedList.push({...item,unitLabel:''});}
-  });
-  window._currentProductList=expandedList;
-  const hasDownload=expandedList.some(item=>item.url3d);
-  const dlBtn=document.getElementById('dlAllBtn');if(dlBtn)dlBtn.disabled=!hasDownload;
-  document.getElementById('productCount').textContent=expandedList.length+' รายการ';
-  tbody.innerHTML=expandedList.map((item,i)=>{
-    const typeTag=item.type==='solenoid'?'<span class="tag-type tag-sv">Solenoid Valve</span>':item.type==='manifold'?'<span class="tag-type tag-mf">Manifold</span>':item.type==='blanking'?'<span class="tag-type tag-bk">Blanking Plate</span>':'<span class="tag-type tag-ft">Fitting</span>';
-    const linkCell=item.url3d?`<a class="product-link" href="${item.url3d}" download target="_blank">⬇️ ดาวน์โหลด 3D</a>`:`<span class="no-link-badge">ยังไม่มีไฟล์ 3D</span>`;
-    return`<tr><td style="color:var(--gray3);font-size:11px;">${i+1}</td><td style="color:var(--text-light);font-weight:500;">${item.title}${item.unitLabel?`<span style="color:var(--gray3);font-size:11px">${item.unitLabel}</span>`:''}</td><td><span class="tag-series">${item.series}</span></td><td>${typeTag}</td><td style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--orange-light);font-weight:700;">${item.partNo}</td><td>${linkCell}</td></tr>`;
+  document.getElementById('productCount').textContent=filtered.length+' รายการ';
+  tbody.innerHTML=filtered.map((item,i)=>{
+    const tt=item.type==='solenoid'?'<span class="tt tsv">Solenoid Valve</span>':item.type==='manifold'?'<span class="tt tmf">Manifold</span>':'<span class="tt tbk">Blanking Plate</span>';
+    const lc=item.url3d?`<a style="color:var(--orl);font-size:12px;" href="${item.url3d}" download>⬇ 3D</a>`:`<span class="nlb">-</span>`;
+    return`<tr><td style="color:var(--g3);font-size:11px;">${i+1}</td><td style="color:var(--tl);font-weight:500;font-size:12px;">${item.title}</td><td><span class="sb">${item.series}</span></td><td>${tt}</td><td style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--orl);font-weight:700;">${item.partNo}</td><td>${lc}</td></tr>`;
   }).join('');
 }
 
-function downloadAll(){
-  const items=window._currentProductList||[];const downloadables=items.filter(i=>i.url3d);if(!downloadables.length)return;
-  downloadables.forEach((item,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=item.url3d;a.download='';a.target='_blank';document.body.appendChild(a);a.click();document.body.removeChild(a);},i*300);});
+// ══════════════════════════════════════════════
+// ASSEMBLY SET — auto-sync from rows
+// ══════════════════════════════════════════════
+function syncAssembly(){
+  const sec=document.getElementById('asmCards');
+  if(!rows.length){
+    sec.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--g3);font-size:12px;">เลือก Solenoid Valve ด้านซ้ายเพื่อเริ่มประกอบ</div>';
+    resetDownload();return;
+  }
+  const bom=buildBOM();
+  currentBomItems=bom;
+  renderCards(bom);renderBOM(bom);updateStats(bom);
+  document.getElementById('asmLabel').textContent=`${rows.length} SV → ${bom.length} รายการ`;
 }
 
-// ASSEMBLY DIAGRAM — ต้นฉบับครบถ้วน
-function drawDiagram() {
-  const sec=document.getElementById('diagramSection');
-  if(rows.length<=1){sec.style.display='none';return;}
-  sec.style.display='block';
-  const wrap=document.getElementById('diagramWrap');wrap.innerHTML='';
-  const dlWrapClear=document.getElementById('diagramDownloadWrap');if(dlWrapClear)dlWrapClear.innerHTML='';
+function buildBOM(){
+  const bom=[];
+  const groups={};
+  rows.forEach(r=>{if(!groups[r.size])groups[r.size]=[];groups[r.size].push(r);});
+  Object.values(groups).forEach(grp=>{
+    const size=grp[0].size;const count=grp.length;const spare=count>10?4:2;const raw=count+spare;const station=raw%2===0?raw:raw+1;const blanks=station-count;const prefix=MP[size]||'';
+    // SVs — group by part_no
+    const svG={};
+    grp.forEach(r=>{const pn=getPartNo(r.orientation,r.size);if(!svG[pn])svG[pn]={partNo:pn,desc:`Solenoid Valve ${size} ${r.orientation==='H'?'Horizontal':'Vertical'}`,type:'sv',series:size,orientation:r.orientation,qty:0};svG[pn].qty++;});
+    Object.values(svG).forEach(sv=>bom.push(sv));
+    // Manifold units
+    let remain=station;const MAX=10;let idx=0;
+    while(remain>0){const take=remain>MAX?MAX:remain;const pn=prefix+String(take).padStart(2,'0');bom.push({partNo:pn,desc:`Manifold ${size} / ${take} Station${idx>0?` (ตัวที่${idx+1})`:''}`,type:'mf',series:size,qty:1});remain-=take;idx++;}
+    // Blanking
+    if(blanks>0)bom.push({partNo:BP[size]||'BLANK',desc:`Blanking Plate ${size}`,type:'bk',series:size,qty:blanks});
+  });
+  return bom;
+}
+
+function renderCards(bom){
+  const ICONS={sv:'⚡',mf:'🔧',bk:'◻'};
+  const LABELS={sv:'Solenoid Valve',mf:'Manifold',bk:'Blanking Plate'};
+  document.getElementById('asmCards').innerHTML=bom.map(item=>`
+    <div class="acard ${item.type}">
+      <div class="acard-cat">${ICONS[item.type]} ${LABELS[item.type]} — ${item.series}</div>
+      <div class="acard-pno">${item.partNo}</div>
+      <div class="acard-desc">${item.desc}</div>
+      <div class="acard-qty">× ${item.qty} ชิ้น</div>
+      <span class="acard-step sttbd">○ STEP TBD</span>
+    </div>`).join('');
+}
+
+function renderBOM(bom){
+  document.getElementById('bomList').innerHTML=bom.length?bom.map(item=>`
+    <div class="brow">
+      <div class="brow-top"><div class="bpno">${item.partNo}</div><div class="bqty">×${item.qty}</div></div>
+      <div class="bdesc">${item.desc}</div>
+    </div>`).join(''):'<div style="padding:18px;text-align:center;color:var(--g3);font-size:12px;">ยังไม่มีรายการ</div>';
+  document.getElementById('bomCount').textContent=bom.length+' รายการ';
+}
+
+function updateStats(bom){
+  const total=bom.length;const parts=bom.reduce((s,b)=>s+b.qty,0);
+  document.getElementById('stTotal').textContent=total;
+  document.getElementById('stReady').textContent=0;
+  document.getElementById('stParts').textContent=parts;
+  document.getElementById('progF').style.width='0%';
+  document.getElementById('btnAssemble').disabled=total===0;
+  document.getElementById('btnCSV').disabled=total===0;
+  document.getElementById('dlNote').textContent=total>0?`${total} รายการพร้อม — กด Download เพื่อสร้าง STEP`:'เลือก Solenoid Valve ด้านซ้ายก่อน';
+}
+
+function resetDownload(){
+  ['stTotal','stReady','stParts'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('progF').style.width='0%';
+  document.getElementById('btnAssemble').disabled=true;
+  document.getElementById('btnCSV').disabled=true;
+  document.getElementById('dlNote').textContent='เลือก Solenoid Valve ด้านซ้ายก่อน';
+  document.getElementById('bomCount').textContent='0 รายการ';
+  document.getElementById('asmLabel').textContent='เลือก SV เพื่อเริ่ม';
+  document.getElementById('bomList').innerHTML='<div style="padding:18px;text-align:center;color:var(--g3);font-size:12px;">ยังไม่มีรายการ</div>';
+}
+
+// ══════════════════════════════════════════════
+// REAL API ASSEMBLY
+// ══════════════════════════════════════════════
+async function runAssemble(){
+  if(!currentBomItems.length)return;
+
+  // Build API payload from rows
+  const bom_payload=[];
+  const groups={};
+  rows.forEach(r=>{if(!groups[r.size])groups[r.size]=[];groups[r.size].push(r);});
+  Object.values(groups).forEach(grp=>{
+    const svG={};
+    grp.forEach(r=>{const pn=getPartNo(r.orientation,r.size);if(!svG[pn])svG[pn]={series:r.size,orientation:r.orientation,part_no:pn,qty:0};svG[pn].qty++;});
+    Object.values(svG).forEach(sv=>bom_payload.push(sv));
+  });
+
+  const name=`PHI_Assembly_${new Date().toISOString().split('T')[0]}`;
+  const prog=document.getElementById('asmProgress');
+  const progText=document.getElementById('asmProgressText');
+  const btn=document.getElementById('btnAssemble');
+
+  btn.disabled=true;prog.classList.add('show');
+  progText.textContent='กำลังส่ง BOM ไปยัง Assembly Engine...';
+
+  try {
+    // Try async endpoint first
+    const resp=await fetch(`${API_URL}/api/assemble-async`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({bom:bom_payload,name})
+    });
+
+    if(!resp.ok)throw new Error(`API error: ${resp.status}`);
+    const {job_id}=await resp.json();
+    progText.textContent=`กำลังประกอบ STEP (Job: ${job_id})...`;
+
+    // Poll for completion
+    for(let i=0;i<60;i++){
+      await new Promise(r=>setTimeout(r,2000));
+      const poll=await fetch(`${API_URL}/api/job/${job_id}`);
+      const status=await poll.json();
+      if(status.status==='done'){
+        progText.textContent='ประกอบเสร็จแล้ว! กำลังดาวน์โหลด...';
+        // Download the file
+        const dl=await fetch(`${API_URL}${status.download_url}`);
+        const blob=await dl.blob();
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download=`${name}.step`;a.click();
+        URL.revokeObjectURL(url);
+        prog.classList.remove('show');btn.disabled=false;
+        document.getElementById('stReady').textContent=currentBomItems.length;
+        document.getElementById('progF').style.width='100%';
+        showNotif('ดาวน์โหลด Assembly STEP เรียบร้อย ✓','green');
+        return;
+      } else if(status.status==='error'){
+        throw new Error(status.error||'Assembly failed');
+      }
+      progText.textContent=`กำลังประกอบ... (${i*2}s)`;
+    }
+    throw new Error('Timeout');
+  } catch(e){
+    console.error(e);
+    prog.classList.remove('show');btn.disabled=false;
+    // Fallback: generate placeholder STEP zip
+    showNotif(`API ไม่พร้อม — ดาวน์โหลด placeholder แทน`,'amber');
+    await downloadPlaceholderSTEP();
+  }
+}
+
+async function downloadPlaceholderSTEP(){
+  const zip=new JSZip();const now=new Date().toISOString().split('T')[0];
+  const lines=['ISO-10303-21;','HEADER;',
+    `FILE_DESCRIPTION(('PHI Pneumatic Assembly - SY Series','PHI Integration Design'),'2;1');`,
+    `FILE_NAME('PHI_Assembly_${now}.step','${now}',('PHI Integration Design'),(''),'',' ','');`,
+    `FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));`,'ENDSEC;','DATA;'];
+  let eid=1;
+  currentBomItems.forEach(item=>{
+    const name=item.partNo.replace(/[^A-Za-z0-9_-]/g,'_');
+    lines.push(`#${eid}=PRODUCT('${name}','${item.desc}','',());`);
+    lines.push(`#${eid+1}=PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE('','',#${eid},.NOT_KNOWN.);`);
+    lines.push(`#${eid+2}=PRODUCT_DEFINITION('design','',#${eid+1},#${eid+3});`);
+    lines.push(`#${eid+3}=PRODUCT_DEFINITION_CONTEXT('part definition',#${eid+4},'design');`);
+    lines.push(`#${eid+4}=APPLICATION_CONTEXT('automotive design');`);
+    eid+=5;
+    zip.folder('parts').file(`${name}.step`,`ISO-10303-21;\nHEADER;\nFILE_NAME('${name}.step','${now}',('PHI'),(''),'',' ','');\nFILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));\nENDSEC;\nDATA;\n/* PLACEHOLDER: ${item.partNo} */\n/* วางไฟล์ STEP จริงจาก SMC แล้วรันผ่าน API */\nENDSEC;\nEND-ISO-10303-21;\n`);
+  });
+  lines.push('ENDSEC;','END-ISO-10303-21;');
+  zip.file(`PHI_Assembly_${now}.step`,lines.join('\n'));
+  zip.file(`PHI_BOM_${now}.csv`,generateCSV());
+  zip.file('SETUP.txt',`PHI Assembly Set — ${now}\n\nวิธีรับ STEP ที่ประกอบจริง:\n1. ดาวน์โหลด STEP แต่ละ part จาก smcworld.com\n2. วางใน models/ ตาม structure\n3. รัน: python3 assembler/api.py\n4. กด Download Assembly STEP อีกครั้ง\n\nParts:\n${currentBomItems.map(p=>`- [x${p.qty}] ${p.partNo}  ${p.desc}`).join('\n')}\n`);
+  const blob=await zip.generateAsync({type:'blob'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`PHI_Assembly_${now}.zip`;a.click();
+  URL.revokeObjectURL(url);
+}
+
+function generateCSV(){
+  const r=[['No.','Part No.','Description','Type','Series','Qty']];
+  currentBomItems.forEach((item,i)=>r.push([i+1,item.partNo,`"${item.desc}"`,item.type,item.series,item.qty]));
+  return r.map(row=>row.join(',')).join('\n');
+}
+
+function downloadCSV(){
+  const csv=generateCSV();const now=new Date().toISOString().split('T')[0];
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=`PHI_BOM_${now}.csv`;a.click();URL.revokeObjectURL(url);
+  showNotif('Export BOM CSV เรียบร้อย ✓','green');
+}
+
+function showNotif(msg,color='orange'){
+  document.querySelectorAll('.notif').forEach(n=>n.remove());if(notifTimer)clearTimeout(notifTimer);
+  const n=document.createElement('div');n.className='notif';
+  const c=color==='green'?'var(--gn)':color==='amber'?'var(--am)':color==='red'?'var(--rd)':'var(--or)';
+  n.style.borderLeftColor=c;n.innerHTML=`<span style="color:${c};font-size:14px;">●</span> ${msg}`;
+  document.body.appendChild(n);notifTimer=setTimeout(()=>n.remove(),3500);
+}
+
+// ══════════════════════════════════════════════
+// ASSEMBLY DIAGRAM (original)
+// ══════════════════════════════════════════════
+function drawDiagram(){
+  const sec=document.getElementById('diagramSection');if(rows.length<=1){sec.style.display='none';return;}sec.style.display='block';
+  const wrap=document.getElementById('diagramWrap');wrap.innerHTML='';const dlw=document.getElementById('diagramDownloadWrap');if(dlw)dlw.innerHTML='';
   const groups={};rows.forEach(r=>{if(!groups[r.size])groups[r.size]=[];groups[r.size].push(r);});
   Object.values(groups).forEach(grp=>{
     const size=grp[0].size;const count=grp.length;const spare=count>10?4:2;const raw=count+spare;const station=raw%2===0?raw:raw+1;const blanks=station-count;
-    const mfPrefix={SY3:'SS5Y3-20-',SY5:'SS5Y5-20-',SY7:'SS5Y7-20-',SY9:'SS5Y9-20-'}[size]||'';
+    const mfPrefix=MP[size]||'';
     function toEven(n){return n%2===0?n:n+1;}
-    function splitStations(total,svCount){
-      const lastDigit=svCount%10;
-      if(lastDigit===8||lastDigit===9||lastDigit===0){
-        const half=toEven(Math.min(Math.ceil(total/2),10));const rest=toEven(total-half);
-        if(rest<=10)return[half,rest];
-        const units=[half];let r=rest;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;
-      }
-      const units=[];let r=total;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;
-    }
-    const unitCounts=splitStations(station,count);const stationRows=[];let stIdx=0;
-    unitCounts.forEach(take=>{stationRows.push({count:take,startIdx:stIdx});stIdx+=take;});
-    const svgNS='http://www.w3.org/2000/svg';const SW=80;const CARD_W=64;const CARD_H=200;const FT_H=28;const FT_LBL=22;const WIRE_T=40;const WIRE_B=50;const MFH=100;const PAD=100;const ROW_GAP=40;
+    function splitStations(total,svCount){const ld=svCount%10;if(ld===8||ld===9||ld===0){const half=toEven(Math.min(Math.ceil(total/2),10));const rest=toEven(total-half);if(rest<=10)return[half,rest];const units=[half];let r=rest;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;}const units=[];let r=total;while(r>0){const t=toEven(Math.min(r,10));units.push(t);r-=t;}return units;}
+    const unitCounts=splitStations(station,count);const stationRows=[];let stIdx=0;unitCounts.forEach(take=>{stationRows.push({count:take,startIdx:stIdx});stIdx+=take;});
+    const svgNS='http://www.w3.org/2000/svg';const SW=80,CARD_W=64,CARD_H=200,FT_H=28,FT_LBL=22,WIRE_T=40,WIRE_B=50,MFH=100,PAD=100,ROW_GAP=40;
     const ROW_H=WIRE_T+FT_LBL+FT_H+CARD_H+MFH+FT_H+FT_LBL+WIRE_B;
-    const maxW=stationRows.reduce((m,r)=>Math.max(m,PAD*2+r.count*SW),0);
-    const totalH=stationRows.length*ROW_H+(stationRows.length-1)*ROW_GAP;
-    const container=document.createElement('div');container.style.cssText='margin-bottom:24px;';
-    const lbl=document.createElement('div');lbl.style.cssText='font-size:12px;color:var(--gray3);margin-bottom:8px;font-family:Barlow,sans-serif;';
-    lbl.textContent=`${size} Series — ${count} Solenoid Valve + ${blanks} Blanking Plate = ${station} Station`;container.appendChild(lbl);
-    const svgId='svg_'+size+'_'+Date.now();const svg=document.createElementNS(svgNS,'svg');
-    svg.setAttribute('id',svgId);svg.setAttribute('width',maxW);svg.setAttribute('height',totalH);svg.setAttribute('viewBox',`0 0 ${maxW} ${totalH}`);svg.style.cssText='display:block;';
+    const maxW=stationRows.reduce((m,r)=>Math.max(m,PAD*2+r.count*SW),0);const totalH=stationRows.length*ROW_H+(stationRows.length-1)*ROW_GAP;
+    const cont=document.createElement('div');cont.style.cssText='margin-bottom:24px;';
+    const lbl=document.createElement('div');lbl.style.cssText='font-size:12px;color:var(--g3);margin-bottom:8px;font-family:Barlow,sans-serif;';lbl.textContent=`${size} — ${count} SV + ${blanks} Blanking = ${station} Station`;cont.appendChild(lbl);
+    const svgId='svg_'+size+'_'+Date.now();const svg=document.createElementNS(svgNS,'svg');svg.setAttribute('id',svgId);svg.setAttribute('width',maxW);svg.setAttribute('height',totalH);svg.setAttribute('viewBox',`0 0 ${maxW} ${totalH}`);svg.style.cssText='display:block;';
     function el(tag,attrs,parent){const e=document.createElementNS(svgNS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));(parent||svg).appendChild(e);return e;}
     function txt(t,x,y,attrs,parent){const e=document.createElementNS(svgNS,'text');e.textContent=t;const d={x,y,fill:'#ccc','font-size':'11','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle'};Object.entries({...d,...attrs}).forEach(([k,v])=>e.setAttribute(k,v));(parent||svg).appendChild(e);return e;}
     el('rect',{x:0,y:0,width:maxW,height:totalH,fill:'#161616'});
@@ -870,59 +691,38 @@ function drawDiagram() {
       el('rect',{x:mxStart,y:MFY,width:mxWidth,height:MFH,rx:6,fill:'#2a2a2a',stroke:'#555','stroke-width':'2'});
       for(let j=1;j<mfCount;j++)el('line',{x1:mxStart+j*SW,y1:MFY,x2:mxStart+j*SW,y2:MFY+MFH,stroke:'#444','stroke-width':'1'});
       txt(mfPart,mxStart+mxWidth/2,MFY+MFH/2-(stationRows.length>1?8:0),{fill:'#f5a500','font-size':'11','font-weight':'bold'});
-      if(stationRows.length>1)txt(`ตัวที่ ${rowIdx+1}`,mxStart+mxWidth/2,MFY+MFH/2+10,{fill:'#888','font-size':'9'});
+      if(stationRows.length>1)txt(`ตัวที่${rowIdx+1}`,mxStart+mxWidth/2,MFY+MFH/2+10,{fill:'#888','font-size':'9'});
       const portRows=[{label:'EA',y:MFY+20},{label:'P',y:MFY+50},{label:'EB',y:MFY+80}];
       [-1,1].forEach(side=>{portRows.forEach(p=>{const capX=side===-1?mxStart-46:mxStart+mxWidth+4;el('rect',{x:capX,y:p.y-10,width:40,height:20,rx:4,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.5'});el('line',{x1:side===-1?capX+40:capX,y1:p.y,x2:side===-1?mxStart:mxStart+mxWidth,y2:p.y,stroke:'#6bbccc','stroke-width':'2'});txt(p.label,capX+20,p.y+1,{fill:'#fff','font-size':'10','font-weight':'bold'});});});
       for(let i=0;i<mfCount;i++){
         const globalIdx=mfRow.startIdx+i;const cx=PAD+i*SW+SW/2;const cardX=PAD+i*SW+(SW-CARD_W)/2;const isBlank=globalIdx>=count;const row=isBlank?null:grp[globalIdx];
-        const svPart=row?getPartNo(row.orientation,row.size):'';const ftCfg=row?(FITTINGS_CONFIG[row.fitting]||{label:row.fitting+' mm.',partNo:''}):null;const ftLabel=ftCfg?(ftCfg.partNo||ftCfg.label):'';const isL=row&&row.typ==='L';const isH=row&&row.orientation==='H';
-        if(isBlank){
-          const bkPart={SY3:'SY3000-26-10A',SY5:'SY5000-26-20A',SY7:'SY7000-26-20A',SY9:'SY9000-26-1A'}[size]||'BLANK';
-          const g=el('g',{transform:`translate(${cardX},${CARD_TOP_Y})`});
-          el('rect',{x:0,y:0,width:CARD_W,height:CARD_H,rx:5,fill:'#1a3a5c',stroke:'#3a7aac','stroke-width':'2'},g);
-          el('circle',{cx:CARD_W/2,cy:20,r:8,fill:'#3a7aac',stroke:'#6abaec','stroke-width':'1.5'},g);
-          el('circle',{cx:CARD_W/2,cy:CARD_H-20,r:8,fill:'#3a7aac',stroke:'#6abaec','stroke-width':'1.5'},g);
-          const t=el('text',{x:CARD_W/2,y:CARD_H/2,fill:'#6abaec','font-size':'11','font-weight':'bold','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(-90,${CARD_W/2},${CARD_H/2})`},g);t.textContent=bkPart;
-        } else {
-          const cardColor=isH?'#c45000':'#e06010';
+        const svPart=row?getPartNo(row.orientation,row.size):'';const ftCfg=row?(FC[row.fitting]||{label:row.fitting+' mm.'}):null;const ftLabel=ftCfg?ftCfg.label:'';const isL=row&&row.typ==='L';const isH=row&&row.orientation==='H';
+        if(isBlank){const bkPart=BP[size]||'BLANK';const g=el('g',{transform:`translate(${cardX},${CARD_TOP_Y})`});el('rect',{x:0,y:0,width:CARD_W,height:CARD_H,rx:5,fill:'#1a3a5c',stroke:'#3a7aac','stroke-width':'2'},g);const t=el('text',{x:CARD_W/2,y:CARD_H/2,fill:'#6abaec','font-size':'11','font-weight':'bold','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(-90,${CARD_W/2},${CARD_H/2})`},g);t.textContent=bkPart;}
+        else{const cardColor=isH?'#c45000':'#e06010';
           el('line',{x1:cx-6,y1:rowY,x2:cx-6,y2:CARD_TOP_Y,stroke:'#cc3333','stroke-width':'2'});el('line',{x1:cx,y1:rowY,x2:cx,y2:CARD_TOP_Y,stroke:'#444','stroke-width':'2'});el('line',{x1:cx+6,y1:rowY,x2:cx+6,y2:CARD_TOP_Y,stroke:'#ddd','stroke-width':'2'});
           if(ftLabel){el('rect',{x:cx-28,y:rowY+WIRE_T,width:56,height:FT_LBL-2,rx:3,fill:'#f5c518',stroke:'#f5a500','stroke-width':'1'});txt('A: '+ftLabel,cx,rowY+WIRE_T+10,{fill:'#000','font-size':'10','font-weight':'bold'});}
           const ftTopY=rowY+WIRE_T+FT_LBL;el('rect',{x:cx-22,y:ftTopY,width:44,height:FT_H,rx:4,fill:'#222',stroke:'#555','stroke-width':'1.5'});
-          if(isL){el('rect',{x:cx-16,y:ftTopY+4,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});el('rect',{x:cx+2,y:ftTopY+2,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});txt('L',cx+20,ftTopY+11,{fill:'#6bbccc','font-size':'9','font-weight':'bold'});}
+          if(isL){el('rect',{x:cx-16,y:ftTopY+4,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});el('rect',{x:cx+2,y:ftTopY+2,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});}
           else{el('rect',{x:cx-9,y:ftTopY+4,width:18,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});}
-          const g=el('g',{transform:`translate(${cardX},${CARD_TOP_Y})`});
-          el('rect',{x:0,y:0,width:CARD_W,height:CARD_H,rx:5,fill:cardColor,stroke:'#ff9a40','stroke-width':'2'},g);
-          el('circle',{cx:CARD_W/2,cy:16,r:9,fill:'#ffeecc',stroke:'#fff','stroke-width':'1.5'},g);txt('A',CARD_W/2,16,{fill:'#333','font-size':'9','font-weight':'bold'},g);
-          el('circle',{cx:CARD_W/2,cy:CARD_H-16,r:9,fill:'#ffeecc',stroke:'#fff','stroke-width':'1.5'},g);txt('B',CARD_W/2,CARD_H-16,{fill:'#333','font-size':'9','font-weight':'bold'},g);
-          const t=el('text',{x:CARD_W/2,y:CARD_H/2,fill:'#000','font-size':'12','font-weight':'900','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(-90,${CARD_W/2},${CARD_H/2})`},g);t.textContent=svPart;
+          const g=el('g',{transform:`translate(${cardX},${CARD_TOP_Y})`});el('rect',{x:0,y:0,width:CARD_W,height:CARD_H,rx:5,fill:cardColor,stroke:'#ff9a40','stroke-width':'2'},g);el('circle',{cx:CARD_W/2,cy:16,r:9,fill:'#ffeecc',stroke:'#fff','stroke-width':'1.5'},g);txt('A',CARD_W/2,16,{fill:'#333','font-size':'9','font-weight':'bold'},g);el('circle',{cx:CARD_W/2,cy:CARD_H-16,r:9,fill:'#ffeecc',stroke:'#fff','stroke-width':'1.5'},g);txt('B',CARD_W/2,CARD_H-16,{fill:'#333','font-size':'9','font-weight':'bold'},g);const t=el('text',{x:CARD_W/2,y:CARD_H/2,fill:'#000','font-size':'12','font-weight':'900','font-family':'Barlow,sans-serif','text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(-90,${CARD_W/2},${CARD_H/2})`},g);t.textContent=svPart;
           const ftBotY=MFY+MFH+4;el('rect',{x:cx-22,y:ftBotY,width:44,height:FT_H,rx:4,fill:'#222',stroke:'#555','stroke-width':'1.5'});
           if(isL){el('rect',{x:cx-16,y:ftBotY+4,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});el('rect',{x:cx+2,y:ftBotY+2,width:14,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});}
           else{el('rect',{x:cx-9,y:ftBotY+4,width:18,height:18,rx:3,fill:'#4a8a9a',stroke:'#6bbccc','stroke-width':'1.2'});}
           if(ftLabel){el('rect',{x:cx-28,y:ftBotY+FT_H+2,width:56,height:FT_LBL-2,rx:3,fill:'#f5c518',stroke:'#f5a500','stroke-width':'1'});txt('B: '+ftLabel,cx,ftBotY+FT_H+11,{fill:'#000','font-size':'10','font-weight':'bold'});}
-          const wireBotY=ftBotY+FT_H+FT_LBL+2;el('line',{x1:cx-6,y1:wireBotY,x2:cx-6,y2:rowY+ROW_H,stroke:'#cc3333','stroke-width':'2'});el('line',{x1:cx,y1:wireBotY,x2:cx,y2:rowY+ROW_H,stroke:'#444','stroke-width':'2'});el('line',{x1:cx+6,y1:wireBotY,x2:cx+6,y2:rowY+ROW_H,stroke:'#ddd','stroke-width':'2'});
-        }
+          const wireBotY=ftBotY+FT_H+FT_LBL+2;el('line',{x1:cx-6,y1:wireBotY,x2:cx-6,y2:rowY+ROW_H,stroke:'#cc3333','stroke-width':'2'});el('line',{x1:cx,y1:wireBotY,x2:cx,y2:rowY+ROW_H,stroke:'#444','stroke-width':'2'});el('line',{x1:cx+6,y1:wireBotY,x2:cx+6,y2:rowY+ROW_H,stroke:'#ddd','stroke-width':'2'});}
         txt(globalIdx+1,cx,MFY+MFH/2+(stationRows.length>1?-8:0),{fill:'#666','font-size':'10','font-weight':'bold'});
       }
     });
-    container.appendChild(svg);wrap.appendChild(container);
-    const dlWrap=document.getElementById('diagramDownloadWrap');const dlBtn=document.createElement('button');dlBtn.className='btn-dl-diagram';
-    dlBtn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ${size} Series`;
-    dlBtn.onclick=()=>downloadDiagram(svgId,size);dlWrap.appendChild(dlBtn);
+    cont.appendChild(svg);wrap.appendChild(cont);
+    const dlBtn=document.createElement('button');dlBtn.className='btn-dldiag';dlBtn.innerHTML=`⬇ ${size}`;dlBtn.onclick=()=>downloadDiagram(svgId,size);dlw.appendChild(dlBtn);
   });
   document.getElementById('diagramLabel').textContent=rows.length+' Solenoid Valve';
 }
 
-function downloadDiagram(svgId,size){
-  const svg=document.getElementById(svgId);if(!svg)return;
-  const scale=2;const w=parseInt(svg.getAttribute('width'));const h=parseInt(svg.getAttribute('height'));
-  const data=new XMLSerializer().serializeToString(svg);const svgBlob=new Blob([data],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(svgBlob);
-  const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=w*scale;canvas.height=h*scale;const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.drawImage(img,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Assembly_${size}_Series.png`;a.click();URL.revokeObjectURL(a.href);},'image/png');};img.src=url;
-}
+function downloadDiagram(svgId,size){const svg=document.getElementById(svgId);if(!svg)return;const scale=2;const w=parseInt(svg.getAttribute('width'));const h=parseInt(svg.getAttribute('height'));const data=new XMLSerializer().serializeToString(svg);const svgBlob=new Blob([data],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(svgBlob);const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=w*scale;canvas.height=h*scale;const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.drawImage(img,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Assembly_${size}.png`;a.click();URL.revokeObjectURL(a.href);},'image/png');};img.src=url;}
 
-
-// ── INIT ──
-addRow();
-loadProductList();
+// INIT
+addRow();loadProductList();
 </script>
 </body>
 </html>
