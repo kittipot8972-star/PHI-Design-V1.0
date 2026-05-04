@@ -18,7 +18,7 @@
     },
     "SY5": {
       "manifold_prefix": "SS5Y5-20-",
-      "station_pitch": 20.0,
+      "station_pitch": 16.0,
       "sv_height_above_manifold": 47.5,
       "sv_center_offset_x": 0.0,
       "manifold_height": 32.0,
