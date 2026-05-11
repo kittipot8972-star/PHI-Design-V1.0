@@ -204,7 +204,7 @@ select:focus{border-color:var(--or);}
   <div class="api-modal-box">
     <div class="api-modal-title">Assembly API Settings</div>
     <div class="api-note">กรอก URL ของ Python backend ที่รัน assembler/api.py<br>ค่าเริ่มต้น: http://localhost:5050</div>
-    <input class="api-input" id="apiUrlInput" placeholder="http://localhost:5050" value="http://localhost:5050">
+    <input class="api-input" id="apiUrlInput" placeholder="https://phi-design-v1-0.onrender.com" value="http://localhost:5050">
     <div style="display:flex;gap:8px;">
       <button onclick="saveApiUrl()" style="flex:1;background:var(--or);color:#fff;border:none;padding:9px;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;">บันทึก &amp; ทดสอบ</button>
       <button onclick="document.getElementById('apiModal').classList.remove('show')" style="background:var(--bk3);border:1px solid var(--ch);color:var(--g4);padding:9px 16px;border-radius:4px;cursor:pointer;font-family:inherit;font-size:13px;">ปิด</button>
@@ -336,14 +336,17 @@ select:focus{border-color:var(--or);}
 // ══════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════
-let API_URL = localStorage.getItem('phi_api_url') || 'http://localhost:5050';
+const DEFAULT_API = 'https://phi-design-v1-0.onrender.com';
+let API_URL = localStorage.getItem('phi_api_url') || DEFAULT_API;
 document.getElementById('apiUrlInput').value = API_URL;
 let notifTimer = null;
 let currentBomItems = [];
 
 async function checkApiStatus() {
   try {
-    const r = await fetch(`${API_URL}/health`, {signal: AbortSignal.timeout(3000)});
+    document.getElementById('apiDot').className = 'api-dot';
+    document.getElementById('apiLbl').textContent = 'Assembly API: กำลังตรวจสอบ...';
+    const r = await fetch(`${API_URL}/health`, {signal: AbortSignal.timeout(8000)});
     const d = await r.json();
     document.getElementById('apiDot').className = 'api-dot ok';
     document.getElementById('apiLbl').textContent = `Assembly API: พร้อม (${d.engine})`;
@@ -568,10 +571,23 @@ async function runAssemble(){
   const btn=document.getElementById('btnAssemble');
 
   btn.disabled=true;prog.classList.add('show');
-  progText.textContent='กำลังส่ง BOM ไปยัง Assembly Engine...';
 
   try {
-    // Try async endpoint first
+    // ── Step 1: Wake up Render if sleeping ──
+    progText.textContent='กำลังปลุก Assembly Server (อาจใช้เวลา 30–60 วิ)...';
+    let wakeOk=false;
+    for(let w=0;w<6;w++){
+      try{
+        const wk=await fetch(`${API_URL}/health`,{signal:AbortSignal.timeout(15000)});
+        if(wk.ok){wakeOk=true;break;}
+      }catch(e){}
+      progText.textContent=`รอ Server ตื่น... (${(w+1)*10}s)`;
+      await new Promise(r=>setTimeout(r,5000));
+    }
+    if(!wakeOk)throw new Error('Server ไม่ตอบสนอง กรุณาลองใหม่อีกครั้ง');
+
+    // ── Step 2: Submit async job ──
+    progText.textContent='กำลังส่ง BOM ไปยัง Assembly Engine...';
     const resp=await fetch(`${API_URL}/api/assemble-async`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -580,16 +596,15 @@ async function runAssemble(){
 
     if(!resp.ok)throw new Error(`API error: ${resp.status}`);
     const {job_id}=await resp.json();
-    progText.textContent=`กำลังประกอบ STEP (Job: ${job_id})...`;
 
-    // Poll for completion
-    for(let i=0;i<60;i++){
+    // ── Step 3: Poll (max 5 นาที) ──
+    for(let i=0;i<150;i++){
       await new Promise(r=>setTimeout(r,2000));
-      const poll=await fetch(`${API_URL}/api/job/${job_id}`);
+      const poll=await fetch(`${API_URL}/api/job/${job_id}`,{signal:AbortSignal.timeout(10000)});
       const status=await poll.json();
+      const elapsed=status.elapsed_sec||i*2;
       if(status.status==='done'){
         progText.textContent='ประกอบเสร็จแล้ว! กำลังดาวน์โหลด...';
-        // Download the file
         const dl=await fetch(`${API_URL}${status.download_url}`);
         const blob=await dl.blob();
         const url=URL.createObjectURL(blob);
@@ -603,15 +618,13 @@ async function runAssemble(){
       } else if(status.status==='error'){
         throw new Error(status.error||'Assembly failed');
       }
-      progText.textContent=`กำลังประกอบ... (${i*2}s)`;
+      progText.textContent=`กำลังประกอบ STEP... (${elapsed}s)`;
     }
-    throw new Error('Timeout');
+    throw new Error('Timeout — ใช้เวลานานเกินไป กรุณาลองใหม่');
   } catch(e){
     console.error(e);
     prog.classList.remove('show');btn.disabled=false;
-    // Fallback: generate placeholder STEP zip
-    showNotif(`API ไม่พร้อม — ดาวน์โหลด placeholder แทน`,'amber');
-    await downloadPlaceholderSTEP();
+    showNotif(`เกิดข้อผิดพลาด: ${e.message}`,'red');
   }
 }
 
