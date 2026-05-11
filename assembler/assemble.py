@@ -1,17 +1,19 @@
 """
-PHI Integration Design — STEP Assembly Engine
-Uses CadQuery to:
-1. Load real STEP files (when available from SMC)
-2. Generate parametric geometry (fallback when STEP not available)
-3. Position each part correctly using assembly_rules/positions.json
-4. Export a single Assembly STEP file
+PHI Integration Design — STEP Assembly Engine v1.2
+Fixes vs v1.1:
+  - BUG FIX: station_pitch ใน positions.json SY5 แก้จาก 16→20mm
+  - BUG FIX: SV/Blanking X อ้างอิงจาก global_x (left edge of manifold)
+             ถูกต้องแล้ว ไม่เลื่อนออกนอก manifold
+  - NEW: center_step() — re-centre real SMC STEP files ให้ origin
+         อยู่กลาง bbox เหมือน parametric parts
+  - NEW: แสดง position report ทุก part เมื่อ run
 """
 
 import cadquery as cq
-import json, os, math
+import json
 from pathlib import Path
 
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR   = Path(__file__).parent.parent
 RULES_FILE = BASE_DIR / "assembly_rules" / "positions.json"
 MODELS_DIR = BASE_DIR / "models"
 OUTPUT_DIR = BASE_DIR / "output"
@@ -21,241 +23,266 @@ with open(RULES_FILE) as f:
     RULES = json.load(f)
 
 
-# ─────────────────────────────────────────────
-# PARAMETRIC GEOMETRY (fallback when no STEP file)
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+# HELPER: centre real STEP files
+# ─────────────────────────────────────────────────────────────────
+
+def center_step(shape: cq.Workplane) -> cq.Workplane:
+    """
+    SMC STEP files มักมี origin ที่มุมหรือพื้นผิว port
+    ฟังก์ชันนี้ย้าย shape ให้ bbox center อยู่ที่ origin (0,0,0)
+    เหมือน parametric geometry ที่สร้างด้วย cq.Workplane.box()
+    """
+    bb = shape.val().BoundingBox()
+    cx = (bb.xmin + bb.xmax) / 2
+    cy = (bb.ymin + bb.ymax) / 2
+    cz = (bb.zmin + bb.zmax) / 2
+    return shape.translate((-cx, -cy, -cz))
+
+
+# ─────────────────────────────────────────────────────────────────
+# PARAMETRIC GEOMETRY
+# ─────────────────────────────────────────────────────────────────
 
 def make_solenoid_valve(series: str, orientation: str = "V") -> cq.Workplane:
-    """Parametric SY-series solenoid valve body."""
+    """
+    Origin ที่ bbox center.
+    X = manifold_width, Y = manifold_depth*0.7, Z = sv_height_above_manifold
+    """
     r = RULES["series_rules"][series]
     w = r["manifold_width"]
     h = r["sv_height_above_manifold"]
     d = r["manifold_depth"] * 0.7
 
-    body = (
-        cq.Workplane("XY")
-        .box(w, d, h)
-        .edges("|Z").fillet(1.5)
-    )
-    # Solenoid coil block on top
-    coil = (
-        cq.Workplane("XY")
-        .box(w * 0.8, d * 0.5, h * 0.35)
-        .edges("|Z").fillet(1.0)
-        .translate((0, 0, h * 0.5 + h * 0.35 / 2 - h / 2))
-    )
-    # Connector plug
-    plug = (
-        cq.Workplane("XY")
-        .box(w * 0.5, d * 0.3, h * 0.15)
-        .translate((0, -d * 0.3, h * 0.5 + h * 0.15 / 2 - h / 2 + h * 0.35))
-    )
-    # Port holes on bottom face
-    sv = body.union(coil).union(plug)
-    return sv
+    body = (cq.Workplane("XY").box(w, d, h)
+            .edges("|Z").fillet(min(1.5, w * 0.1)))
+    coil = (cq.Workplane("XY").box(w*0.8, d*0.5, h*0.35)
+            .edges("|Z").fillet(min(1.0, w*0.07))
+            .translate((0, 0, h*0.5 + h*0.35/2 - h/2)))
+    plug = (cq.Workplane("XY").box(w*0.5, d*0.3, h*0.15)
+            .translate((0, -d*0.3, h*0.5 + h*0.15/2 - h/2 + h*0.35)))
+    return body.union(coil).union(plug)
 
 
 def make_manifold(series: str, stations: int) -> cq.Workplane:
-    """Parametric SS5Y manifold block."""
-    r = RULES["series_rules"][series]
-    pitch = r["station_pitch"]
-    mh = r["manifold_height"]
-    mw = r["manifold_width"]
-    md = r["manifold_depth"]
-    total_length = pitch * stations + 20  # end plates
+    """
+    Origin ที่ bbox center (cq.box() centred automatically).
+    X = station_pitch * stations + 20 (end-caps)
+    Y = manifold_depth
+    Z = manifold_height
+    """
+    r     = RULES["series_rules"][series]
+    pitch = r["station_pitch"]      # ← ใช้ pitch จาก JSON เสมอ
+    mh    = r["manifold_height"]
+    mw    = r["manifold_width"]
+    md    = r["manifold_depth"]
+    total = pitch * stations + 20
 
-    body = (
-        cq.Workplane("XY")
-        .box(total_length, md, mh)
-        .edges("|Y").fillet(1.5)
-    )
-    # Station dividers (grooves)
+    body = (cq.Workplane("XY").box(total, md, mh)
+            .edges("|Y").fillet(min(1.5, mh*0.05)))
+
+    # Station divider grooves
     for i in range(1, stations):
-        x = -total_length / 2 + 10 + i * pitch
-        groove = (
-            cq.Workplane("XY")
-            .box(1.5, md + 2, mh * 0.4)
-            .translate((x, 0, mh * 0.3))
+        x = -total/2 + 10 + i * pitch
+        body = body.cut(
+            cq.Workplane("XY").box(1.5, md+2, mh*0.4).translate((x, 0, mh*0.3))
         )
-        body = body.cut(groove)
-    # Port holes on side
-    for i in range(stations):
-        x = -total_length / 2 + 10 + i * pitch + pitch / 2
-        hole = (
-            cq.Workplane("YZ")
-            .circle(mw * 0.15)
-            .extrude(total_length)
-            .translate((x, 0, 0))
-        )
+
     # End caps
-    cap_l = cq.Workplane("XY").box(8, md, mh).translate((-total_length / 2 + 4, 0, 0))
-    cap_r = cq.Workplane("XY").box(8, md, mh).translate((total_length / 2 - 4, 0, 0))
-    manifold = body.union(cap_l).union(cap_r)
-    return manifold
+    cap_l = cq.Workplane("XY").box(8, md, mh).translate((-total/2 + 4, 0, 0))
+    cap_r = cq.Workplane("XY").box(8, md, mh).translate(( total/2 - 4, 0, 0))
+    return body.union(cap_l).union(cap_r)
 
 
 def make_blanking_plate(series: str) -> cq.Workplane:
-    """Parametric blanking plate."""
+    """
+    Origin ที่ bbox center.
+    X = manifold_width, Z = sv_height*0.6
+    """
     r = RULES["series_rules"][series]
     w = r["manifold_width"]
     h = r["sv_height_above_manifold"] * 0.6
     d = r["manifold_depth"] * 0.4
-    plate = (
-        cq.Workplane("XY")
-        .box(w, d, h)
-        .edges("|Z").fillet(1.0)
-    )
-    return plate
+    return (cq.Workplane("XY").box(w, d, h)
+            .edges("|Z").fillet(min(1.0, w*0.07)))
 
 
-# ─────────────────────────────────────────────
-# STEP FILE LOADER (uses real file when available)
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+# STEP FILE LOADER
+# ─────────────────────────────────────────────────────────────────
 
-def load_or_generate(part_type: str, series: str, orientation: str = "V", stations: int = 1) -> cq.Workplane:
-    """Try to load real STEP file; fall back to parametric geometry."""
+def load_or_generate(part_type: str, series: str,
+                     orientation: str = "V", stations: int = 1) -> cq.Workplane:
+    """
+    โหลด STEP จริงถ้ามี (แล้ว re-centre) มิฉะนั้นสร้าง parametric
+    """
     r = RULES["series_rules"][series]
 
     if part_type == "solenoid":
-        key = "model_file_h" if orientation == "H" else "model_file"
-        step_path = MODELS_DIR / r[key]
-        if step_path.exists():
-            print(f"  Loading real STEP: {step_path.name}")
-            return cq.importers.importStep(str(step_path))
-        else:
-            print(f"  Generating parametric: {series} SV ({orientation})")
-            return make_solenoid_valve(series, orientation)
+        key  = "model_file_h" if orientation == "H" else "model_file"
+        path = MODELS_DIR / r[key]
+        if path.exists():
+            print(f"  ✓ Real STEP: {path.name}")
+            return center_step(cq.importers.importStep(str(path)))
+        print(f"  ○ Parametric: {series} SV ({orientation})")
+        return make_solenoid_valve(series, orientation)
 
     elif part_type == "manifold":
-        # Try pattern match for station count
         fname = r["manifold_model"].replace("XX", str(stations).zfill(2))
-        step_path = MODELS_DIR / fname
-        if step_path.exists():
-            print(f"  Loading real STEP: {step_path.name}")
-            return cq.importers.importStep(str(step_path))
-        else:
-            print(f"  Generating parametric: {series} Manifold {stations} station")
-            return make_manifold(series, stations)
+        path  = MODELS_DIR / fname
+        if path.exists():
+            print(f"  ✓ Real STEP: {path.name}")
+            return center_step(cq.importers.importStep(str(path)))
+        print(f"  ○ Parametric: {series} Manifold {stations}st")
+        return make_manifold(series, stations)
 
     elif part_type == "blanking":
-        step_path = MODELS_DIR / f"blanking/{r['blanking_part']}.step"
-        if step_path.exists():
-            print(f"  Loading real STEP: {step_path.name}")
-            return cq.importers.importStep(str(step_path))
-        else:
-            print(f"  Generating parametric: {series} Blanking Plate")
-            return make_blanking_plate(series)
+        path = MODELS_DIR / f"blanking/{r['blanking_part']}.STEP"
+        if path.exists():
+            print(f"  ✓ Real STEP: {path.name}")
+            return center_step(cq.importers.importStep(str(path)))
+        print(f"  ○ Parametric: {series} Blanking Plate")
+        return make_blanking_plate(series)
+
+    raise ValueError(f"Unknown part_type: {part_type}")
 
 
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 # MAIN ASSEMBLER
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 
 def assemble(bom: list, output_name: str = "PHI_Assembly") -> str:
     """
-    bom = list of dicts from selector:
-    [
-      {"series": "SY5", "orientation": "H", "part_no": "SY5420-5LZ-01", "qty": 3},
-      {"series": "SY5", "orientation": "V", "part_no": "SY5320-5LZ-01", "qty": 1},
-      ...
-    ]
-    Returns path to output STEP file.
-    """
-    print(f"\n=== PHI Assembly Engine ===")
-    print(f"BOM: {len(bom)} items")
+    bom = list of dicts:
+      {"series":"SY5","orientation":"H","part_no":"SY5420-5LZ-01","qty":3}
 
-    # Group by series
-    series_groups = {}
+    ── Coordinate system ──
+    ทุก part มี origin ที่ bbox CENTER (ทั้ง parametric และ real STEP)
+
+    Manifold:
+      center_X = global_x + total_length / 2
+      center_Z = 0   →  top face = +mh/2
+
+    SV / Blanking:
+      center_X = global_x + 10 + station_index * pitch + pitch/2
+              ← เริ่มจาก left edge ของ manifold เหมือนกัน
+      center_Z = mh/2 + part_height/2
+              ← วางบน top face ของ manifold พอดี
+    """
+    print(f"\n{'='*52}")
+    print(f"  PHI Assembly Engine v1.2")
+    print(f"  BOM: {len(bom)} line items")
+    print(f"{'='*52}")
+
+    # Group by series, expand qty
+    groups: dict[str, list] = {}
     for item in bom:
         s = item["series"]
-        if s not in series_groups:
-            series_groups[s] = []
+        if s not in groups:
+            groups[s] = []
         for _ in range(item.get("qty", 1)):
-            series_groups[s].append(item)
+            groups[s].append(item)
 
-    assembly = cq.Assembly(name="PHI_Pneumatic_Assembly")
+    asm      = cq.Assembly(name="PHI_Pneumatic_Assembly")
+    global_x = 0.0     # left edge of current series block
 
-    global_x_offset = 0
-
-    for series, items in series_groups.items():
-        print(f"\n-- Series: {series} ({len(items)} SV) --")
-        r = RULES["series_rules"][series]
+    for series, items in groups.items():
+        r     = RULES["series_rules"][series]
         pitch = r["station_pitch"]
-        mh = r["manifold_height"]
-        sv_h = r["sv_height_above_manifold"]
+        mh    = r["manifold_height"]
+        sv_h  = r["sv_height_above_manifold"]
+        bp_h  = sv_h * 0.6
 
-        # Calculate station count (SV + 2 spare, round up to even)
         sv_count = len(items)
-        spare = 4 if sv_count > 10 else 2
-        raw = sv_count + spare
+        spare    = 4 if sv_count > 10 else 2
+        raw      = sv_count + spare
         stations = raw if raw % 2 == 0 else raw + 1
-        blanks = stations - sv_count
-        total_length = pitch * stations + 20
+        blanks   = stations - sv_count
+        total    = pitch * stations + 20
 
-        print(f"  {sv_count} SV + {blanks} blanking = {stations} stations")
+        print(f"\n── {series}: {sv_count} SV + {blanks} blank = {stations} station ──")
+        print(f"   pitch={pitch}mm | manifold length={total:.1f}mm | height={mh}mm")
 
-        # ── MANIFOLD ──
-        print(f"  Building manifold...")
-        manifold = load_or_generate("manifold", series, stations=stations)
-        manifold_x = global_x_offset + total_length / 2
-        assembly.add(
-            manifold,
+        # MANIFOLD
+        mf_cx = global_x + total / 2
+        asm.add(
+            load_or_generate("manifold", series, stations=stations),
             name=f"{series}_Manifold_{stations}st",
-            loc=cq.Location(cq.Vector(manifold_x, 0, 0))
+            loc=cq.Location(cq.Vector(mf_cx, 0, 0))
         )
+        print(f"   Manifold  cx={mf_cx:.1f}  cz=0  top=+{mh/2:.1f}")
 
-        # ── SOLENOID VALVES ──
+        # SOLENOID VALVES
         for i, item in enumerate(items):
-            orientation = item.get("orientation", "V")
-            part_no = item.get("part_no", f"{series}3xx")
-            print(f"  SV {i+1}: {part_no} ({orientation})")
-
-            sv = load_or_generate("solenoid", series, orientation)
-
-            # X position: center of this station on the manifold
-            sv_x = global_x_offset + 10 + i * pitch + pitch / 2
-            sv_z = mh / 2 + sv_h / 2  # sit on top of manifold
-
-            # Horizontal orientation rotates 90° around Z
-            rot = cq.Location(
-                cq.Vector(sv_x, 0, sv_z),
-                cq.Vector(0, 0, 1),
-                90 if orientation == "H" else 0
+            ori    = item.get("orientation", "V")
+            pno    = item.get("part_no", f"{series}_SV")
+            sv_cx  = global_x + 10 + i * pitch + pitch / 2
+            sv_cz  = mh / 2 + sv_h / 2
+            angle  = 90.0 if ori == "H" else 0.0
+            asm.add(
+                load_or_generate("solenoid", series, ori),
+                name=f"{series}_SV_{i+1}_{pno}",
+                loc=cq.Location(cq.Vector(sv_cx, 0, sv_cz),
+                                cq.Vector(0, 0, 1), angle)
             )
-            assembly.add(sv, name=f"{series}_SV_{i+1}_{part_no}", loc=rot)
+            print(f"   SV {i+1:2d} ({ori})  cx={sv_cx:.1f}  cz={sv_cz:.1f}")
 
-        # ── BLANKING PLATES ──
+        # BLANKING PLATES
         for j in range(blanks):
-            idx = sv_count + j
-            print(f"  Blanking plate {j+1}")
-            bp = load_or_generate("blanking", series)
-            bp_x = global_x_offset + 10 + idx * pitch + pitch / 2
-            bp_z = mh / 2 + r["sv_height_above_manifold"] * 0.3
-            assembly.add(
-                bp,
+            idx   = sv_count + j
+            bp_cx = global_x + 10 + idx * pitch + pitch / 2
+            bp_cz = mh / 2 + bp_h / 2
+            asm.add(
+                load_or_generate("blanking", series),
                 name=f"{series}_Blanking_{j+1}",
-                loc=cq.Location(cq.Vector(bp_x, 0, bp_z))
+                loc=cq.Location(cq.Vector(bp_cx, 0, bp_cz))
             )
+            print(f"   Blank {j+1}     cx={bp_cx:.1f}  cz={bp_cz:.1f}")
 
-        global_x_offset += total_length + 30  # gap between series groups
+        global_x += total + 30   # 30mm gap between series
 
-    # ── EXPORT ──
+    # EXPORT
     out_path = OUTPUT_DIR / f"{output_name}.step"
-    print(f"\nExporting to {out_path.name}...")
-    assembly.save(str(out_path))
-    print(f"Done! File size: {out_path.stat().st_size / 1024:.1f} KB")
+    print(f"\nExporting → {out_path.name} ...")
+    asm.save(str(out_path))
+    print(f"Done! {out_path.stat().st_size/1024:.1f} KB")
     return str(out_path)
 
 
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 # CLI TEST
-# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    # Example: 3x SY5 Horizontal + 1x SY5 Vertical
     test_bom = [
         {"series": "SY5", "orientation": "H", "part_no": "SY5420-5LZ-01", "qty": 3},
         {"series": "SY5", "orientation": "V", "part_no": "SY5320-5LZ-01", "qty": 1},
     ]
-    result = assemble(test_bom, "PHI_Assembly_Test")
+    result = assemble(test_bom, "PHI_Assembly_Fixed")
     print(f"\nOutput: {result}")
+def load_or_generate(part_type: str, series: str, orientation: str = "V", stations: int = 1) -> cq.Workplane:
+    r = RULES["series_rules"][series]
+    
+    if part_type == "solenoid":
+        key = "model_file_h" if orientation == "H" else "model_file"
+        path = MODELS_DIR / r[key]
+    elif part_type == "manifold":
+        fname = r["manifold_model"].replace("XX", str(stations).zfill(2))
+        path = MODELS_DIR / fname
+    elif part_type == "blanking":
+        # แก้บรรทัดนี้ให้ยืดหยุ่นขึ้น
+        path = MODELS_DIR / "blanking" / f"{r['blanking_part']}.STEP"
+
+    # --- ส่วนสำคัญ: เพิ่ม Log เพื่อเช็ค Path จริงบน Render ---
+    print(f"DEBUG: Looking for {part_type} at: {path.absolute()}")
+
+    if path.exists():
+        print(f"  ✓ Found Real STEP: {path.name}")
+        return center_step(cq.importers.importStep(str(path)))
+    else:
+        # ถ้าหาไม่เจอ ให้บอกสาเหตุใน Log
+        print(f"  !! NOT FOUND: {path.absolute()} (Using Parametric instead)")
+        
+    if part_type == "solenoid": return make_solenoid_valve(series, orientation)
+    if part_type == "manifold": return make_manifold(series, stations)
+    return make_blanking_plate(series)
