@@ -203,14 +203,24 @@ def assemble(bom: list, output_name: str = "PHI_Assembly") -> str:
         print(f"\n── {series}: {sv_count} SV + {blanks} blank = {stations} station ──")
         print(f"   pitch={pitch}mm | manifold length={total:.1f}mm | height={mh}mm")
 
-        # MANIFOLD
+        # MANIFOLD — ชื่อใช้ Part No. จริง เช่น SS5Y5-20-06
+        # manifold_prefix อ่านจาก positions.json ถ้ามี ไม่งั้น fallback ตาม pattern
+        MANIFOLD_PREFIX_DEFAULT = {
+            "SY3": "SS5Y3-20-",
+            "SY5": "SS5Y5-20-",
+            "SY7": "SS5Y7-20-",
+            "SY9": "SS5Y9-20-",
+        }
+        r_rules = RULES["series_rules"][series]
+        mf_prefix = r_rules.get("manifold_prefix") or MANIFOLD_PREFIX_DEFAULT.get(series, f"SS5Y_-20-")
+        mf_pno  = mf_prefix + str(stations).zfill(2)
         mf_cx = global_x + total / 2
         asm.add(
             load_or_generate("manifold", series, stations=stations),
-            name=f"{series}_Manifold_{stations}st",
+            name=mf_pno,
             loc=cq.Location(cq.Vector(mf_cx, 0, 0))
         )
-        print(f"   Manifold  cx={mf_cx:.1f}  cz=0  top=+{mh/2:.1f}")
+        print(f"   Manifold  name={mf_pno}  cx={mf_cx:.1f}  cz=0  top=+{mh/2:.1f}")
 
         # SOLENOID VALVES
         for i, item in enumerate(items):
@@ -219,25 +229,35 @@ def assemble(bom: list, output_name: str = "PHI_Assembly") -> str:
             sv_cx  = global_x + 10 + i * pitch + pitch / 2
             sv_cz  = mh / 2 + sv_h / 2
             angle  = 90.0 if ori == "H" else 0.0
+            # ใช้ part_no จริงเป็นชื่อ (ถ้ามีซ้ำเพิ่ม suffix)
+            sv_name = pno if i == 0 else f"{pno}_{i+1}"
             asm.add(
                 load_or_generate("solenoid", series, ori),
-                name=f"{series}_SV_{i+1}_{pno}",
+                name=sv_name,
                 loc=cq.Location(cq.Vector(sv_cx, 0, sv_cz),
                                 cq.Vector(0, 0, 1), angle)
             )
-            print(f"   SV {i+1:2d} ({ori})  cx={sv_cx:.1f}  cz={sv_cz:.1f}")
+            print(f"   SV {i+1:2d} ({ori})  name={sv_name}  cx={sv_cx:.1f}  cz={sv_cz:.1f}")
 
-        # BLANKING PLATES
+        # BLANKING PLATES — ชื่อใช้ Part No. จริง
+        BLANKING_PART_DEFAULT = {
+            "SY3": "SY3000-26-10A",
+            "SY5": "SY5000-26-20A",
+            "SY7": "SY7000-26-20A",
+            "SY9": "SY9000-26-1A",
+        }
+        bp_pno = r_rules.get("blanking_part") or BLANKING_PART_DEFAULT.get(series, f"{series}000-26-20A")
         for j in range(blanks):
             idx   = sv_count + j
             bp_cx = global_x + 10 + idx * pitch + pitch / 2
             bp_cz = mh / 2 + bp_h / 2
+            bp_name = bp_pno if j == 0 else f"{bp_pno}_{j+1}"
             asm.add(
                 load_or_generate("blanking", series),
-                name=f"{series}_Blanking_{j+1}",
+                name=bp_name,
                 loc=cq.Location(cq.Vector(bp_cx, 0, bp_cz))
             )
-            print(f"   Blank {j+1}     cx={bp_cx:.1f}  cz={bp_cz:.1f}")
+            print(f"   Blank {j+1}     name={bp_name}  cx={bp_cx:.1f}  cz={bp_cz:.1f}")
 
         global_x += total + 30   # 30mm gap between series
 
