@@ -574,15 +574,15 @@ async function runAssemble(){
 
   try {
     // ── Step 1: Wake up Render if sleeping ──
-    progText.textContent='กำลังปลุก Assembly Server (อาจใช้เวลา 30–60 วิ)...';
+    progText.textContent='กำลังปลุก Assembly Server (อาจใช้เวลา 30–90 วิ)...';
     let wakeOk=false;
-    for(let w=0;w<6;w++){
+    for(let w=0;w<10;w++){
       try{
-        const wk=await fetch(`${API_URL}/health`,{signal:AbortSignal.timeout(15000)});
+        const wk=await fetch(`${API_URL}/health`,{signal:AbortSignal.timeout(60000)});
         if(wk.ok){wakeOk=true;break;}
-      }catch(e){}
+      }catch(e){ console.warn(`Wake attempt ${w+1} failed:`,e.message); }
       progText.textContent=`รอ Server ตื่น... (${(w+1)*10}s)`;
-      await new Promise(r=>setTimeout(r,5000));
+      await new Promise(r=>setTimeout(r,10000));
     }
     if(!wakeOk)throw new Error('Server ไม่ตอบสนอง กรุณาลองใหม่อีกครั้ง');
 
