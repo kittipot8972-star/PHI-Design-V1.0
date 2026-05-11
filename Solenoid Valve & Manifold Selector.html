@@ -572,43 +572,50 @@ async function runAssemble(){
 
   btn.disabled=true;prog.classList.add('show');
 
+  // helper: fetch with short timeout, ไม่ throw ถ้า fail
+  async function tryFetch(url,opts={},ms=8000){
+    try{
+      const c=new AbortController();
+      const t=setTimeout(()=>c.abort(),ms);
+      const r=await fetch(url,{...opts,signal:c.signal});
+      clearTimeout(t);
+      return r;
+    }catch(e){ return null; }
+  }
+
   try {
-    // ── Step 1: Wake up Render if sleeping ──
-    progText.textContent='กำลังปลุก Assembly Server (อาจใช้เวลา 30–90 วิ)...';
+    // ── Step 1: Wake up Render — ping ทุก 8 วิ รอได้สูงสุด 3 นาที ──
+    progText.textContent='กำลังปลุก Assembly Server...';
     let wakeOk=false;
-    for(let w=0;w<10;w++){
-      try{
-        const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),60000));
-        const req=fetch(`${API_URL}/health`);
-        const wk=await Promise.race([req,timeout]);
-        if(wk.ok){wakeOk=true;break;}
-      }catch(e){ console.warn(`Wake attempt ${w+1}:`,e.message); }
-      progText.textContent=`รอ Server ตื่น... (${(w+1)*10}s)`;
-      await new Promise(r=>setTimeout(r,10000));
+    for(let w=0;w<22;w++){
+      progText.textContent=`กำลังปลุก Server... (${w*8}s)`;
+      const wk=await tryFetch(`${API_URL}/health`,{},8000);
+      if(wk&&wk.ok){wakeOk=true;break;}
+      await new Promise(r=>setTimeout(r,8000));
     }
     if(!wakeOk)throw new Error('Server ไม่ตอบสนอง กรุณาลองใหม่อีกครั้ง');
 
     // ── Step 2: Submit async job ──
     progText.textContent='กำลังส่ง BOM ไปยัง Assembly Engine...';
-    const resp=await fetch(`${API_URL}/api/assemble-async`,{
+    const resp=await tryFetch(`${API_URL}/api/assemble-async`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({bom:bom_payload,name})
-    });
-
-    if(!resp.ok)throw new Error(`API error: ${resp.status}`);
+    },120000);
+    if(!resp||!resp.ok)throw new Error(`ส่ง BOM ไม่สำเร็จ (${resp?.status||'no response'})`);
     const {job_id}=await resp.json();
 
-    // ── Step 3: Poll (max 5 นาที) ──
-    for(let i=0;i<150;i++){
-      await new Promise(r=>setTimeout(r,2000));
-      const timeout2=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),10000));
-      const poll=await Promise.race([fetch(`${API_URL}/api/job/${job_id}`),timeout2]);
+    // ── Step 3: Poll ทุก 3 วิ รอได้สูงสุด 5 นาที ──
+    for(let i=0;i<100;i++){
+      await new Promise(r=>setTimeout(r,3000));
+      const poll=await tryFetch(`${API_URL}/api/job/${job_id}`,{},8000);
+      if(!poll) continue; // network blip ลอง loop ต่อ
       const status=await poll.json();
-      const elapsed=status.elapsed_sec||i*2;
+      const elapsed=status.elapsed_sec||(i*3);
       if(status.status==='done'){
         progText.textContent='ประกอบเสร็จแล้ว! กำลังดาวน์โหลด...';
-        const dl=await fetch(`${API_URL}${status.download_url}`);
+        const dl=await tryFetch(`${API_URL}${status.download_url}`,{},30000);
+        if(!dl||!dl.ok)throw new Error('ดาวน์โหลดไฟล์ไม่สำเร็จ');
         const blob=await dl.blob();
         const url=URL.createObjectURL(blob);
         const a=document.createElement('a');a.href=url;a.download=`${name}.step`;a.click();
@@ -623,7 +630,7 @@ async function runAssemble(){
       }
       progText.textContent=`กำลังประกอบ STEP... (${elapsed}s)`;
     }
-    throw new Error('Timeout — ใช้เวลานานเกินไป กรุณาลองใหม่');
+    throw new Error('ใช้เวลานานเกินไป กรุณาลองใหม่');
   } catch(e){
     console.error(e);
     prog.classList.remove('show');btn.disabled=false;
