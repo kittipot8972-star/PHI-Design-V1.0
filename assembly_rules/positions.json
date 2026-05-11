@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "note": "All dimensions in mm. Based on SMC SY/SS5Y series datasheet dimensions.",
+  "version": "1.2",
+  "note": "All dimensions in mm. Based on SMC SY/SS5Y series datasheet. station_pitch = width of each valve slot on the manifold.",
 
   "series_rules": {
     "SY3": {
@@ -12,22 +12,22 @@
       "manifold_width": 12.0,
       "manifold_depth": 60.0,
       "blanking_part": "SY3000-26-10A",
-      "model_file": "solenoid/SY3320-5LZ-M5.step",
-      "model_file_h": "solenoid/SY3420-5LZ-M5.step",
-      "manifold_model": "manifold/SS5Y3-20-XX.step"
+      "model_file":   "solenoid/SY3320-5LZ-M5.STEP",
+      "model_file_h": "solenoid/SY3420-5LZ-M5.STEP",
+      "manifold_model": "manifold/SS5Y3-20-XX.STEP"
     },
     "SY5": {
       "manifold_prefix": "SS5Y5-20-",
-      "station_pitch": 16.0,
+      "station_pitch": 20.0,
       "sv_height_above_manifold": 47.5,
       "sv_center_offset_x": 0.0,
       "manifold_height": 32.0,
       "manifold_width": 20.0,
       "manifold_depth": 68.0,
       "blanking_part": "SY5000-26-20A",
-      "model_file": "solenoid/SY5320-5LZ-01.step",
-      "model_file_h": "solenoid/SY5420-5LZ-01.step",
-      "manifold_model": "manifold/SS5Y5-20-XX.step"
+      "model_file":   "solenoid/SY5320-5LZ-01.STEP",
+      "model_file_h": "solenoid/SY5420-5LZ-01.STEP",
+      "manifold_model": "manifold/SS5Y5-20-XX.STEP"
     },
     "SY7": {
       "manifold_prefix": "SS5Y7-20-",
@@ -38,9 +38,9 @@
       "manifold_width": 26.0,
       "manifold_depth": 80.0,
       "blanking_part": "SY7000-26-20A",
-      "model_file": "solenoid/SY7320-5LZ-02.step",
-      "model_file_h": "solenoid/SY7420-5LZ-02.step",
-      "manifold_model": "manifold/SS5Y7-20-XX.step"
+      "model_file":   "solenoid/SY7320-5LZ-02.STEP",
+      "model_file_h": "solenoid/SY7420-5LZ-02.STEP",
+      "manifold_model": "manifold/SS5Y7-20-XX.STEP"
     },
     "SY9": {
       "manifold_prefix": "SS5Y9-20-",
@@ -51,9 +51,9 @@
       "manifold_width": 34.0,
       "manifold_depth": 100.0,
       "blanking_part": "SY9000-26-1A",
-      "model_file": "solenoid/SY9320-5LZ-03.step",
-      "model_file_h": "solenoid/SY9420-5LZ-03.step",
-      "manifold_model": "manifold/SS5Y9-20-XX.step"
+      "model_file":   "solenoid/SY9320-5LZ-03.STEP",
+      "model_file_h": "solenoid/SY9420-5LZ-03.STEP",
+      "manifold_model": "manifold/SS5Y9-20-XX.STEP"
     }
   }
 }
