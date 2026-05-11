@@ -260,3 +260,29 @@ if __name__ == "__main__":
     ]
     result = assemble(test_bom, "PHI_Assembly_Fixed")
     print(f"\nOutput: {result}")
+def load_or_generate(part_type: str, series: str, orientation: str = "V", stations: int = 1) -> cq.Workplane:
+    r = RULES["series_rules"][series]
+    
+    if part_type == "solenoid":
+        key = "model_file_h" if orientation == "H" else "model_file"
+        path = MODELS_DIR / r[key]
+    elif part_type == "manifold":
+        fname = r["manifold_model"].replace("XX", str(stations).zfill(2))
+        path = MODELS_DIR / fname
+    elif part_type == "blanking":
+        # แก้บรรทัดนี้ให้ยืดหยุ่นขึ้น
+        path = MODELS_DIR / "blanking" / f"{r['blanking_part']}.STEP"
+
+    # --- ส่วนสำคัญ: เพิ่ม Log เพื่อเช็ค Path จริงบน Render ---
+    print(f"DEBUG: Looking for {part_type} at: {path.absolute()}")
+
+    if path.exists():
+        print(f"  ✓ Found Real STEP: {path.name}")
+        return center_step(cq.importers.importStep(str(path)))
+    else:
+        # ถ้าหาไม่เจอ ให้บอกสาเหตุใน Log
+        print(f"  !! NOT FOUND: {path.absolute()} (Using Parametric instead)")
+        
+    if part_type == "solenoid": return make_solenoid_valve(series, orientation)
+    if part_type == "manifold": return make_manifold(series, stations)
+    return make_blanking_plate(series)
