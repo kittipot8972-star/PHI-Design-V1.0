@@ -137,7 +137,7 @@ def load_or_generate(part_type: str, series: str,
         return make_manifold(series, stations)
 
     elif part_type == "blanking":
-        path = MODELS_DIR / f"blanking/{r['blanking_part']}.step"
+        path = MODELS_DIR / f"blanking/{r['blanking_part']}.STEP"
         if path.exists():
             print(f"  ✓ Real STEP: {path.name}")
             return center_step(cq.importers.importStep(str(path)))
