@@ -229,8 +229,7 @@ def assemble(bom: list, output_name: str = "PHI_Assembly") -> str:
             sv_cx  = global_x + 10 + i * pitch + pitch / 2
             sv_cz  = mh / 2 + sv_h / 2
             angle  = 90.0 if ori == "H" else 0.0
-            # ใช้ part_no จริงเป็นชื่อ (ถ้ามีซ้ำเพิ่ม suffix)
-            sv_name = pno if i == 0 else f"{pno}_{i+1}"
+            sv_name = f"{pno}<{i+1}>"
             asm.add(
                 load_or_generate("solenoid", series, ori),
                 name=sv_name,
@@ -251,7 +250,7 @@ def assemble(bom: list, output_name: str = "PHI_Assembly") -> str:
             idx   = sv_count + j
             bp_cx = global_x + 10 + idx * pitch + pitch / 2
             bp_cz = mh / 2 + bp_h / 2
-            bp_name = bp_pno if j == 0 else f"{bp_pno}_{j+1}"
+            bp_name = f"{bp_pno}<{j+1}>"
             asm.add(
                 load_or_generate("blanking", series),
                 name=bp_name,
