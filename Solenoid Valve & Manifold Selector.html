@@ -578,9 +578,11 @@ async function runAssemble(){
     let wakeOk=false;
     for(let w=0;w<10;w++){
       try{
-        const wk=await fetch(`${API_URL}/health`,{signal:AbortSignal.timeout(60000)});
+        const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),60000));
+        const req=fetch(`${API_URL}/health`);
+        const wk=await Promise.race([req,timeout]);
         if(wk.ok){wakeOk=true;break;}
-      }catch(e){ console.warn(`Wake attempt ${w+1} failed:`,e.message); }
+      }catch(e){ console.warn(`Wake attempt ${w+1}:`,e.message); }
       progText.textContent=`รอ Server ตื่น... (${(w+1)*10}s)`;
       await new Promise(r=>setTimeout(r,10000));
     }
@@ -600,7 +602,8 @@ async function runAssemble(){
     // ── Step 3: Poll (max 5 นาที) ──
     for(let i=0;i<150;i++){
       await new Promise(r=>setTimeout(r,2000));
-      const poll=await fetch(`${API_URL}/api/job/${job_id}`,{signal:AbortSignal.timeout(10000)});
+      const timeout2=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),10000));
+      const poll=await Promise.race([fetch(`${API_URL}/api/job/${job_id}`),timeout2]);
       const status=await poll.json();
       const elapsed=status.elapsed_sec||i*2;
       if(status.status==='done'){
