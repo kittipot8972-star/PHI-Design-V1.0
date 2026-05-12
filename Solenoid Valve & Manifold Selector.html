@@ -556,14 +556,14 @@ async function runAssemble(){
   if(!currentBomItems.length)return;
 
   // Build API payload from rows
-  const bom_payload=[];
-  const groups={};
-  rows.forEach(r=>{if(!groups[r.size])groups[r.size]=[];groups[r.size].push(r);});
-  Object.values(groups).forEach(grp=>{
-    const svG={};
-    grp.forEach(r=>{const pn=getPartNo(r.orientation,r.size);if(!svG[pn])svG[pn]={series:r.size,orientation:r.orientation,part_no:pn,qty:0};svG[pn].qty++;});
-    Object.values(svG).forEach(sv=>bom_payload.push(sv));
-  });
+  // ส่ง BOM แบบ expand — แต่ละ row เป็น 1 item qty:1
+  // assemble.py จะจัดกลุ่ม series เองภายใน
+  const bom_payload = rows.map(r => ({
+    series: r.size,
+    orientation: r.orientation,
+    part_no: getPartNo(r.orientation, r.size),
+    qty: 1
+  }));
 
   const name=`PHI_Assembly_${new Date().toISOString().split('T')[0]}`;
   const prog=document.getElementById('asmProgress');
