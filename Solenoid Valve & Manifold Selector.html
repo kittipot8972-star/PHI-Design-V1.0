@@ -204,7 +204,7 @@ select:focus{border-color:var(--or);}
   <div class="api-modal-box">
     <div class="api-modal-title">Assembly API Settings</div>
     <div class="api-note">กรอก URL ของ Python backend ที่รัน assembler/api.py<br>ค่าเริ่มต้น: http://localhost:5050</div>
-    <input class="api-input" id="apiUrlInput" placeholder="https://phi-design-v1-0.onrender.com" value="http://localhost:5050">
+    <input class="api-input" id="apiUrlInput" placeholder="https://kittipot8972-star-solenoid-valve-selector.hf.space" value="https://kittipot8972-star-solenoid-valve-selector.hf.space">
     <div style="display:flex;gap:8px;">
       <button onclick="saveApiUrl()" style="flex:1;background:var(--or);color:#fff;border:none;padding:9px;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;">บันทึก &amp; ทดสอบ</button>
       <button onclick="document.getElementById('apiModal').classList.remove('show')" style="background:var(--bk3);border:1px solid var(--ch);color:var(--g4);padding:9px 16px;border-radius:4px;cursor:pointer;font-family:inherit;font-size:13px;">ปิด</button>
@@ -336,7 +336,7 @@ select:focus{border-color:var(--or);}
 // ══════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════
-const DEFAULT_API = 'https://phi-design-v1-0.onrender.com';
+const DEFAULT_API = 'https://kittipot8972-star-solenoid-valve-selector.hf.space';
 let API_URL = localStorage.getItem('phi_api_url') || DEFAULT_API;
 document.getElementById('apiUrlInput').value = API_URL;
 let notifTimer = null;
