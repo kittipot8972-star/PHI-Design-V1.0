@@ -88,7 +88,7 @@
       {n:'5',i:'⚡',t:'Electrical Components',    h:'electrical-components/electrical-components.html'},
     ]},
     { label:'🧮 &nbsp;Calculator Design', items:[
-      {n:'1',i:'➕',t:'Calculator Motor',  h:'calculator-design/item1.html'},
+      {n:'1',i:'➕',t:'Calculator Motor',  h:'/Motor_Sizing_Calculator.html'},
       {n:'2',i:'➖',t:'Calculator IAI',    h:'calculator-design/item2.html'},
     ]},
     { label:'🏢 &nbsp;Design Tools', items:[
