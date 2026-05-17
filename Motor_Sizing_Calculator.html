@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor Sizing Calculator — PHI Integration Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --or:#f5620a;--or2:#c44600;--orl:#ff8c42;
+  --bk:#0d0d0d;--bk2:#161616;--bk3:#1e1e1e;--bk4:#2a2a2a;
+  --ch:#333;--g3:#888;--g4:#aaa;
+  --tl:#e8e8e8;--wh:#fff;
+  --gn:#2ecc71;--bl:#3498db;--am:#f59e0b;--rd:#ef4444;
+  --pu:#8b5cf6;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans Thai','Barlow',sans-serif;background:var(--bk);color:var(--tl);font-size:14px;line-height:1.5;}
+
+/* HEADER */
+header{background:var(--bk2);border-bottom:2px solid var(--or);box-shadow:0 4px 20px rgba(0,0,0,.6);position:sticky;top:0;z-index:200;}
+.hdr{max-width:1400px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:16px;}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;}
+.logo-text span{color:var(--or);}
+.nav-links{display:flex;gap:4px;margin-left:24px;}
+.nav-link{font-size:12px;font-family:'Barlow',sans-serif;color:var(--g3);text-decoration:none;padding:5px 12px;border-radius:4px;transition:.2s;border:1px solid transparent;}
+.nav-link:hover{color:var(--tl);border-color:var(--ch);}
+.nav-link.active{color:var(--orl);border-color:var(--or);background:rgba(245,98,10,.08);}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+
+/* BREADCRUMB */
+.bc{max-width:1400px;margin:0 auto;padding:8px 24px;font-size:12px;color:var(--g3);}
+.bc a{color:var(--orl);text-decoration:none;}
+
+/* LAYOUT */
+.wrap{max-width:1400px;margin:0 auto;padding:0 24px 60px;}
+.grid{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start;margin-top:20px;}
+
+/* SECTION */
+.sec{background:var(--bk2);border:1px solid var(--bk4);border-radius:6px;margin-bottom:16px;overflow:hidden;}
+.sec-title{background:var(--bk4);padding:11px 18px;font-weight:700;color:var(--orl);border-bottom:1px solid var(--or);display:flex;justify-content:space-between;align-items:center;font-family:'Barlow',sans-serif;letter-spacing:.04em;gap:8px;flex-wrap:wrap;}
+.sec-title i{font-size:15px;margin-right:6px;vertical-align:-1px;}
+.sec-body{padding:18px;}
+
+/* MECHANISM GRID */
+.mech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.mech-btn{padding:12px 8px;border:1px solid var(--bk4);border-radius:5px;cursor:pointer;text-align:center;background:var(--bk3);color:var(--g3);font-size:12px;font-family:'Barlow',sans-serif;transition:.2s;}
+.mech-btn:hover{border-color:var(--ch);color:var(--tl);}
+.mech-btn.sel{border-color:var(--or);color:var(--orl);background:rgba(245,98,10,.08);}
+.mech-btn .mi{font-size:22px;display:block;margin-bottom:5px;}
+.mech-btn .mn{font-size:11px;font-weight:600;letter-spacing:.03em;}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-row.three{grid-template-columns:1fr 1fr 1fr;}
+.field label{font-size:11px;color:var(--g3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
+.field input,.field select{background:var(--bk3);border:1px solid var(--ch);border-radius:4px;padding:8px 10px;font-size:13px;font-family:inherit;color:var(--tl);width:100%;outline:none;transition:.15s;}
+.field input:focus,.field select:focus{border-color:var(--or);}
+.field .unit{font-size:11px;color:var(--g4);margin-top:3px;}
+.divider{border:none;border-top:1px solid var(--bk4);margin:14px 0;}
+.section-label{font-size:11px;color:var(--g3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;font-weight:600;font-family:'Barlow',sans-serif;}
+
+/* CALC BUTTON */
+.btn-calc{background:var(--or);border:none;border-radius:4px;padding:10px 20px;font-size:14px;font-family:'Barlow',sans-serif;font-weight:700;color:#fff;cursor:pointer;width:100%;letter-spacing:.05em;transition:.2s;margin-top:12px;}
+.btn-calc:hover{background:var(--or2);}
+
+/* RESULTS PANEL */
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.metric{background:var(--bk3);border:1px solid var(--bk4);border-radius:6px;padding:14px 16px;}
+.metric.hi{border-color:var(--or);background:rgba(245,98,10,.06);}
+.ml{font-size:10px;color:var(--g3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;font-family:'Barlow',sans-serif;}
+.mv{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--orl);line-height:1;}
+.mv.blue{color:var(--bl);}
+.mv.green{color:var(--gn);}
+.mv.purple{color:var(--pu);}
+.mu{font-size:11px;color:var(--g3);margin-top:2px;}
+
+/* FORMULA BOX */
+.formula-box{background:var(--bk3);border:1px solid var(--bk4);border-radius:5px;padding:12px 14px;font-size:12px;color:var(--g4);line-height:1.9;margin-top:12px;}
+.formula-box b{color:var(--orl);font-family:'Barlow',sans-serif;}
+.formula-highlight{color:var(--tl);font-weight:500;}
+
+/* RECOMMENDATION */
+.rec-card{background:var(--bk3);border:1px solid var(--bk4);border-radius:5px;padding:14px;margin-top:8px;}
+.rec-tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;font-family:'Barlow',sans-serif;letter-spacing:.05em;margin-bottom:6px;}
+.rec-tag.ac{background:rgba(52,152,219,.15);color:var(--bl);border:1px solid rgba(52,152,219,.3);}
+.rec-tag.step{background:rgba(245,159,11,.15);color:var(--am);border:1px solid rgba(245,159,11,.3);}
+.rec-tag.servo{background:rgba(139,92,246,.15);color:var(--pu);border:1px solid rgba(139,92,246,.3);}
+.rec-name{font-size:14px;font-weight:600;color:var(--tl);font-family:'Barlow',sans-serif;margin-bottom:4px;}
+.rec-reason{font-size:12px;color:var(--g3);}
+
+/* STEP TABS */
+.step-tabs{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--bk4);border-radius:5px;overflow:hidden;}
+.step-tab{flex:1;padding:9px 12px;text-align:center;font-size:12px;font-family:'Barlow',sans-serif;font-weight:600;cursor:pointer;color:var(--g3);background:var(--bk3);border:none;transition:.2s;position:relative;}
+.step-tab:not(:last-child){border-right:1px solid var(--bk4);}
+.step-tab.active{color:var(--orl);background:rgba(245,98,10,.08);}
+.step-tab .step-no{display:inline-flex;width:18px;height:18px;border-radius:50%;background:var(--bk4);align-items:center;justify-content:center;font-size:10px;margin-right:5px;}
+.step-tab.active .step-no{background:var(--or);color:#fff;}
+.step-tab.done .step-no{background:var(--gn);color:#fff;}
+
+/* PLACEHOLDER */
+.placeholder{text-align:center;padding:32px 20px;color:var(--g3);font-size:13px;}
+.placeholder .ph-icon{font-size:36px;margin-bottom:8px;opacity:.3;}
+
+/* MOTION PROFILE SVG */
+.profile-wrap{background:var(--bk3);border:1px solid var(--bk4);border-radius:5px;padding:12px;margin-top:8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <div class="logo-text"><span>PHI</span> INTEGRATION DESIGN</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">หน้าแรก</a>
+      <a href="Solenoid Valve & Manifold Selector.html" class="nav-link">Solenoid Valve</a>
+      <a href="#" class="nav-link active">Motor Sizing</a>
+    </div>
+    <div class="hdr-right">
+      <span style="font-size:11px;color:var(--g3);font-family:'Barlow',sans-serif;">Motor Sizing Tool v1.0</span>
+    </div>
+  </div>
+</header>
+
+<div class="bc">
+  <a href="index.html">หน้าแรก</a> › Motor Sizing Calculator
+</div>
+
+<div class="wrap">
+
+  <div class="grid">
+
+    <!-- LEFT: INPUT -->
+    <div>
+
+      <!-- STEP TABS -->
+      <div class="step-tabs">
+        <button class="step-tab active" id="tab1" onclick="goStep(1)"><span class="step-no" id="sn1">1</span>Mechanism</button>
+        <button class="step-tab" id="tab2" onclick="goStep(2)"><span class="step-no" id="sn2">2</span>Load Conditions</button>
+        <button class="step-tab" id="tab3" onclick="goStep(3)"><span class="step-no" id="sn3">3</span>Motion Profile</button>
+      </div>
+
+      <!-- STEP 1: MECHANISM -->
+      <div class="sec" id="step1-sec">
+        <div class="sec-title">⚙ เลือก Drive Mechanism</div>
+        <div class="sec-body">
+          <div class="mech-grid">
+            <div class="mech-btn sel" id="m_ball" onclick="selMech('ball')">
+              <span class="mi">🔩</span><span class="mn">Ball Screw</span>
+            </div>
+            <div class="mech-btn" id="m_belt" onclick="selMech('belt')">
+              <span class="mi">⭕</span><span class="mn">Belt & Pulley</span>
+            </div>
+            <div class="mech-btn" id="m_rack" onclick="selMech('rack')">
+              <span class="mi">📏</span><span class="mn">Rack & Pinion</span>
+            </div>
+            <div class="mech-btn" id="m_rot" onclick="selMech('rot')">
+              <span class="mi">🔄</span><span class="mn">Rotating Body</span>
+            </div>
+            <div class="mech-btn" id="m_conv" onclick="selMech('conv')">
+              <span class="mi">➡</span><span class="mn">Conveyor</span>
+            </div>
+            <div class="mech-btn" id="m_direct" onclick="selMech('direct')">
+              <span class="mi">⚡</span><span class="mn">Direct Drive</span>
+            </div>
+          </div>
+          <div id="mech-diagram" style="text-align:center;padding:8px 0;"></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: LOAD CONDITIONS -->
+      <div class="sec" id="step2-sec">
+        <div class="sec-title">📦 Load Conditions</div>
+        <div class="sec-body">
+          <div id="load-fields"></div>
+          <div class="divider"></div>
+          <div class="section-label">สภาวะแวดล้อม</div>
+          <div class="form-row">
+            <div class="field">
+              <label>มุมเอียง θ</label>
+              <input type="number" id="f_theta" value="0" min="0" max="90" step="1">
+              <div class="unit">° (0 = แนวนอน, 90 = แนวตั้ง)</div>
+            </div>
+            <div class="field">
+              <label>สัมประสิทธิ์เสียดทาน μ</label>
+              <input type="number" id="f_mu" value="0.1" min="0" max="1" step="0.01">
+              <div class="unit">0.05–0.3 ทั่วไป</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Safety Factor (SF)</label>
+              <input type="number" id="f_sf" value="2.0" min="1" max="5" step="0.1">
+              <div class="unit">แนะนำ 1.5–3.0</div>
+            </div>
+            <div class="field">
+              <label>ประสิทธิภาพ Gearhead η</label>
+              <input type="number" id="f_gear_eta" value="1.0" min="0.5" max="1" step="0.01">
+              <div class="unit">1.0 = ไม่มี Gearhead</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: MOTION PROFILE -->
+      <div class="sec" id="step3-sec">
+        <div class="sec-title">📈 Motion Profile</div>
+        <div class="sec-body">
+          <div class="form-row three">
+            <div class="field">
+              <label>ระยะทาง / มุม</label>
+              <input type="number" id="f_dist" value="300" min="0" step="any">
+              <div class="unit" id="dist-unit">mm</div>
+            </div>
+            <div class="field">
+              <label>เวลาเคลื่อนที่ t</label>
+              <input type="number" id="f_time" value="1.0" min="0.01" step="0.01">
+              <div class="unit">วินาที</div>
+            </div>
+            <div class="field">
+              <label>เวลา Accel ta</label>
+              <input type="number" id="f_ta" value="0.2" min="0.01" step="0.01">
+              <div class="unit">วินาที (≤ t/2)</div>
+            </div>
+          </div>
+
+          <!-- Motion profile diagram -->
+          <div class="profile-wrap">
+            <canvas id="profileChart" height="100" style="width:100%;"></canvas>
+          </div>
+
+          <button class="btn-calc" onclick="calculate()">⚡ คำนวณ Motor Sizing</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+
+      <div class="sec">
+        <div class="sec-title">📊 Sizing Results</div>
+        <div class="sec-body" id="results-panel">
+          <div class="placeholder">
+            <div class="ph-icon">📐</div>
+            <div>กรอกค่าและกด "คำนวณ"<br>เพื่อดูผลการ Sizing</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec" id="rec-sec" style="display:none;">
+        <div class="sec-title">💡 Motor Recommendation</div>
+        <div class="sec-body" id="rec-panel"></div>
+      </div>
+
+      <div class="sec" id="formula-sec" style="display:none;">
+        <div class="sec-title">📝 สูตรที่ใช้คำนวณ</div>
+        <div class="sec-body">
+          <div class="formula-box" id="formula-panel"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const g = 9.81;
+let curMech = 'ball';
+
+const MECHS = {
+  ball:   {name:'Ball Screw',   distUnit:'mm', fields:[
+    {id:'f_lead',lbl:'Ball Screw Lead (PB)',val:10,unit:'mm'},
+    {id:'f_mass',lbl:'มวลโหลด m',val:10,unit:'kg'},
+    {id:'f_db',lbl:'เส้นผ่าศูนย์กลาง Screw (DB)',val:20,unit:'mm'},
+    {id:'f_lb',lbl:'ความยาว Screw (LB)',val:500,unit:'mm'},
+    {id:'f_eta',lbl:'ประสิทธิภาพ Ball Screw η',val:0.9,unit:'0–1'},
+  ]},
+  belt:   {name:'Belt & Pulley',distUnit:'mm', fields:[
+    {id:'f_dr',lbl:'เส้นผ่าศูนย์กลาง Pulley (D)',val:80,unit:'mm'},
+    {id:'f_mass',lbl:'มวล Belt + โหลด m',val:5,unit:'kg'},
+    {id:'f_eta',lbl:'ประสิทธิภาพ η',val:0.9,unit:'0–1'},
+    {id:'f_mpulley',lbl:'มวล Pulley',val:0.5,unit:'kg'},
+  ]},
+  rack:   {name:'Rack & Pinion',distUnit:'mm', fields:[
+    {id:'f_dp',lbl:'เส้นผ่าศูนย์กลาง Pinion (DP)',val:40,unit:'mm'},
+    {id:'f_mass',lbl:'มวลโหลด m',val:8,unit:'kg'},
+    {id:'f_eta',lbl:'ประสิทธิภาพ η',val:0.85,unit:'0–1'},
+  ]},
+  rot:    {name:'Rotating Body',distUnit:'°', fields:[
+    {id:'f_iload',lbl:'Load Inertia (JL)',val:0.01,unit:'kg·m²'},
+    {id:'f_tres',lbl:'Resistance Torque (Tr)',val:0.5,unit:'N·m'},
+    {id:'f_n',lbl:'ความเร็วรอบ N',val:1000,unit:'RPM'},
+  ]},
+  conv:   {name:'Conveyor',     distUnit:'mm', fields:[
+    {id:'f_dr',lbl:'เส้นผ่าศูนย์กลาง Roller (D)',val:60,unit:'mm'},
+    {id:'f_mass',lbl:'มวล Belt + โหลด m',val:10,unit:'kg'},
+    {id:'f_mroll',lbl:'มวล Roller mr',val:1,unit:'kg'},
+    {id:'f_eta',lbl:'ประสิทธิภาพ η',val:0.9,unit:'0–1'},
+  ]},
+  direct: {name:'Direct Drive', distUnit:'°', fields:[
+    {id:'f_iload',lbl:'Load Inertia (JL)',val:0.005,unit:'kg·m²'},
+    {id:'f_tres',lbl:'Load Torque (TL)',val:1,unit:'N·m'},
+    {id:'f_n',lbl:'ความเร็วรอบ N',val:500,unit:'RPM'},
+  ]},
+};
+
+function v(id){return parseFloat(document.getElementById(id)?.value)||0;}
+
+function selMech(k){
+  curMech = k;
+  Object.keys(MECHS).forEach(m=>{
+    document.getElementById('m_'+m).className='mech-btn'+(m===k?' sel':'');
+  });
+  renderLoadFields();
+  document.getElementById('dist-unit').textContent = MECHS[k].distUnit;
+  drawProfile();
+}
+
+function renderLoadFields(){
+  const fields = MECHS[curMech].fields;
+  let html = '';
+  for(let i=0;i<fields.length;i+=2){
+    html += '<div class="form-row">';
+    for(let j=i;j<Math.min(i+2,fields.length);j++){
+      const f=fields[j];
+      html += `<div class="field"><label>${f.lbl}</label><input type="number" id="${f.id}" value="${f.val}" step="any" min="0"><div class="unit">${f.unit}</div></div>`;
+    }
+    html += '</div>';
+  }
+  document.getElementById('load-fields').innerHTML = html;
+}
+
+function goStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('tab'+i).className='step-tab'+(i===n?' active':'');
+  });
+}
+
+function drawProfile(){
+  const canvas = document.getElementById('profileChart');
+  const ctx    = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio || 600;
+  canvas.height= 100 * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const W=canvas.offsetWidth||600, H=100;
+  ctx.clearRect(0,0,W,H);
+  const t=v('f_time')||1, ta=Math.min(v('f_ta')||0.2, t*0.45);
+  const pad=30, graphW=W-pad*2, graphH=H-20;
+  const x0=pad, y0=10;
+
+  ctx.strokeStyle='#2a2a2a'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y0+graphH); ctx.lineTo(x0+graphW,y0+graphH); ctx.stroke();
+
+  ctx.fillStyle='#888'; ctx.font='10px Barlow,sans-serif';
+  ctx.fillText('v',x0-16,y0+graphH/2);
+  ctx.fillText('t (s)',x0+graphW-20,y0+graphH+14);
+  ctx.fillText('0',x0-10,y0+graphH+3);
+
+  const xScale = graphW/t;
+  const vmax   = graphH*0.75;
+  const x1=x0+ta*xScale, x2=x0+(t-ta)*xScale, x3=x0+t*xScale;
+
+  ctx.beginPath();
+  ctx.moveTo(x0, y0+graphH);
+  ctx.lineTo(x1, y0+graphH-vmax);
+  ctx.lineTo(x2, y0+graphH-vmax);
+  ctx.lineTo(x3, y0+graphH);
+  ctx.strokeStyle='#f5620a'; ctx.lineWidth=2; ctx.stroke();
+
+  ctx.fillStyle='rgba(245,98,10,.1)';
+  ctx.beginPath();
+  ctx.moveTo(x0, y0+graphH);
+  ctx.lineTo(x1, y0+graphH-vmax);
+  ctx.lineTo(x2, y0+graphH-vmax);
+  ctx.lineTo(x3, y0+graphH);
+  ctx.closePath(); ctx.fill();
+
+  ctx.strokeStyle='#333'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(x1,y0); ctx.lineTo(x1,y0+graphH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2,y0); ctx.lineTo(x2,y0+graphH); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle='#888'; ctx.font='10px Barlow,sans-serif';
+  ctx.fillText('ta='+ta.toFixed(1),x1-10,y0+graphH+14);
+  ctx.fillText('t='+t.toFixed(1),x3-10,y0+graphH+14);
+
+  ctx.fillStyle='rgba(52,152,219,.5)';
+  ctx.fillRect(x1-1,y0+graphH-vmax-8,1,8);
+  ctx.fillStyle='#3498db';
+  ctx.font='9px Barlow,sans-serif';
+  ctx.fillText('Vmax',x1+3,y0+graphH-vmax+3);
+}
+
+function calculate(){
+  const dist   = v('f_dist');
+  const t      = v('f_time')||1;
+  const ta     = Math.min(v('f_ta')||0.2, t*0.45);
+  const sf     = v('f_sf')||2;
+  const mu     = v('f_mu');
+  const theta  = (v('f_theta')*Math.PI)/180;
+  const gEta   = v('f_gear_eta')||1;
+
+  let N_rpm=0, TL=0, JL=0, Ta_torq=0, Ttotal=0, Pout=0;
+  let formula='', details='';
+
+  if(curMech==='ball'){
+    const lead=v('f_lead')/1000, m=v('f_mass');
+    const DB=v('f_db')/1000, LB=v('f_lb')/1000;
+    const eta=v('f_eta')||0.9, rho=7800;
+    const v_ms=(dist/1000)/t;
+    N_rpm=(v_ms/lead)*60;
+    const F=m*g*(Math.sin(theta)+mu*Math.cos(theta));
+    TL=(F*lead)/(2*Math.PI*eta*gEta);
+    const Js=(Math.PI*rho*LB*(DB/2)**4)/2;
+    const Jl=m*(lead/(2*Math.PI))**2;
+    JL=Js+Jl;
+    const omg=N_rpm*2*Math.PI/60;
+    Ta_torq=JL*(omg/ta);
+    Ttotal=(TL+Ta_torq)*sf;
+    Pout=Ttotal*omg;
+    formula=`<b>Ball Screw Sizing</b><br>
+V = Dist/t = ${v_ms.toFixed(3)} m/s<br>
+N = V/PB × 60 = ${N_rpm.toFixed(1)} RPM<br>
+F = m·g·(sinθ + μcosθ) = ${F.toFixed(2)} N<br>
+TL = F·PB / (2π·η) = ${TL.toFixed(4)} N·m<br>
+J_screw = πρL·(D/2)⁴/2 = ${Js.toFixed(6)} kg·m²<br>
+J_load = m·(PB/2π)² = ${Jl.toFixed(6)} kg·m²<br>
+Ta = JL·(ω/ta) = ${Ta_torq.toFixed(4)} N·m<br>
+<span class="formula-highlight">T_required = (TL + Ta) × SF = ${Ttotal.toFixed(4)} N·m</span>`;
+  }
+  else if(curMech==='belt'||curMech==='conv'){
+    const D=(v('f_dr'))/1000;
+    const m=v('f_mass'), mr=curMech==='conv'?v('f_mroll'):v('f_mpulley')||0;
+    const eta=v('f_eta')||0.9;
+    const v_ms=(dist/1000)/t;
+    N_rpm=(v_ms/(Math.PI*D))*60;
+    const F=(m+mr)*g*(Math.sin(theta)+mu*Math.cos(theta));
+    TL=(F*D/2)/(eta*gEta);
+    JL=(m+mr)*(D/2)**2;
+    const omg=N_rpm*2*Math.PI/60;
+    Ta_torq=JL*(omg/ta);
+    Ttotal=(TL+Ta_torq)*sf;
+    Pout=Ttotal*omg;
+    formula=`<b>${MECHS[curMech].name} Sizing</b><br>
+V = ${v_ms.toFixed(3)} m/s &nbsp;|&nbsp; N = ${N_rpm.toFixed(1)} RPM<br>
+F = (m+mr)·g·(sinθ+μcosθ) = ${F.toFixed(2)} N<br>
+TL = F·D/2 / η = ${TL.toFixed(4)} N·m<br>
+J = (m+mr)·(D/2)² = ${JL.toFixed(6)} kg·m²<br>
+<span class="formula-highlight">T_required = ${Ttotal.toFixed(4)} N·m</span>`;
+  }
+  else if(curMech==='rack'){
+    const dp=v('f_dp')/1000, m=v('f_mass');
+    const eta=v('f_eta')||0.9;
+    const v_ms=(dist/1000)/t;
+    N_rpm=(v_ms/(Math.PI*dp))*60;
+    const F=m*g*(Math.sin(theta)+mu*Math.cos(theta));
+    TL=(F*dp/2)/(eta*gEta);
+    JL=m*(dp/2)**2;
+    const omg=N_rpm*2*Math.PI/60;
+    Ta_torq=JL*(omg/ta);
+    Ttotal=(TL+Ta_torq)*sf;
+    Pout=Ttotal*omg;
+    formula=`<b>Rack & Pinion Sizing</b><br>
+V = ${v_ms.toFixed(3)} m/s &nbsp;|&nbsp; N = ${N_rpm.toFixed(1)} RPM<br>
+F = m·g·(sinθ+μcosθ) = ${F.toFixed(2)} N<br>
+TL = F·DP/2 / η = ${TL.toFixed(4)} N·m<br>
+J = m·(DP/2)² = ${JL.toFixed(6)} kg·m²<br>
+<span class="formula-highlight">T_required = ${Ttotal.toFixed(4)} N·m</span>`;
+  }
+  else{
+    N_rpm=v('f_n'); TL=v('f_tres'); JL=v('f_iload');
+    const omg=N_rpm*2*Math.PI/60;
+    Ta_torq=JL*(omg/ta);
+    Ttotal=(TL+Ta_torq)*sf;
+    Pout=Ttotal*omg;
+    formula=`<b>${MECHS[curMech].name} Sizing</b><br>
+ω = N × 2π/60 = ${(N_rpm*2*Math.PI/60).toFixed(3)} rad/s<br>
+Ta = J·α = J·(ω/ta) = ${Ta_torq.toFixed(4)} N·m<br>
+T_total = (TL + Ta) × SF = ${Ttotal.toFixed(4)} N·m<br>
+<span class="formula-highlight">P = T × ω = ${Pout.toFixed(2)} W</span>`;
+  }
+
+  const kw=Pout/1000, hp=Pout/745.7;
+  const rads=N_rpm*2*Math.PI/60;
+
+  document.getElementById('results-panel').innerHTML = `
+    <div class="res-grid">
+      <div class="metric hi">
+        <div class="ml">ความเร็วรอบ (N)</div>
+        <div class="mv">${N_rpm.toFixed(1)}</div>
+        <div class="mu">RPM &nbsp;|&nbsp; ${rads.toFixed(2)} rad/s</div>
+      </div>
+      <div class="metric hi">
+        <div class="ml">Required Torque</div>
+        <div class="mv">${Ttotal.toFixed(3)}</div>
+        <div class="mu">N·m &nbsp;(×SF ${sf})</div>
+      </div>
+      <div class="metric">
+        <div class="ml">Load Torque (TL)</div>
+        <div class="mv blue">${TL.toFixed(4)}</div>
+        <div class="mu">N·m</div>
+      </div>
+      <div class="metric">
+        <div class="ml">Accel Torque (Ta)</div>
+        <div class="mv blue">${Ta_torq.toFixed(4)}</div>
+        <div class="mu">N·m</div>
+      </div>
+      <div class="metric">
+        <div class="ml">Load Inertia (JL)</div>
+        <div class="mv purple">${JL.toFixed(5)}</div>
+        <div class="mu">kg·m²</div>
+      </div>
+      <div class="metric">
+        <div class="ml">Required Power</div>
+        <div class="mv green">${Pout<1000?Pout.toFixed(1):kw.toFixed(2)}</div>
+        <div class="mu">${Pout<1000?'W':'kW'} &nbsp;|&nbsp; ${hp.toFixed(3)} HP</div>
+      </div>
+    </div>`;
+
+  // Motor recommendation
+  let recHtml = '';
+  if(Pout<50){
+    recHtml=`<div class="rec-card"><div class="rec-tag step">STEPPER</div><div class="rec-name">Stepper Motor (Open Loop)</div><div class="rec-reason">กำลังต่ำ ≤50W — Stepper เหมาะสมราคาประหยัด ไม่ต้องการ encoder</div></div>`;
+  } else if(Pout<400){
+    recHtml=`<div class="rec-card"><div class="rec-tag step">STEPPER</div><div class="rec-name">Stepper Motor + Driver</div><div class="rec-reason">50–400W — พิจารณา Closed-loop Stepper หรือ Brushless DC</div></div>`;
+  } else if(Pout<3000){
+    recHtml=`<div class="rec-card"><div class="rec-tag servo">SERVO</div><div class="rec-name">AC Servo Motor</div><div class="rec-reason">400W–3kW — Servo ให้ความแม่นยำสูง feedback real-time</div></div>`;
+  } else {
+    recHtml=`<div class="rec-card"><div class="rec-tag ac">AC MOTOR</div><div class="rec-name">AC Induction Motor + VFD</div><div class="rec-reason">3kW ขึ้น — AC Motor + Inverter คุ้มค่าและทนทาน</div></div>`;
+  }
+  document.getElementById('rec-panel').innerHTML=recHtml;
+  document.getElementById('rec-sec').style.display='block';
+  document.getElementById('formula-panel').innerHTML=formula;
+  document.getElementById('formula-sec').style.display='block';
+
+  // Mark steps done
+  ['sn1','sn2','sn3'].forEach(id=>{document.getElementById(id).style.background='#2ecc71';document.getElementById(id).style.color='#fff';});
+
+  drawProfile();
+}
+
+// Init
+selMech('ball');
+window.addEventListener('resize', drawProfile);
+document.getElementById('f_time').addEventListener('input', drawProfile);
+document.getElementById('f_ta').addEventListener('input', drawProfile);
+drawProfile();
+</script>
+</body>
+</html>
